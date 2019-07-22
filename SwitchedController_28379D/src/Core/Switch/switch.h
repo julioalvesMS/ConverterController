@@ -11,6 +11,10 @@ namespace Switch
 
     void SetState(short state);
 
+    void TurnOff(short gate);
+
+    void TurnOn(short gate);
+
     __interrupt void cpu_timer2_isr(void);
 }
 

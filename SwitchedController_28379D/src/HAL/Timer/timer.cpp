@@ -7,8 +7,8 @@ namespace Timer
         // Configure timer 100ms interruption
         InitCpuTimers();
 
-        ConfigCpuTimer(&CpuTimer1, 200, 100000);
-        ConfigCpuTimer(&CpuTimer2, 200, 30000);
+        ConfigCpuTimer(&CpuTimer1, 200, 10000);
+        ConfigCpuTimer(&CpuTimer2, 200, 3000);
 
         CpuTimer1Regs.TCR.all = 0x4000;
         CpuTimer2Regs.TCR.all = 0x4000;

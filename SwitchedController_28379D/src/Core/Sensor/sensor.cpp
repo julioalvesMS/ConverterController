@@ -10,7 +10,7 @@ namespace Sensor
 
     static double input_voltage = 0;
 
-    double raw_variables[ADC_CONVERSIONS];
+    static unsigned int raw_variables[ADC_CONVERSIONS];
 
     //
     // Configure - Make configurations and initializations needed
@@ -18,27 +18,32 @@ namespace Sensor
     //
     void Configure(void)
     {
-        ADC::Configure();
+        ADC_HAL::Configure();
 
         PWM::Configure();
 
-        ADC::SetupADC();
+        ADC_HAL::SetupADC();
 
         //
         // Configure the interruption to read the ADC
         //
-        double* variables[ADC_CONVERSIONS] = {
+        unsigned int* variables[ADC_CONVERSIONS] = {
             &(raw_variables[0]),
             &(raw_variables[1]),
             &(raw_variables[2])
         };
-        ADC::ConfigureInterruption(variables);
+        ADC_HAL::ConfigureInterruption(variables);
 
         //
         // Assume the initial state as zero
         //
         s_state.data[0] = 0;
         s_state.data[1] = 0;
+    }
+
+    void Start(void)
+    {
+        PWM::Start();
     }
 
     //
@@ -64,8 +69,8 @@ namespace Sensor
     //
     void UpdateState(void)
     {
-        s_state.data[0] = raw_variables[0];
-        s_state.data[1] = raw_variables[1];
+        s_state.data[0] = ADCDRV_1ch_F_C(raw_variables[0]);
+        s_state.data[1] = ADCDRV_1ch_F_C(raw_variables[1]);
     }
 
     //
@@ -73,6 +78,6 @@ namespace Sensor
     //
     void UpdateInput(void)
     {
-        input_voltage = raw_variables[2];
+        input_voltage = ADCDRV_1ch_F_C(raw_variables[2]);
     }
 }

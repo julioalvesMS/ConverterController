@@ -7,6 +7,8 @@ namespace Switch
 
     static short switch_to_power;
 
+    static int temp = 0;
+
     void Configure()
     {
         GateDrive::Configure();
@@ -29,25 +31,40 @@ namespace Switch
         //
 //        s_switch_state = state;
 
-        s_switch_state = !s_switch_state;
+        temp++;
+
+        s_switch_state = temp < 3;
+
+
         switch(s_switch_state)
         {
         case 0:
-            GateDrive::SetState(GPIO_S1, false);
-            switch_to_power = GPIO_S2;
-            Timer::Switch_Start();
+            TurnOff(GPIO_S1);
+            TurnOn(GPIO_S2);
             break;
         case 1:
-            GateDrive::SetState(GPIO_S2, false);
-            switch_to_power = GPIO_S1;
-            Timer::Switch_Start();
+            TurnOff(GPIO_S2);
+            TurnOn(GPIO_S1);
             break;
         default:
-            GateDrive::SetState(GPIO_S1, false);
-            GateDrive::SetState(GPIO_S2, false);
+            TurnOff(GPIO_S1);
+            TurnOff(GPIO_S2);
             break;
 
         }
+
+        temp = temp % 3;
+    }
+
+    void TurnOff(short gate)
+    {
+        GateDrive::SetState(gate, false);
+    }
+
+    void TurnOn(short gate)
+    {
+        switch_to_power = gate;
+        Timer::Switch_Start();
     }
 
 

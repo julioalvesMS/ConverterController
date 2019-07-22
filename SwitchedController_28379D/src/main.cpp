@@ -19,89 +19,20 @@ void initInterruption(void);
 
 __interrupt void cpu_timer1_isr(void);
 
-static int main_loop_wait = 0;
+volatile static bool main_loop_wait;
+
+//
+// Variables declared here for debugging
+//
+Vector *X, *Xe;
+double *u;
 
 void main(void)
 {
-    Vector *X, *Xe;
     Matrix *P;
-    double *u;
     int k;
     double Vref = 60;
     System* sys;
-
-
-
-    //
-    // General Board initializations
-    //
-    init();
-
-    //
-    // Clear all interrupts and initialize PIE vector table:
-    // Disable CPU interrupts
-    //
-    DINT;
-
-    initInterruption();
-
-    //
-    // Specific devices initializations
-    //
-    Timer::Configure();
-    Sensor::Configure();
-    Switch::Configure();
-
-
-    EALLOW;  // This is needed to write to EALLOW protected registers
-    PieVectTable.TIMER1_INT = &cpu_timer1_isr;
-    EDIS;    // This is needed to disable write to EALLOW protected registers
-
-    //
-    // Control Parameters and variables
-    //
-    sys = Buck::getSys();
-
-    Equilibrium::init();
-
-    X = Sensor::GetState();
-    u = Sensor::GetInput();
-    Xe = Equilibrium::getReference();
-
-    P = Controller::getP();
-
-    /* =============== */
-    *u = 400;
-    Vref = 100;
-    Xe->data[0] = 1.0331;
-    Xe->data[1] = 100;
-    /* =============== */
-
-
-    Timer::MainLoop_Start();
-    while(1)
-    {
-        main_loop_wait = 1;
-
-//        Equilibrium::referenceUpdate(Vref, X, *u);
-        Sensor::UpdateInput();
-        Sensor::UpdateState();
-
-        k = SwitchingRule2::switchingRule(sys, P, X, Xe, *u);
-
-
-        Switch::SetState(k);
-
-        while(main_loop_wait){
-            if (Vref==0)
-                main_loop_wait = 1;
-        }
-    }
-}
-
-
-void init(void)
-{
 
     //
     // Initialize System Control:
@@ -114,12 +45,14 @@ void init(void)
     //
     InitGpio();
 
+
     InitCpuTimers();
 
-}
-
-void initInterruption(void)
-{
+    //
+    // Clear all interrupts and initialize PIE vector table:
+    // Disable CPU interrupts
+    //
+    DINT;
 
     //
     // Initialize the PIE control registers to their default state.
@@ -149,8 +82,66 @@ void initInterruption(void)
 
     EINT;  // Enable Global interrupt INTM
     ERTM;  // Enable Global realtime interrupt DBGM
-}
 
+    //
+    // enable PIE interrupt
+    //
+    PieCtrlRegs.PIEIER1.bit.INTx1 = 1;
+
+    //
+    // Specific devices initializations
+    //
+    Timer::Configure();
+    Sensor::Configure();
+    Switch::Configure();
+
+
+    InitTempSensor(3.0);
+
+
+    EALLOW;  // This is needed to write to EALLOW protected registers
+    PieVectTable.TIMER1_INT = &cpu_timer1_isr;
+    EDIS;    // This is needed to disable write to EALLOW protected registers
+
+    //
+    // Control Parameters and variables
+    //
+    sys = Buck::getSys();
+
+    Equilibrium::init();
+
+    X = Sensor::GetState();
+    u = Sensor::GetInput();
+    Xe = Equilibrium::getReference();
+
+    P = Controller::getP();
+
+    /* =============== */
+    *u = 400;
+    Vref = 100;
+    Xe->data[0] = 1.0331;
+    Xe->data[1] = 100;
+    /* =============== */
+
+    Sensor::Start();
+
+    Timer::MainLoop_Start();
+    while(1)
+    {
+        main_loop_wait = true;
+
+//        Equilibrium::referenceUpdate(Vref, X, *u);
+        Sensor::UpdateInput();
+        Sensor::UpdateState();
+
+        k = SwitchingRule2::switchingRule(sys, P, X, Xe, *u);
+
+
+        Switch::SetState(k);
+
+        while(main_loop_wait);
+    }
+}
 
 //
 // cpu_timer0_isr - CPU Timer0 ISR with interrupt counter
@@ -160,5 +151,5 @@ __interrupt void cpu_timer1_isr(void)
    CpuTimer1.InterruptCount++;
 
 
-   main_loop_wait = 0;
+   main_loop_wait = false;
 }
