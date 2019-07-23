@@ -31,7 +31,7 @@ void main(void)
 {
     Matrix *P;
     int k;
-    double Vref = 60;
+    double Vref;
     System* sys;
 
     //
@@ -96,9 +96,6 @@ void main(void)
     Switch::Configure();
 
 
-    InitTempSensor(3.0);
-
-
     EALLOW;  // This is needed to write to EALLOW protected registers
     PieVectTable.TIMER1_INT = &cpu_timer1_isr;
     EDIS;    // This is needed to disable write to EALLOW protected registers
@@ -106,19 +103,19 @@ void main(void)
     //
     // Control Parameters and variables
     //
-    sys = Buck::getSys();
+    sys = Buck::GetSys();
 
-    Equilibrium::init();
+    Equilibrium::Configure();
 
     X = Sensor::GetState();
     u = Sensor::GetInput();
-    Xe = Equilibrium::getReference();
+    Xe = Equilibrium::GetReference();
 
-    P = Controller::getP();
+    P = Controller::GetP();
 
     /* =============== */
-    *u = 400;
-    Vref = 100;
+    *u = 9;
+    Vref = 3;
     Xe->data[0] = 1.0331;
     Xe->data[1] = 100;
     /* =============== */
@@ -126,15 +123,17 @@ void main(void)
     Sensor::Start();
 
     Timer::MainLoop_Start();
+
     while(1)
     {
         main_loop_wait = true;
 
-//        Equilibrium::referenceUpdate(Vref, X, *u);
         Sensor::UpdateInput();
         Sensor::UpdateState();
 
-        k = SwitchingRule2::switchingRule(sys, P, X, Xe, *u);
+        Equilibrium::UpdateReference(Vref, X, *u);
+
+        k = SwitchingRule2::SwitchingRule(sys, P, X, Xe, *u);
 
 
         Switch::SetState(k);

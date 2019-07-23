@@ -1,3 +1,6 @@
+#ifndef SRC_HAL_PWM_H_
+#define SRC_HAL_PWM_H_
+
 #include "F28x_Project.h"
 
 namespace PWM
@@ -17,3 +20,5 @@ namespace PWM
     //
     void Start(void);
 }
+
+#endif /* SRC_HAL_PWM_H_ */

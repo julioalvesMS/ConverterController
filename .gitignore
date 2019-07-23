@@ -1,4 +1,15 @@
 RemoteSystemsTempFiles/*
+.jxbrowser-data/*
+.xdchelp/*
 .metadata/*
 build/*
-/.metadata/
+dvt/*
+*/Debug
+*/Release
+*/.settings
+*/.launches
+*/.history
+*/.lock
+
+
+*.log

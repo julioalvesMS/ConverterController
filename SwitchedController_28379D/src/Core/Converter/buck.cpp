@@ -7,14 +7,14 @@ namespace Buck
 {
     static System system;
 
-    System* getSys()
+    System* GetSys()
     {
-        defineSystem();
+        DefineSystem();
 
         return &(system);
     }
 
-    void defineSystem()
+    void DefineSystem()
     {
         SubSystem* subSys;
 

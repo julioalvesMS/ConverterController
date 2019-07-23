@@ -1,5 +1,5 @@
-#ifndef WATCHDOG_H_
-#define WATCHDOG_H_
+#ifndef SRC_HAL_WATCHDOG_H_
+#define SRC_HAL_WATCHDOG_H_
 
 #include "F2837xD_Device.h"
 
@@ -14,4 +14,4 @@ namespace WatchDog
 }
 
 
-#endif /* WATCHDOG_H_ */
+#endif /* SRC_HAL_WATCHDOG_H_ */

@@ -1,5 +1,5 @@
-#ifndef SRC_CONVERTER_BUCK_H_
-#define SRC_CONVERTER_BUCK_H_
+#ifndef SRC_CORE_CONVERTER_BUCK_H_
+#define SRC_CORE_CONVERTER_BUCK_H_
 
 #include <src/Util/Common/constants.h>
 #include <src/Util/Math/matrix.h>
@@ -10,9 +10,9 @@ using namespace SwitchedSystem;
 
 namespace Buck
 {
-    System* getSys();
+    System* GetSys();
 
-    void defineSystem();
+    void DefineSystem();
 }
 
-#endif  /* SRC_CONVERTER_BUCK_H_ */
+#endif  /* SRC_CORE_CONVERTER_BUCK_H_ */

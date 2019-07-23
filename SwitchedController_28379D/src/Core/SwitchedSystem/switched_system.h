@@ -1,5 +1,5 @@
-#ifndef SRC_SWITCHED_SYSTEM_H_
-#define SRC_SWITCHED_SYSTEM_H_
+#ifndef SRC_CORE_SWITCHED_SYSTEM_H_
+#define SRC_CORE_SWITCHED_SYSTEM_H_
 
 #include <src/Util/Common/constants.h>
 #include <src/Util/Math/matrix.h>
@@ -26,4 +26,4 @@ namespace SwitchedSystem
 
 }
 
-#endif /* SRC_SWITCHED_SYSTEM_H_ */
+#endif /* SRC_CORE_SWITCHED_SYSTEM_H_ */

@@ -26,6 +26,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>F2837xD_CpuTimers.c</name>
+			<type>1</type>
+			<locationURI>DEVICE_SUPPORT_F2837XD/common/source/F2837xD_CpuTimers.c</locationURI>
+		</link>
+		<link>
 			<name>libs/F2837xD_Adc.c</name>
 			<type>1</type>
 			<locationURI>DEVICE_SUPPORT_F2837XD/common/source/F2837xD_Adc.c</locationURI>
@@ -36,14 +41,14 @@
 			<locationURI>DEVICE_SUPPORT_F2837XD/common/source/F2837xD_CodeStartBranch.asm</locationURI>
 		</link>
 		<link>
-			<name>libs/F2837xD_CpuTimers.c</name>
-			<type>1</type>
-			<locationURI>DEVICE_SUPPORT_F2837XD/common/source/F2837xD_CpuTimers.c</locationURI>
-		</link>
-		<link>
 			<name>libs/F2837xD_DefaultISR.c</name>
 			<type>1</type>
 			<locationURI>DEVICE_SUPPORT_F2837XD/common/source/F2837xD_DefaultISR.c</locationURI>
+		</link>
+		<link>
+			<name>libs/F2837xD_EPwm.c</name>
+			<type>1</type>
+			<locationURI>DEVICE_SUPPORT_F2837XD/common/source/F2837xD_EPwm.c</locationURI>
 		</link>
 		<link>
 			<name>libs/F2837xD_GlobalVariableDefs.c</name>
@@ -54,11 +59,6 @@
 			<name>libs/F2837xD_Gpio.c</name>
 			<type>1</type>
 			<locationURI>DEVICE_SUPPORT_F2837XD/common/source/F2837xD_Gpio.c</locationURI>
-		</link>
-		<link>
-			<name>libs/F2837xD_Ipc.c</name>
-			<type>1</type>
-			<locationURI>DEVICE_SUPPORT_F2837XD/common/source/F2837xD_Ipc.c</locationURI>
 		</link>
 		<link>
 			<name>libs/F2837xD_PieCtrl.c</name>
@@ -74,11 +74,6 @@
 			<name>libs/F2837xD_SysCtrl.c</name>
 			<type>1</type>
 			<locationURI>DEVICE_SUPPORT_F2837XD/common/source/F2837xD_SysCtrl.c</locationURI>
-		</link>
-		<link>
-			<name>libs/F2837xD_TempSensorConv.c</name>
-			<type>1</type>
-			<locationURI>PARENT-4-DEVICE_SUPPORT_F2837XD/C2000Ware_2_00_00_02_Software/device_support/f2837xd/common/source/F2837xD_TempSensorConv.c</locationURI>
 		</link>
 		<link>
 			<name>libs/F2837xD_usDelay.asm</name>

@@ -1,5 +1,5 @@
-#ifndef SRC_EQUILIBRIUM_REFERENCE_UPDATE_H_
-#define SRC_EQUILIBRIUM_REFERENCE_UPDATE_H_
+#ifndef SRC_CORE_EQUILIBRIUM_REFERENCE_UPDATE_H_
+#define SRC_CORE_EQUILIBRIUM_REFERENCE_UPDATE_H_
 
 #include <src/Util/Math/matrix.h>
 #include <src/Util/Common/constants.h>
@@ -8,11 +8,11 @@ using namespace Math;
 
 namespace Equilibrium
 {
-    void init(void);
+    void Configure(void);
 
-    void referenceUpdate(Vector* X, double u);
+    void UpdateReference(double Vref, Vector* X, double u);
 
-    Vector* getReference();
+    Vector* GetReference();
 }
 
-#endif /* SRC_EQUILIBRIUM_REFERENCE_UPDATE_H_ */
+#endif /* SRC_CORE_EQUILIBRIUM_REFERENCE_UPDATE_H_ */

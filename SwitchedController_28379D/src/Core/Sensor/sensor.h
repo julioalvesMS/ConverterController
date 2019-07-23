@@ -1,5 +1,5 @@
-#ifndef SRC_SENSOR_SENSOR_H_
-#define SRC_SENSOR_SENSOR_H_
+#ifndef SRC_CORE_SENSOR_H_
+#define SRC_CORE_SENSOR_H_
 
 #include "F28x_Project.h"
 #include "DPlib.h"
@@ -44,4 +44,4 @@ namespace Sensor
     void UpdateInput(void);
 }
 
-#endif /* SRC_SENSOR_SENSOR_H_ */
+#endif /* SRC_CORE_SENSOR_H_ */

@@ -12,7 +12,7 @@ namespace SwitchingRule2
 
     static Vector prod_1;   // csi'*P
 
-    int switchingRule(System *sys, Matrix *P, Vector *X, Vector *Xe, double u)
+    int SwitchingRule(System *sys, Matrix *P, Vector *X, Vector *Xe, double u)
     {
         double best_sigma = 0, new_sigma;
         int best_id = 0;
@@ -22,7 +22,7 @@ namespace SwitchingRule2
 
         for (i=0;i<SUBSYSTEMS_COUNT;i++)
         {
-            new_sigma = evaluateSubSystem(&(sys->subSystems[i]), P, X, Xe, u);
+            new_sigma = EvaluateSubSystem(&(sys->subSystems[i]), P, X, Xe, u);
 
             if (new_sigma < best_sigma || i==0)
             {
@@ -34,7 +34,7 @@ namespace SwitchingRule2
         return best_id;
     }
 
-    double evaluateSubSystem(SubSystem *subSys, Matrix *P, Vector *X, Vector *Xe, double u)
+    double EvaluateSubSystem(SubSystem *subSys, Matrix *P, Vector *X, Vector *Xe, double u)
     {
         double val;
 

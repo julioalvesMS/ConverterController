@@ -13,13 +13,13 @@ namespace Equilibrium
 
 
 
-    void init(void)
+    void Configure(void)
     {
         Xe.data[0] = 0;
         Xe.data[1] = 0;
     }
 
-    void referenceUpdate(double Vref, Vector* X, double u)
+    void UpdateReference(double Vref, Vector* X, double u)
     {
         double Ve;
         double Ie;
@@ -59,7 +59,7 @@ namespace Equilibrium
         Xe.data[1] = Ve;
     }
 
-    Vector* getReference()
+    Vector* GetReference()
     {
         return &Xe;
     }

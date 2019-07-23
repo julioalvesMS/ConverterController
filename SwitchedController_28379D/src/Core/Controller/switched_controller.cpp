@@ -6,7 +6,7 @@ namespace Controller
 {
     static Matrix P;
 
-    Matrix* getP()
+    Matrix* GetP()
     {
         //
         // Buck Converter - Rule 2

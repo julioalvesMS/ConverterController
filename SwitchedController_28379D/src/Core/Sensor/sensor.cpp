@@ -4,6 +4,10 @@ extern void InitAdc(void);
 
 using namespace Math;
 
+double const Vout_max = 6.09;
+double const Vin_max = 12.09;
+double const IL_max = 6.83;
+
 namespace Sensor
 {
     static Vector s_state;
@@ -69,8 +73,8 @@ namespace Sensor
     //
     void UpdateState(void)
     {
-        s_state.data[0] = ADCDRV_1ch_F_C(raw_variables[0]);
-        s_state.data[1] = ADCDRV_1ch_F_C(raw_variables[1]);
+        s_state.data[0] = ADCDRV_1ch_F_C(raw_variables[0]) * IL_max;
+        s_state.data[1] = ADCDRV_1ch_F_C(raw_variables[1]) * Vout_max;
     }
 
     //
@@ -78,6 +82,6 @@ namespace Sensor
     //
     void UpdateInput(void)
     {
-        input_voltage = ADCDRV_1ch_F_C(raw_variables[2]);
+        input_voltage = ADCDRV_1ch_F_C(raw_variables[2]) * Vin_max;
     }
 }
