@@ -3,7 +3,7 @@
 namespace Switch
 {
 
-    static short s_switch_state = 0;
+    static short s_switch_state = -1;
 
     static short switch_to_power;
 
@@ -31,12 +31,15 @@ namespace Switch
         //
 //        s_switch_state = state;
 
+
+        state = temp < 8;
         temp++;
+        temp = temp % 17;
 
-        s_switch_state = temp < 3;
+        if (state == s_switch_state)
+            return;
 
-
-        switch(s_switch_state)
+        switch(state)
         {
         case 0:
             TurnOff(GPIO_S1);
@@ -53,7 +56,7 @@ namespace Switch
 
         }
 
-        temp = temp % 3;
+        s_switch_state = state;
     }
 
     void TurnOff(short gate)

@@ -1,5 +1,6 @@
 
 #include "F28x_Project.h"
+#include "F2837xD_device.h"        // F2837xD Headerfile Include File
 
 #include <src/Util/Math/matrix.h>
 #include <src/Core/Switch/switch.h>
@@ -12,9 +13,6 @@
 
 using namespace Math;
 using namespace SwitchedSystem;
-
-void init(void);
-void initInterruption(void);
 
 
 __interrupt void cpu_timer1_isr(void);
@@ -73,15 +71,6 @@ void main(void)
     //
     InitPieVectTable();
 
-    //
-    // Enable global Interrupts and higher priority real-time debug events:
-    //
-    IER |= M_INT1; //Enable group 1 interrupts
-    IER |= M_INT13;
-    IER |= M_INT14;
-
-    EINT;  // Enable Global interrupt INTM
-    ERTM;  // Enable Global realtime interrupt DBGM
 
     //
     // enable PIE interrupt
@@ -91,9 +80,10 @@ void main(void)
     //
     // Specific devices initializations
     //
-    Timer::Configure();
     Sensor::Configure();
     Switch::Configure();
+
+    Timer::Configure();
 
 
     EALLOW;  // This is needed to write to EALLOW protected registers
@@ -114,14 +104,22 @@ void main(void)
     P = Controller::GetP();
 
     /* =============== */
-    *u = 9;
     Vref = 3;
     Xe->data[0] = 1.0331;
     Xe->data[1] = 100;
     /* =============== */
 
-    Sensor::Start();
+    //
+    // Enable global Interrupts and higher priority real-time debug events:
+    //
+    IER |= M_INT1; //Enable group 1 interrupts
+    IER |= M_INT13;
+    IER |= M_INT14;
 
+    EINT;  // Enable Global interrupt INTM
+    ERTM;  // Enable Global realtime interrupt DBGM
+
+    Sensor::Start();
     Timer::MainLoop_Start();
 
     while(1)
@@ -131,7 +129,7 @@ void main(void)
         Sensor::UpdateInput();
         Sensor::UpdateState();
 
-        Equilibrium::UpdateReference(Vref, X, *u);
+//        Equilibrium::UpdateReference(Vref, X, *u);
 
         k = SwitchingRule2::SwitchingRule(sys, P, X, Xe, *u);
 

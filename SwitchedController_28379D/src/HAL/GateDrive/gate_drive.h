@@ -5,6 +5,8 @@
 
 #define GPIO_S1    6
 #define GPIO_S2    7
+#define GPIO_A1    8
+#define GPIO_A2    9
 
 namespace GateDrive
 {

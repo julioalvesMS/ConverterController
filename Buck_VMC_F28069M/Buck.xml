@@ -16,7 +16,7 @@
     <!-- Max Output Voltage Sense -->
     <Vout_SenseMax>6.7</Vout_SenseMax>
     <!-- Max Input Voltage Sense -->
-    <Vin_SenseMax>3.3</Vin_SenseMax>
+    <Vin_SenseMax>13.3</Vin_SenseMax>
     <!-- Max Inductor Current Sense -->
     <Il_SenseMax>7.52</Il_SenseMax>
     <!-- High side MOSFET Rdson -->
@@ -62,7 +62,7 @@
       <A1>0.828597658074737</A1>
       <A2>0.171402341925263</A2>
       <A3>0</A3>
-      <B0>4.17032266595574</B0>
+      <B0>4.17032266595575</B0>
       <B1>-5.91209927067546</B1>
       <B2>1.94959122226704</B2>
       <B3>0</B3>
@@ -152,7 +152,7 @@
       <A1>1.61862133328143</A1>
       <A2>-0.618621333281426</A2>
       <A3>0</A3>
-      <B0>0.099645484006019</B0>
+      <B0>0.0996454840060191</B0>
       <B1>-0.0548484052577046</B1>
       <B2>-0.0108871872256277</B2>
       <B3>0</B3>
@@ -208,7 +208,7 @@
     <!--  Specify Model 0 for mathematical 1 for SFRA Based -->
     <MODEL_STYLE>0</MODEL_STYLE>
     <!--  Specify the SFRA data path -->
-    <SFRAPATH>C:/Users/Julio-LEPO/Codes/ConverterController/Buck_VMC_F2837xD/SFRAData/SFRAData.csv</SFRAPATH>
+    <SFRAPATH>C:/Users/Julio-LEPO/Codes/ConverterController/Buck_VMC_F28069M/SFRAData/SFRAData.csv</SFRAPATH>
     <COMP_ABS_LIMIT>256</COMP_ABS_LIMIT>
   </COMP_OPTIONS>
 </MODEL>
