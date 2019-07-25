@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>adc_soc_epwm_tempsensor_cpu01</name>
+	<name>blinky_dc_cpu02</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -25,11 +25,6 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
 	<linkedResources>
-		<link>
-			<name>F2837xD_Adc.c</name>
-			<type>1</type>
-			<locationURI>PARENT-5-ORIGINAL_PROJECT_ROOT/common/source/F2837xD_Adc.c</locationURI>
-		</link>
 		<link>
 			<name>F2837xD_CodeStartBranch.asm</name>
 			<type>1</type>
@@ -71,19 +66,14 @@
 			<locationURI>PARENT-5-ORIGINAL_PROJECT_ROOT/common/source/F2837xD_SysCtrl.c</locationURI>
 		</link>
 		<link>
-			<name>F2837xD_TempSensorConv.c</name>
-			<type>1</type>
-			<locationURI>PARENT-5-ORIGINAL_PROJECT_ROOT/common/source/F2837xD_TempSensorConv.c</locationURI>
-		</link>
-		<link>
 			<name>F2837xD_usDelay.asm</name>
 			<type>1</type>
 			<locationURI>PARENT-5-ORIGINAL_PROJECT_ROOT/common/source/F2837xD_usDelay.asm</locationURI>
 		</link>
 		<link>
-			<name>adc_soc_epwm_tempsensor_cpu01.c</name>
+			<name>blinky_dc_cpu02.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-ORIGINAL_PROJECT_ROOT/adc_soc_epwm_tempsensor_cpu01.c</locationURI>
+			<locationURI>PARENT-1-ORIGINAL_PROJECT_ROOT/blinky_dc_cpu02.c</locationURI>
 		</link>
 	</linkedResources>
 	<variableList>
@@ -93,7 +83,7 @@
 		</variable>
 		<variable>
 			<name>ORIGINAL_PROJECT_ROOT</name>
-			<value>$%7BTI_PRODUCTS_DIR__TIREX%7D/C2000Ware_2_00_00_02_Software/device_support/f2837xd/examples/cpu1/adc_soc_epwm_tempsensor/cpu01/ccs</value>
+			<value>$%7BTI_PRODUCTS_DIR__TIREX%7D/C2000Ware_2_00_00_02_Software/device_support/f2837xd/examples/dual/blinky_dc/cpu02/ccs</value>
 		</variable>
 	</variableList>
 </projectDescription>

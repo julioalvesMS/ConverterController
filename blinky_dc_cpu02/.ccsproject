@@ -9,5 +9,5 @@
 	<rts value="libc.a"/>
 	<templateProperties value="id=com.ti.common.project.core.emptyProjectTemplate,"/>
 	<isTargetManual value="false"/>
-	<origin value="C:/ti/C2000Ware_2_00_00_02_Software/device_support/f2837xd/examples/cpu1/adc_soc_continuous/cpu01/ccs"/>
+	<origin value="C:/ti/C2000Ware_2_00_00_02_Software/device_support/f2837xd/examples/dual/blinky_dc/cpu02/ccs"/>
 </projectOptions>

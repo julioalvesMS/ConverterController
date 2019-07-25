@@ -7,9 +7,11 @@ namespace Timer
         // Configure timer 100ms interruption
         InitCpuTimers();
 
-        ConfigCpuTimer(&CpuTimer1, 100, 1);
-        ConfigCpuTimer(&CpuTimer2, 100, 1);
+        ConfigCpuTimer(&CpuTimer0, 100, MAIN_PERIOD);
+        ConfigCpuTimer(&CpuTimer1, 100, SWITCH_ON_DELAY);
+        ConfigCpuTimer(&CpuTimer2, 100, REFERENCE_CONTROLLER_PERIOD);
 
+        CpuTimer0Regs.TCR.all = 0x4000;
         CpuTimer1Regs.TCR.all = 0x4000;
         CpuTimer2Regs.TCR.all = 0x4000;
 
@@ -18,16 +20,21 @@ namespace Timer
 
     void MainLoop_Start()
     {
-        CpuTimer1Regs.TCR.bit.TSS = 0;
+        CpuTimer0Regs.TCR.bit.TSS = 0;
     }
 
     void Switch_Start()
     {
-        CpuTimer2Regs.TCR.bit.TSS = 0;
+        CpuTimer1Regs.TCR.bit.TSS = 0;
     }
 
     void Switch_Stop()
     {
-        CpuTimer2Regs.TCR.bit.TSS = 1;
+        CpuTimer1Regs.TCR.bit.TSS = 1;
+    }
+
+    void ReferenceUpdate_Start()
+    {
+        CpuTimer2Regs.TCR.bit.TSS = 0;
     }
 }

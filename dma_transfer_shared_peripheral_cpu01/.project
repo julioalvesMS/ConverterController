@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>adc_soc_epwm_cpu01</name>
+	<name>dma_transfer_shared_peripheral_cpu01</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -26,11 +26,6 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>F2837xD_Adc.c</name>
-			<type>1</type>
-			<locationURI>PARENT-5-ORIGINAL_PROJECT_ROOT/common/source/F2837xD_Adc.c</locationURI>
-		</link>
-		<link>
 			<name>F2837xD_CodeStartBranch.asm</name>
 			<type>1</type>
 			<locationURI>PARENT-5-ORIGINAL_PROJECT_ROOT/common/source/F2837xD_CodeStartBranch.asm</locationURI>
@@ -39,6 +34,16 @@
 			<name>F2837xD_DefaultISR.c</name>
 			<type>1</type>
 			<locationURI>PARENT-5-ORIGINAL_PROJECT_ROOT/common/source/F2837xD_DefaultISR.c</locationURI>
+		</link>
+		<link>
+			<name>F2837xD_Dma.c</name>
+			<type>1</type>
+			<locationURI>PARENT-5-ORIGINAL_PROJECT_ROOT/common/source/F2837xD_Dma.c</locationURI>
+		</link>
+		<link>
+			<name>F2837xD_EPwm.c</name>
+			<type>1</type>
+			<locationURI>PARENT-5-ORIGINAL_PROJECT_ROOT/common/source/F2837xD_EPwm.c</locationURI>
 		</link>
 		<link>
 			<name>F2837xD_GlobalVariableDefs.c</name>
@@ -76,9 +81,9 @@
 			<locationURI>PARENT-5-ORIGINAL_PROJECT_ROOT/common/source/F2837xD_usDelay.asm</locationURI>
 		</link>
 		<link>
-			<name>adc_soc_epwm_cpu01.c</name>
+			<name>dma_transfer_shared_peripheral_cpu01.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-ORIGINAL_PROJECT_ROOT/adc_soc_epwm_cpu01.c</locationURI>
+			<locationURI>PARENT-1-ORIGINAL_PROJECT_ROOT/dma_transfer_shared_peripheral_cpu01.c</locationURI>
 		</link>
 	</linkedResources>
 	<variableList>
@@ -88,7 +93,7 @@
 		</variable>
 		<variable>
 			<name>ORIGINAL_PROJECT_ROOT</name>
-			<value>$%7BTI_PRODUCTS_DIR__TIREX%7D/C2000Ware_2_00_00_02_Software/device_support/f2837xd/examples/cpu1/adc_soc_epwm/cpu01/ccs</value>
+			<value>$%7BTI_PRODUCTS_DIR__TIREX%7D/C2000Ware_2_00_00_02_Software/device_support/f2837xd/examples/dual/dma_transfer_shared_peripheral/cpu01/ccs</value>
 		</variable>
 	</variableList>
 </projectDescription>

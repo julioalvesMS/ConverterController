@@ -15,7 +15,7 @@ namespace Switch
 
     void TurnOn(short gate);
 
-    __interrupt void cpu_timer2_isr(void);
+    __interrupt void Interruption_SwitchOnDelay(void);
 }
 
 #endif /* SRC_CORE_SWITCH_H_ */

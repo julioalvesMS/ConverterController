@@ -14,7 +14,7 @@ namespace Switch
         GateDrive::Configure();
 
         EALLOW;  // This is needed to write to EALLOW protected registers
-        PieVectTable.TIMER2_INT = &cpu_timer2_isr;
+        PieVectTable.TIMER1_INT = &Interruption_SwitchOnDelay;
         EDIS;    // This is needed to disable write to EALLOW protected registers
     }
 
@@ -74,9 +74,9 @@ namespace Switch
     //
     // cpu_timer0_isr - CPU Timer0 ISR with interrupt counter
     //
-    __interrupt void cpu_timer2_isr(void)
+    __interrupt void Interruption_SwitchOnDelay(void)
     {
-       CpuTimer2.InterruptCount++;
+       CpuTimer1.InterruptCount++;
 
        GateDrive::SetState(switch_to_power, true);
 

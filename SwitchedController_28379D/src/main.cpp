@@ -20,16 +20,16 @@ __interrupt void cpu_timer1_isr(void);
 volatile static bool main_loop_wait;
 
 //
-// Variables declared here for debugging
+// Global Variables
 //
 Vector *X, *Xe;
 double *u;
+double Vref;
 
 void main(void)
 {
     Matrix *P;
     int k;
-    double Vref;
     System* sys;
 
     //
@@ -87,7 +87,8 @@ void main(void)
 
 
     EALLOW;  // This is needed to write to EALLOW protected registers
-    PieVectTable.TIMER1_INT = &cpu_timer1_isr;
+    PieVectTable.TIMER0_INT = &Interruption_MainLoopPeriod;
+    PieVectTable.TIMER2_INT = &Interruption_ReferenceUpdate;
     EDIS;    // This is needed to disable write to EALLOW protected registers
 
     //
@@ -121,6 +122,7 @@ void main(void)
 
     Sensor::Start();
     Timer::MainLoop_Start();
+    Timer::ReferenceUpdate_Start();
 
     while(1)
     {
@@ -129,7 +131,6 @@ void main(void)
         Sensor::UpdateInput();
         Sensor::UpdateState();
 
-//        Equilibrium::UpdateReference(Vref, X, *u);
 
         k = SwitchingRule2::SwitchingRule(sys, P, X, Xe, *u);
 
@@ -141,12 +142,26 @@ void main(void)
 }
 
 //
-// cpu_timer0_isr - CPU Timer0 ISR with interrupt counter
+// Interruption_MainLoopPeriod - CPU Timer0 ISR with interrupt counter
 //
-__interrupt void cpu_timer1_isr(void)
+__interrupt void Interruption_MainLoopPeriod(void)
 {
-   CpuTimer1.InterruptCount++;
-
+   CpuTimer0.InterruptCount++;
 
    main_loop_wait = false;
+
+   PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
+
 }
+
+
+//
+// Interruption_MainLoopPeriod - CPU Timer0 ISR with interrupt counter
+//
+__interrupt void Interruption_ReferenceUpdate(void)
+{
+    CpuTimer2.InterruptCount++;
+
+    Equilibrium::UpdateReference(Vref, X, *u);
+}
+

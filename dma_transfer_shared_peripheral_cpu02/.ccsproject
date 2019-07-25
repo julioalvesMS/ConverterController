@@ -3,11 +3,11 @@
 <projectOptions>
 	<deviceVariant value="com.ti.ccstudio.deviceModel.C2000.GenericC28xxDevice"/>
 	<deviceFamily value="C2000"/>
-	<codegenToolVersion value="6.3.0.A13150"/>
+	<codegenToolVersion value="6.2.5"/>
 	<isElfFormat value="false"/>
-	<connection value=""/>
 	<rts value="libc.a"/>
-	<templateProperties value="id=com.ti.common.project.core.emptyProjectTemplate,"/>
+	<createSlaveProjects value=""/>
+	<templateProperties value="id=com.ti.common.project.core.emptyProjectWithMainTemplate,"/>
 	<isTargetManual value="false"/>
-	<origin value="C:/ti/C2000Ware_2_00_00_02_Software/device_support/f2837xd/examples/cpu1/adc_soc_epwm_tempsensor/cpu01/ccs"/>
+	<origin value="C:/ti/C2000Ware_2_00_00_02_Software/device_support/f2837xd/examples/dual/dma_transfer_shared_peripheral/cpu02/ccs"/>
 </projectOptions>

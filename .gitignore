@@ -6,12 +6,13 @@ build/*
 dvt/*
 */Debug
 */Release
+*/CPU1_RAM
 */.settings
 */.config
 */.launches
 */.history
 */.lock
-
-
 *.log
+*.obj
+*.d
 /.metadata/
