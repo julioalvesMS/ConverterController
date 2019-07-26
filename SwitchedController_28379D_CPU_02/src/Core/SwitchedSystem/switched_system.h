@@ -2,9 +2,6 @@
 #define SRC_CORE_SWITCHED_SYSTEM_H_
 
 #include <src/Util/Common/constants.h>
-#include <src/Util/Math/matrix.h>
-
-using namespace Math;
 
 namespace SwitchedSystem
 {
@@ -12,9 +9,10 @@ namespace SwitchedSystem
     class SubSystem
     {
     public:
-        Matrix A;
-        Vector B;
-        Matrix Q;
+        double A[SYSTEM_ORDER][SYSTEM_ORDER];
+        double B[SYSTEM_ORDER];
+
+        double Q[SYSTEM_ORDER][SYSTEM_ORDER];
 
     };
 

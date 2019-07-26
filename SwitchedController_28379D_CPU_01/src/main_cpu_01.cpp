@@ -2,17 +2,9 @@
 #include "F28x_Project.h"
 #include "F2837xD_Ipc_drivers.h"
 
-#include <src/Util/Math/matrix.h>
 #include <src/Core/Switch/switch.h>
 #include <src/Core/Sensor/sensor.h>
-#include <src/Core/SwitchedSystem/switched_system.h>
 #include <src/Core/Equilibrium/reference_update.h>
-#include <src/Core/SwitchingRule/rule2.h>
-#include <src/Core/Converter/buck.h>
-#include <src/Core/Controller/switched_controller.h>
-
-using namespace Math;
-using namespace SwitchedSystem;
 
 
 __interrupt void Interruption_MainLoopPeriod(void);
@@ -24,13 +16,19 @@ volatile static bool main_loop_wait;
 // Global Variables
 //
 #pragma DATA_SECTION("SHARERAMGS0");
-static Vector *X, *Xe;
+volatile static double shared_X[SYSTEM_ORDER];
+#pragma DATA_SECTION("SHARERAMGS0");
+volatile static double shared_Xe[SYSTEM_ORDER];
 
 #pragma DATA_SECTION("SHARERAMGS0");
-static double *u;
+volatile static double shared_u;
 
 #pragma DATA_SECTION("SHARERAMGS1");
-volatile static int BestSubsystem;
+volatile static int shared_BestSubsystem;
+
+static double *X, *Xe;
+static double *u;
+static int BestSubsystem;
 
 
 static double Vref;
@@ -43,6 +41,7 @@ void main(void)
     // PLL, WatchDog, enable Peripheral Clocks
     //
     InitSysCtrl();
+    InitSysPll(XTAL_OSC,IMULT_40,FMULT_0,PLLCLK_BY_2);
 
     //
     // Set the GPIO to it's default state.
@@ -106,21 +105,19 @@ void main(void)
     Xe = Equilibrium::GetReference();
 
     /* =============== */
-    Vref = 5;
-    Xe->data[0] = 0.1143;
-    Xe->data[1] = 5.0000;
+    Vref = 4;
+    Xe[0] = 0.1143;
+    Xe[1] = 5.0000;
     /* =============== */
 
 
     //
-    // Give Memory Access to GS0/ GS1 SARAM to CPU02
+    // Give Memory Access to GS1 SARAM to CPU02
     //
-    while( !(MemCfgRegs.GSxMSEL.bit.MSEL_GS0 &
-             MemCfgRegs.GSxMSEL.bit.MSEL_GS14))
+    while( !(MemCfgRegs.GSxMSEL.bit.MSEL_GS1))
     {
         EALLOW;
-        MemCfgRegs.GSxMSEL.bit.MSEL_GS0 = 1;
-        MemCfgRegs.GSxMSEL.bit.MSEL_GS14 = 1;
+        MemCfgRegs.GSxMSEL.bit.MSEL_GS1 = 1;
         EDIS;
     }
 
@@ -141,20 +138,37 @@ void main(void)
     while(1)
     {
 
+        main_loop_wait = true;
+
         //
         // If there is no pending flag
         //
         if(IPCLtoRFlagBusy(IPC_FLAG10) == 0)
         {
             //
+            // Read data from CPU 2
+            //
+            BestSubsystem = shared_BestSubsystem;
+
+            //
+            // Write data to CPU 2
+            //
+            shared_X[0] = READ_IL(X[0]);
+            shared_X[1] = READ_VOUT(X[1]);
+
+            shared_Xe[0] = Xe[0];
+            shared_Xe[1] = Xe[1];
+
+            shared_u = READ_VIN(*u);
+
+            //
             // Set a flag to notify CPU02 that data is available
             //
             IPCLtoRFlagSet(IPC_FLAG10);
         }
+//        BestSubsystem = !BestSubsystem;
 
-        main_loop_wait = true;
-
-        Switch::SetState(BestSubsystem);
+//        Switch::SetState(BestSubsystem);
 
         while(main_loop_wait);
     }

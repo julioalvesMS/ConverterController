@@ -183,16 +183,17 @@ namespace ADC_HAL
     __interrupt
     void Interruption(void)
     {
+        static BestSubsystem = 0;
         //
         // Read ADC result
         //
 #ifndef FILTERED_IL
-        (*resultDestination[0]) = ADCDRV_1ch_F_C(AdcaResultRegs.ADCRESULT0) * IL_MAX; // Inductor Current
+        (*resultDestination[0]) = AdcaResultRegs.ADCRESULT0; // Inductor Current
 #else
-        (*resultDestination[0]) = ADCDRV_1ch_F_C(AdccResultRegs.ADCRESULT1) * IL_MAX; // Inductor Current
+        (*resultDestination[0]) = AdccResultRegs.ADCRESULT1; // Inductor Current
 #endif
-        (*resultDestination[1]) = ADCDRV_1ch_F_C(AdccResultRegs.ADCRESULT0) * VOUT_MAX; // Load Voltage
-        (*resultDestination[2]) = ADCDRV_1ch_F_C(AdcbResultRegs.ADCRESULT0) * VIN_MAX; // Input Voltage
+        (*resultDestination[1]) = AdccResultRegs.ADCRESULT0; // Load Voltage
+        (*resultDestination[2]) = AdcbResultRegs.ADCRESULT0; // Input Voltage
 
         //
         // Prepare for next conversion
@@ -209,6 +210,9 @@ namespace ADC_HAL
         }
 
         PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
+
+        BestSubsystem = !BestSubsystem;
+        Switch::SetState(BestSubsystem);
 
         return;
     }

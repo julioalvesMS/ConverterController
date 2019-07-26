@@ -5,6 +5,7 @@
 #include "DPlib.h"
 
 #include <src/Util/Common/constants.h>
+#include <src/Core/Switch/switch.h>
 
 
 #define ADC_TRIG_SOURCE         5   // Triggered by PWM4A
@@ -13,10 +14,6 @@
 #define ADC_CHANNEL_VIN         4   // ADC_B4
 #define ADC_CHANNEL_VOUT        4   // ADC_C4
 #define ADC_CHANNEL_IL_AVG      5   // ADC_C5
-
-#define VOUT_MAX    6.09
-#define VIN_MAX     12.09
-#define IL_MAX      6.83
 
 #define FILTERED_IL
 

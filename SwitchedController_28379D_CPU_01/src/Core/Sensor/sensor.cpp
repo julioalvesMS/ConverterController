@@ -2,11 +2,9 @@
 
 extern void InitAdc(void);
 
-using namespace Math;
-
 namespace Sensor
 {
-    static Vector s_state;
+    static double s_state[SYSTEM_ORDER];
 
     static double input_voltage = 0;
 
@@ -26,8 +24,8 @@ namespace Sensor
         // Configure the interruption to read the ADC
         //
         double* variables[ADC_CONVERSIONS] = {
-            &(s_state.data[0]),
-            &(s_state.data[1]),
+            &(s_state[0]),
+            &(s_state[1]),
             &(input_voltage)
         };
         ADC_HAL::ConfigureInterruption(variables);
@@ -35,8 +33,8 @@ namespace Sensor
         //
         // Assume the initial state as zero
         //
-        s_state.data[0] = 0;
-        s_state.data[1] = 0;
+        s_state[0] = 0;
+        s_state[1] = 0;
     }
 
     void Start(void)
@@ -48,9 +46,9 @@ namespace Sensor
     //  GetState - Get the pointer to the variable where the state
     //              vector is stored
     //
-    Vector* GetState(void)
+    double* GetState(void)
     {
-        return &s_state;
+        return s_state;
     }
 
     //

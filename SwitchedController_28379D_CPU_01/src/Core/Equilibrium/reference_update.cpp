@@ -1,19 +1,17 @@
 #include <src/Core/Equilibrium/reference_update.h>
 
-using namespace Math;
-
 namespace Equilibrium
 {
 
-    static Vector Xe;
+    static double Xe[SYSTEM_ORDER];
 
     void Configure(void)
     {
-        Xe.data[0] = 0;
-        Xe.data[1] = 0;
+        Xe[0] = 0;
+        Xe[1] = 0;
     }
 
-    void UpdateReference(double Vref, Vector* X, double u)
+    void UpdateReference(double Vref, double X[SYSTEM_ORDER], double u)
     {
         double Ve;
         double Ie;
@@ -21,7 +19,7 @@ namespace Equilibrium
         double upperLimit, lowerLimit;
         double outsideLimit;
 
-        double erro = Vref - X->data[1];
+        double erro = Vref - X[1];
 
 
         pid_sum += erro*REFERENCE_CONTROLLER_PERIOD/PERIOD_UNIT;
@@ -49,12 +47,12 @@ namespace Equilibrium
 
         Ie = Ve/Ro;
 
-        Xe.data[0] = Ie;
-        Xe.data[1] = Ve;
+        Xe[0] = Ie;
+        Xe[1] = Ve;
     }
 
-    Vector* GetReference()
+    double* GetReference()
     {
-        return &Xe;
+        return Xe;
     }
 }
