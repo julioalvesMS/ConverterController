@@ -163,13 +163,6 @@ namespace ADC_HAL
     {
         int i;
 
-        //
-        // Set the interruption handler for the ADC PWM
-        //
-        EALLOW;
-        PieVectTable.ADCA1_INT = &(Interruption);
-        EDIS;
-
         for (i=0;i<ADC_CONVERSIONS;i++)
         {
             resultDestination[i] = variables[i];
@@ -180,19 +173,18 @@ namespace ADC_HAL
     //
     // IsrInterruption - Interruption called on the end of ADC Conversion
     //
-    __interrupt
-    void Interruption(void)
+    void ReadResult(void)
     {
         //
         // Read ADC result
         //
 #ifndef FILTERED_IL
-        (*resultDestination[0]) = AdcaResultRegs.ADCRESULT0; // Inductor Current
+        (*resultDestination[0]) = READ_IL(AdcaResultRegs.ADCRESULT0); // Inductor Current
 #else
-        (*resultDestination[0]) = AdccResultRegs.ADCRESULT1; // Inductor Current
+        (*resultDestination[0]) = READ_IL(AdccResultRegs.ADCRESULT1); // Inductor Current
 #endif
-        (*resultDestination[1]) = AdccResultRegs.ADCRESULT0; // Load Voltage
-        (*resultDestination[2]) = AdcbResultRegs.ADCRESULT0; // Input Voltage
+        (*resultDestination[1]) = READ_VOUT(AdccResultRegs.ADCRESULT0); // Load Voltage
+        (*resultDestination[2]) = READ_VIN(AdcbResultRegs.ADCRESULT0); // Input Voltage
 
         //
         // Prepare for next conversion
@@ -208,7 +200,6 @@ namespace ADC_HAL
             AdcaRegs.ADCINTFLGCLR.bit.ADCINT1 = 1; //clear INT1 flag
         }
 
-        PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
         return;
     }
 }

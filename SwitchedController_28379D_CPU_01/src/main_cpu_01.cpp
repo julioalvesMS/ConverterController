@@ -106,8 +106,8 @@ void main(void)
 
     /* =============== */
     Vref = 4;
-    Xe[0] = 0.1143;
-    Xe[1] = 5.0000;
+    Xe[0] = 0.5333;
+    Xe[1] = 4.0000;
     /* =============== */
 
 
@@ -168,7 +168,7 @@ void main(void)
         }
 //        BestSubsystem = !BestSubsystem;
 
-//        Switch::SetState(BestSubsystem);
+        Switch::SetState(BestSubsystem);
 
         while(main_loop_wait);
     }
