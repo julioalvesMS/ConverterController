@@ -8,12 +8,6 @@ namespace Timer
 {
     void Configure();
 
-    void MainLoop_Start();
-
-    void Switch_Start();
-
-    void Switch_Stop();
-
     void ReferenceUpdate_Start();
 }
 

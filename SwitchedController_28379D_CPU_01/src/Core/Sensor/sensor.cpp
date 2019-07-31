@@ -1,7 +1,5 @@
 #include <src/Core/Sensor/sensor.h>
 
-extern void InitAdc(void);
-
 namespace Sensor
 {
     static double s_state[SYSTEM_ORDER];

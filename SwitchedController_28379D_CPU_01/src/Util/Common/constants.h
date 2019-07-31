@@ -17,19 +17,16 @@
 //
 
 //  [Ohm] - Converter Resistance
-const double R  = 1e-3;
+const double R  = 0.0105;
 
 //  [H] - Converter Inductance
 const double L  = 4.8e-6;
 
 //  [Ohm] - Load Resistance
-const double Ro = 7;
+const double Ro = 7.5;
 
 //  [F] - Output Capacitance
 const double Co = 726e-6;
-
-//  [Ohm] - Capacitor Resistance
-const double Rc = 0.00015;
 
 
 #endif /* SRC_COMMON_CONSTANTS_H_ */

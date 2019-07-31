@@ -31,6 +31,11 @@
 			<locationURI>DEVICE_SUPPORT_F2837XD/common/source/F2837xD_CodeStartBranch.asm</locationURI>
 		</link>
 		<link>
+			<name>libs/F2837xD_CpuTimers.c</name>
+			<type>1</type>
+			<locationURI>DEVICE_SUPPORT_F2837XD/common/source/F2837xD_CpuTimers.c</locationURI>
+		</link>
+		<link>
 			<name>libs/F2837xD_DefaultISR.c</name>
 			<type>1</type>
 			<locationURI>DEVICE_SUPPORT_F2837XD/common/source/F2837xD_DefaultISR.c</locationURI>
@@ -39,6 +44,11 @@
 			<name>libs/F2837xD_GlobalVariableDefs.c</name>
 			<type>1</type>
 			<locationURI>DEVICE_SUPPORT_F2837XD/headers/source/F2837xD_GlobalVariableDefs.c</locationURI>
+		</link>
+		<link>
+			<name>libs/F2837xD_Gpio.c</name>
+			<type>1</type>
+			<locationURI>DEVICE_SUPPORT_F2837XD/common/source/F2837xD_Gpio.c</locationURI>
 		</link>
 		<link>
 			<name>libs/F2837xD_Ipc.c</name>

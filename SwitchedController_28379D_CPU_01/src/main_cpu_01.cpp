@@ -1,16 +1,16 @@
-
 #include "F28x_Project.h"
 #include "F2837xD_Ipc_drivers.h"
 
-#include <src/Core/Switch/switch.h>
+#include <src/settings_cpu_01.h>
+#include <src/HAL/ADC/adc.h>
+#include <src/HAL/Timer/timer.h>
 #include <src/Core/Sensor/sensor.h>
 #include <src/Core/Equilibrium/reference_update.h>
 
-
+void DebugVariables(void);
+void ConfigureCPU02(void);
 __interrupt void Interruption_MainLoopPeriod(void);
 __interrupt void Interruption_ReferenceUpdate(void);
-
-volatile static bool main_loop_wait;
 
 //
 // Global Variables
@@ -28,10 +28,15 @@ volatile static int shared_BestSubsystem;
 
 static double *X, *Xe;
 static double *u;
-static int BestSubsystem;
-
 
 static double Vref;
+
+//
+// Debug Variables
+//
+__attribute__((unused)) static int BestSubsystem;
+__attribute__((unused)) static double *Vin, *Vout, *IL;
+
 
 
 void main(void)
@@ -48,6 +53,9 @@ void main(void)
     //
     InitGpio();
 
+    //
+    // Initializations to enable CPUs communication
+    //
     InitIpc();
 
 
@@ -78,38 +86,81 @@ void main(void)
     //
     InitPieVectTable();
 
-
     //
     // enable PIE interrupt
     //
     PieCtrlRegs.PIEIER1.bit.INTx1 = 1;
+    PieCtrlRegs.PIEIER1.bit.INTx7 = 1;
+
+    EALLOW;
+    PieVectTable.ADCA1_INT = &(ADC_HAL::Interruption);
+    PieVectTable.TIMER2_INT = &Interruption_ReferenceUpdate;
+    EDIS;
+
+    //
+    // Enable global Interrupts and higher priority real-time debug events:
+    //
+    IER |= M_INT1;
+    IER |= M_INT14;
 
     //
     // Specific devices initializations
     //
     Sensor::Configure();
-    Switch::Configure();
-
     Timer::Configure();
-
-
-    EALLOW;  // This is needed to write to EALLOW protected registers
-    PieVectTable.TIMER0_INT = &Interruption_MainLoopPeriod;
-    PieVectTable.TIMER2_INT = &Interruption_ReferenceUpdate;
-    EDIS;    // This is needed to disable write to EALLOW protected registers
-
     Equilibrium::Configure();
 
     X = Sensor::GetState();
     u = Sensor::GetInput();
     Xe = Equilibrium::GetReference();
 
+    ConfigureCPU02();
+
+    EINT;  // Enable Global interrupt INTM
+    ERTM;  // Enable Global realtime interrupt DBGM
+
+    DebugVariables();
+
     /* =============== */
-    Vref = 4;
+    Vref = 2;
     Xe[0] = 0.5333;
     Xe[1] = 4.0000;
     /* =============== */
 
+#if REFERENCE_UPDATE_ENABLED
+    Timer::ReferenceUpdate_Start();
+#endif
+    Sensor::Start();
+    while(1)
+    {
+        // If there is no pending flag, transfer data between the CPUs
+        if(IPCLtoRFlagBusy(IPC_FLAG10) == 0)
+        {
+            //
+            // Read data from CPU 2
+            //
+            BestSubsystem = shared_BestSubsystem;
+
+            //
+            // Write data to CPU 2
+            //
+            shared_X[0] = X[0];
+            shared_X[1] = X[1];
+            shared_Xe[0] = Xe[0];
+            shared_Xe[1] = Xe[1];
+            shared_u = *u;
+
+            //
+            // Set a flag to notify CPU02 that data is available
+            //
+            IPCLtoRFlagSet(IPC_FLAG10);
+        }
+    }
+}
+
+
+void ConfigureCPU02(void)
+{
 
     //
     // Give Memory Access to GS1 SARAM to CPU02
@@ -121,70 +172,22 @@ void main(void)
         EDIS;
     }
 
+
     //
-    // Enable global Interrupts and higher priority real-time debug events:
+    // Configure GPIOS used in CPU2
     //
-    IER |= M_INT1; //Enable group 1 interrupts
-    IER |= M_INT13;
-    IER |= M_INT14;
-
-    EINT;  // Enable Global interrupt INTM
-    ERTM;  // Enable Global realtime interrupt DBGM
-
-    Sensor::Start();
-    Timer::MainLoop_Start();
-//    Timer::ReferenceUpdate_Start();
-
-    while(1)
-    {
-
-        main_loop_wait = true;
-
-        //
-        // If there is no pending flag
-        //
-        if(IPCLtoRFlagBusy(IPC_FLAG10) == 0)
-        {
-            //
-            // Read data from CPU 2
-            //
-            BestSubsystem = shared_BestSubsystem;
-
-            //
-            // Write data to CPU 2
-            //
-            shared_X[0] = READ_IL(X[0]);
-            shared_X[1] = READ_VOUT(X[1]);
-
-            shared_Xe[0] = Xe[0];
-            shared_Xe[1] = Xe[1];
-
-            shared_u = READ_VIN(*u);
-
-            //
-            // Set a flag to notify CPU02 that data is available
-            //
-            IPCLtoRFlagSet(IPC_FLAG10);
-        }
-//        BestSubsystem = !BestSubsystem;
-
-        Switch::SetState(BestSubsystem);
-
-        while(main_loop_wait);
-    }
+    GPIO_SetupPinMux(GPIO_S1, GPIO_MUX_CPU2, 0);
+    GPIO_SetupPinMux(GPIO_S2, GPIO_MUX_CPU2, 0);
+    GPIO_SetupPinOptions(GPIO_S1, GPIO_OUTPUT, GPIO_PUSHPULL);
+    GPIO_SetupPinOptions(GPIO_S2, GPIO_OUTPUT, GPIO_PUSHPULL);
 }
 
-//
-// Interruption_MainLoopPeriod - CPU Timer0 ISR with interrupt counter
-//
-__interrupt void Interruption_MainLoopPeriod(void)
+
+void DebugVariables(void)
 {
-   CpuTimer0.InterruptCount++;
-
-   main_loop_wait = false;
-
-   PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
-
+    Vin = u;
+    Vout = X+1;
+    IL = X;
 }
 
 
@@ -195,6 +198,6 @@ __interrupt void Interruption_ReferenceUpdate(void)
 {
     CpuTimer2.InterruptCount++;
 
-//    Equilibrium::UpdateReference(Vref, X, *u);
+    Equilibrium::UpdateReference(Vref, X, *u);
 }
 

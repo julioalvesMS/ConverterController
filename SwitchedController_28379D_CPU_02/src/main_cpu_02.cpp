@@ -2,12 +2,17 @@
 #include "F28x_Project.h"
 #include "F2837xD_Ipc_drivers.h"
 
+#include <src/settings_cpu_02.h>
+#include <src/Core/Switch/switch.h>
 #include <src/Core/SwitchedSystem/switched_system.h>
 #include <src/Core/SwitchingRule/rule2.h>
 #include <src/Core/Converter/buck.h>
 #include <src/Core/Controller/switched_controller.h>
 
+void DebugVariables(void);
+
 using namespace SwitchedSystem;
+
 
 //
 // Global Variables
@@ -27,6 +32,10 @@ static double X[SYSTEM_ORDER], Xe[SYSTEM_ORDER];
 static double u;
 static int BestSubsystem;
 
+//
+// Debug Variables
+//
+__attribute__((unused)) static double *Vin, *Vout, *IL;
 
 void main(void)
 {
@@ -71,18 +80,21 @@ void main(void)
 
     Controller::GetP(P);
 
+    DebugVariables();
 
     //
     // Wait until Shared RAM is available.
     //
     while( !(MemCfgRegs.GSxMSEL.bit.MSEL_GS1));
 
-//    EINT;  // Enable Global interrupt INTM
-//    ERTM;  // Enable Global realtime interrupt DBGM
+    EINT;  // Enable Global interrupt INTM
+    ERTM;  // Enable Global realtime interrupt DBGM
 
     while(1)
     {
         BestSubsystem = SwitchingRule2::SwitchingRule(sys, P, X, Xe, u);
+
+        Switch::SetState(BestSubsystem);
 
         if(IPCRtoLFlagBusy(IPC_FLAG10) == 1)
         {
@@ -101,9 +113,15 @@ void main(void)
             // Write data to CPU 1
             //
             shared_BestSubsystem = BestSubsystem;
-//            shared_BestSubsystem = !shared_BestSubsystem;
 
             IPCRtoLFlagAcknowledge (IPC_FLAG10);
         }
     }
+}
+
+void DebugVariables(void)
+{
+    Vin = &u;
+    Vout = X+1;
+    IL = X;
 }

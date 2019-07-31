@@ -74,12 +74,12 @@ namespace ADC_HAL
         //Select the channels to convert and end of conversion flag
         //
         EALLOW;
-        AdcaRegs.ADCSOC0CTL.bit.CHSEL = ADC_CHANNEL_IL;  //SOC0 will convert the inductor current
-        AdcaRegs.ADCSOC0CTL.bit.ACQPS = acqps; //sample window is 100 SYSCLK cycles
-        AdcaRegs.ADCSOC0CTL.bit.TRIGSEL = ADC_TRIG_SOURCE; //trigger on ePWM1 SOCA/C
-        AdcaRegs.ADCINTSEL1N2.bit.INT1SEL = 0; //end of SOC0 will set INT1 flag
-        AdcaRegs.ADCINTSEL1N2.bit.INT1E = 1;   //enable INT1 flag
-        AdcaRegs.ADCINTFLGCLR.bit.ADCINT1 = 1; //make sure INT1 flag is cleared
+        AdcaRegs.ADCSOC0CTL.bit.CHSEL = ADC_CHANNEL_IL;     //SOC0 will convert the inductor current
+        AdcaRegs.ADCSOC0CTL.bit.ACQPS = acqps;              //sample window is 100 SYSCLK cycles
+        AdcaRegs.ADCSOC0CTL.bit.TRIGSEL = ADC_TRIG_SOURCE;  //trigger on ePWM1 SOCA/C
+        AdcaRegs.ADCINTSEL1N2.bit.INT1SEL = 0;              //end of SOC0 will set INT1 flag
+        AdcaRegs.ADCINTSEL1N2.bit.INT1E = 1;                //enable INT1 flag
+        AdcaRegs.ADCINTFLGCLR.bit.ADCINT1 = 1;              //make sure INT1 flag is cleared
         EDIS;
     }
 
@@ -107,11 +107,11 @@ namespace ADC_HAL
         //
         EALLOW;
         AdcbRegs.ADCSOC0CTL.bit.CHSEL = ADC_CHANNEL_VIN;    //SOC0 will convert pin A0
-        AdcbRegs.ADCSOC0CTL.bit.ACQPS = acqps;      //sample window is 100 SYSCLK cycles
-        AdcbRegs.ADCSOC0CTL.bit.TRIGSEL = 5;        //trigger on ePWM1 SOCA/C
-        AdcbRegs.ADCINTSEL1N2.bit.INT1SEL = 0;      //end of SOC0 will set INT1 flag
-        AdcbRegs.ADCINTSEL1N2.bit.INT1E = 1;        //enable INT1 flag
-        AdcbRegs.ADCINTFLGCLR.bit.ADCINT1 = 1;      //make sure INT1 flag is cleared
+        AdcbRegs.ADCSOC0CTL.bit.ACQPS = acqps;              //sample window is 100 SYSCLK cycles
+        AdcbRegs.ADCSOC0CTL.bit.TRIGSEL = ADC_TRIG_SOURCE;  //trigger on ePWM1 SOCA/C
+        AdcbRegs.ADCINTSEL1N2.bit.INT1SEL = 0;              //end of SOC0 will set INT1 flag
+        AdcbRegs.ADCINTSEL1N2.bit.INT1E = 1;                //enable INT1 flag
+        AdcbRegs.ADCINTFLGCLR.bit.ADCINT1 = 1;              //make sure INT1 flag is cleared
         EDIS;
     }
 
@@ -138,19 +138,19 @@ namespace ADC_HAL
         //Select the channels to convert and end of conversion flag
         //
         EALLOW;
-        AdccRegs.ADCSOC0CTL.bit.CHSEL = ADC_CHANNEL_VOUT;    //SOC0 will convert pin A0
-        AdccRegs.ADCSOC0CTL.bit.ACQPS = acqps;      //sample window is 100 SYSCLK cycles
-        AdccRegs.ADCSOC0CTL.bit.TRIGSEL = 5;        //trigger on ePWM1 SOCA/C
-        AdccRegs.ADCINTSEL1N2.bit.INT1SEL = 0;      //end of SOC0 will set INT1 flag
-        AdccRegs.ADCINTSEL1N2.bit.INT1E = 1;        //enable INT1 flag
-        AdccRegs.ADCINTFLGCLR.bit.ADCINT1 = 1;      //make sure INT1 flag is cleared
+        AdccRegs.ADCSOC0CTL.bit.CHSEL = ADC_CHANNEL_VOUT;   //SOC0 will convert pin A0
+        AdccRegs.ADCSOC0CTL.bit.ACQPS = acqps;              //sample window is 100 SYSCLK cycles
+        AdccRegs.ADCSOC0CTL.bit.TRIGSEL = ADC_TRIG_SOURCE;  //trigger on ePWM1 SOCA/C
+        AdccRegs.ADCINTSEL1N2.bit.INT1SEL = 0;              //end of SOC0 will set INT1 flag
+        AdccRegs.ADCINTSEL1N2.bit.INT1E = 1;                //enable INT1 flag
+        AdccRegs.ADCINTFLGCLR.bit.ADCINT1 = 1;              //make sure INT1 flag is cleared
         EDIS;
 
 #ifdef FILTERED_IL
         EALLOW;
-        AdccRegs.ADCSOC1CTL.bit.CHSEL = ADC_CHANNEL_IL_AVG;    //SOC0 will convert pin A0
-        AdccRegs.ADCSOC1CTL.bit.ACQPS = acqps;      //sample window is 100 SYSCLK cycles
-        AdccRegs.ADCSOC1CTL.bit.TRIGSEL = 5;        //trigger on ePWM1 SOCA/C
+        AdccRegs.ADCSOC1CTL.bit.CHSEL = ADC_CHANNEL_IL_AVG; //SOC0 will convert pin A0
+        AdccRegs.ADCSOC1CTL.bit.ACQPS = acqps;              //sample window is 100 SYSCLK cycles
+        AdccRegs.ADCSOC1CTL.bit.TRIGSEL = ADC_TRIG_SOURCE;  //trigger on ePWM1 SOCA/C
         EDIS;
 #endif
     }
@@ -163,13 +163,6 @@ namespace ADC_HAL
     {
         int i;
 
-        //
-        // Set the interruption handler for the ADC PWM
-        //
-        EALLOW;
-        PieVectTable.ADCA1_INT = &(Interruption);
-        EDIS;
-
         for (i=0;i<ADC_CONVERSIONS;i++)
         {
             resultDestination[i] = variables[i];
@@ -180,19 +173,18 @@ namespace ADC_HAL
     //
     // IsrInterruption - Interruption called on the end of ADC Conversion
     //
-    __interrupt
-    void Interruption(void)
+    __interrupt void Interruption(void)
     {
         //
         // Read ADC result
         //
 #ifndef FILTERED_IL
-        (*resultDestination[0]) = AdcaResultRegs.ADCRESULT0; // Inductor Current
+        (*resultDestination[0]) = READ_IL(AdcaResultRegs.ADCRESULT0); // Inductor Current
 #else
-        (*resultDestination[0]) = AdccResultRegs.ADCRESULT1; // Inductor Current
+        (*resultDestination[0]) = READ_IL(AdccResultRegs.ADCRESULT1); // Inductor Current
 #endif
-        (*resultDestination[1]) = AdccResultRegs.ADCRESULT0; // Load Voltage
-        (*resultDestination[2]) = AdcbResultRegs.ADCRESULT0; // Input Voltage
+        (*resultDestination[1]) = READ_VOUT(AdccResultRegs.ADCRESULT0); // Load Voltage
+        (*resultDestination[2]) = READ_VIN(AdcbResultRegs.ADCRESULT0); // Input Voltage
 
         //
         // Prepare for next conversion
