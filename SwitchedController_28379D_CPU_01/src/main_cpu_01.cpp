@@ -178,8 +178,10 @@ void ConfigureCPU02(void)
     //
     GPIO_SetupPinMux(GPIO_S1, GPIO_MUX_CPU2, 0);
     GPIO_SetupPinMux(GPIO_S2, GPIO_MUX_CPU2, 0);
+    GPIO_SetupPinMux(GPIO_A1, GPIO_MUX_CPU2, 0);
     GPIO_SetupPinOptions(GPIO_S1, GPIO_OUTPUT, GPIO_PUSHPULL);
     GPIO_SetupPinOptions(GPIO_S2, GPIO_OUTPUT, GPIO_PUSHPULL);
+    GPIO_SetupPinOptions(GPIO_A1, GPIO_OUTPUT, GPIO_PUSHPULL);
 }
 
 

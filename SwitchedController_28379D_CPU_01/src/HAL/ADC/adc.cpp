@@ -146,7 +146,7 @@ namespace ADC_HAL
         AdccRegs.ADCINTFLGCLR.bit.ADCINT1 = 1;              //make sure INT1 flag is cleared
         EDIS;
 
-#ifdef FILTERED_IL
+#if FILTERED_IL_SENSOR
         EALLOW;
         AdccRegs.ADCSOC1CTL.bit.CHSEL = ADC_CHANNEL_IL_AVG; //SOC0 will convert pin A0
         AdccRegs.ADCSOC1CTL.bit.ACQPS = acqps;              //sample window is 100 SYSCLK cycles
@@ -178,10 +178,10 @@ namespace ADC_HAL
         //
         // Read ADC result
         //
-#ifndef FILTERED_IL
-        (*resultDestination[0]) = READ_IL(AdcaResultRegs.ADCRESULT0); // Inductor Current
-#else
+#if FILTERED_IL_SENSOR
         (*resultDestination[0]) = READ_IL(AdccResultRegs.ADCRESULT1); // Inductor Current
+#else
+        (*resultDestination[0]) = READ_IL(AdcaResultRegs.ADCRESULT0); // Inductor Current
 #endif
         (*resultDestination[1]) = READ_VOUT(AdccResultRegs.ADCRESULT0); // Load Voltage
         (*resultDestination[2]) = READ_VIN(AdcbResultRegs.ADCRESULT0); // Input Voltage

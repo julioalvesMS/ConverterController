@@ -7,6 +7,11 @@ namespace Switch
 
     void SetState(int state)
     {
+        static bool teste = 0;
+
+        teste = !teste;
+        GateDrive::SetState(GPIO_A1, teste);
+
         //
         // If the switch is already ate the desired state, do nothing
         //

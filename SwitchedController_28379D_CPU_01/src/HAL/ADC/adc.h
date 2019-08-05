@@ -5,7 +5,7 @@
 #include "DPlib.h"
 
 #include <src/Util/Common/constants.h>
-
+#include <src/settings_cpu_01.h>
 
 #define ADC_TRIG_SOURCE         5   // Triggered by PWM4A
 
@@ -13,16 +13,6 @@
 #define ADC_CHANNEL_VIN         4   // ADC_B4
 #define ADC_CHANNEL_VOUT        4   // ADC_C4
 #define ADC_CHANNEL_IL_AVG      5   // ADC_C5
-
-#define FILTERED_IL
-
-#define VOUT_MAX    6.09
-#define VIN_MAX     12.09
-#define IL_MAX      6.83
-
-#define READ_IL(X) ADCDRV_1ch_F_C(X) * IL_MAX
-#define READ_VOUT(X) ADCDRV_1ch_F_C(X) * VOUT_MAX
-#define READ_VIN(X) ADCDRV_1ch_F_C(X) * VIN_MAX
 
 namespace ADC_HAL
 {
