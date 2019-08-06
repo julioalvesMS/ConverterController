@@ -1,6 +1,7 @@
 #ifndef SRC_CORE_CONTROLLER_SWITCHED_H_
 #define SRC_CORE_CONTROLLER_SWITCHED_H_
 
+#include <src/settings_cpu_02.h>
 #include <src/Util/Common/constants.h>
 
 namespace Controller

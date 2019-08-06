@@ -5,6 +5,7 @@
 #include <src/settings_cpu_02.h>
 #include <src/Core/Switch/switch.h>
 #include <src/Core/SwitchedSystem/switched_system.h>
+#include <src/Core/SwitchingRule/rule1.h>
 #include <src/Core/SwitchingRule/rule2.h>
 #include <src/Core/Converter/buck.h>
 #include <src/Core/Controller/switched_controller.h>
@@ -92,7 +93,13 @@ void main(void)
 
     while(1)
     {
+
+#if SWITCHING_RULE == 1
+        BestSubsystem = SwitchingRule1::SwitchingRule(sys, P, X, Xe, u);
+#elif SWITCHING_RULE == 2
         BestSubsystem = SwitchingRule2::SwitchingRule(sys, P, X, Xe, u);
+#endif
+
 
         Switch::SetState(BestSubsystem);
 
