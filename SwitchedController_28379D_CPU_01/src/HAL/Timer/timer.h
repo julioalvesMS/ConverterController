@@ -2,7 +2,7 @@
 #define SRC_HAL_TIMER_H_
 
 #include "F28x_Project.h"
-#include <src/Util/Common/constants.h>
+#include <src/settings_cpu_01.h>
 
 namespace Timer
 {

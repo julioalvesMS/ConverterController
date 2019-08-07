@@ -16,6 +16,9 @@ namespace Sensor
     //
     void Configure(void);
 
+    //
+    //  Start - Start Sensor aquisition
+    //
     void Start(void);
 
     //
@@ -29,6 +32,12 @@ namespace Sensor
     //              voltage is stored
     //
     double* GetInput(void);
+
+    //
+    //  GetOutput - Get the pointer to the variable where the input
+    //              voltage is stored
+    //
+    double* GetOutput(void);
 }
 
 #endif /* SRC_CORE_SENSOR_H_ */

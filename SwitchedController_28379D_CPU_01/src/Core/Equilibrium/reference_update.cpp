@@ -5,13 +5,15 @@ namespace Equilibrium
 
     static double Xe[SYSTEM_ORDER];
 
+    static double pid_sum = 0;
+
     void Configure(void)
     {
         Xe[0] = 0;
         Xe[1] = 0;
     }
 
-    void UpdateReference(double Vref, double X[SYSTEM_ORDER], double u)
+    void UpdateReference(double Vref, double Vout, double u)
     {
         double Ve;
         double Ie;
@@ -19,8 +21,7 @@ namespace Equilibrium
         double upperLimit, lowerLimit;
         double outsideLimit;
 
-        double erro = Vref - X[1];
-
+        double erro = Vref - Vout;
 
         pid_sum += erro*REFERENCE_CONTROLLER_PERIOD/PERIOD_UNIT;
 
@@ -35,13 +36,13 @@ namespace Equilibrium
         {
             outsideLimit = lowerLimit - Ve;
             Ve = lowerLimit;
-            pid_sum += outsideLimit/pid_kp;
+            pid_sum += outsideLimit/pid_ki;
         }
         else if (Ve > upperLimit)
         {
             outsideLimit = upperLimit - Ve;
             Ve = upperLimit;
-            pid_sum += outsideLimit/pid_kp;
+            pid_sum += outsideLimit/pid_ki;
         }
 
 

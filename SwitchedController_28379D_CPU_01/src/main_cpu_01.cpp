@@ -3,6 +3,7 @@
 
 #include <src/settings_cpu_01.h>
 #include <src/HAL/ADC/adc.h>
+#include <src/HAL/DAC/dac.h>
 #include <src/HAL/Timer/timer.h>
 #include <src/Core/Sensor/sensor.h>
 #include <src/Core/Equilibrium/reference_update.h>
@@ -28,6 +29,7 @@ volatile static int shared_BestSubsystem;
 
 static double *X, *Xe;
 static double *u;
+static double *Vout_mean;
 
 static double Vref;
 
@@ -103,6 +105,8 @@ void main(void)
     IER |= M_INT1;
     IER |= M_INT14;
 
+    DAC_HAL::Configure();
+
     //
     // Specific devices initializations
     //
@@ -112,6 +116,7 @@ void main(void)
 
     X = Sensor::GetState();
     u = Sensor::GetInput();
+    Vout_mean = Sensor::GetOutput();
     Xe = Equilibrium::GetReference();
 
     ConfigureCPU02();
@@ -130,7 +135,9 @@ void main(void)
 #if REFERENCE_UPDATE_ENABLED
     Timer::ReferenceUpdate_Start();
 #endif
+
     Sensor::Start();
+
     while(1)
     {
         // If there is no pending flag, transfer data between the CPUs
@@ -200,6 +207,6 @@ __interrupt void Interruption_ReferenceUpdate(void)
 {
     CpuTimer2.InterruptCount++;
 
-    Equilibrium::UpdateReference(Vref, X, *u);
+    Equilibrium::UpdateReference(Vref, *Vout_mean, *u);
 }
 

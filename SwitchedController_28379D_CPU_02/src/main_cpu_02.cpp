@@ -93,16 +93,6 @@ void main(void)
 
     while(1)
     {
-
-#if SWITCHING_RULE == 1
-        BestSubsystem = SwitchingRule1::SwitchingRule(sys, P, X, Xe, u);
-#elif SWITCHING_RULE == 2
-        BestSubsystem = SwitchingRule2::SwitchingRule(sys, P, X, Xe, u);
-#endif
-
-
-        Switch::SetState(BestSubsystem);
-
         if(IPCRtoLFlagBusy(IPC_FLAG10) == 1)
         {
             //
@@ -123,6 +113,14 @@ void main(void)
 
             IPCRtoLFlagAcknowledge (IPC_FLAG10);
         }
+
+#if SWITCHING_RULE == 1
+        BestSubsystem = SwitchingRule1::SwitchingRule(sys, P, X, Xe, u);
+#elif SWITCHING_RULE == 2
+        BestSubsystem = SwitchingRule2::SwitchingRule(sys, P, X, Xe, u);
+#endif
+
+        Switch::SetState(BestSubsystem);
     }
 }
 

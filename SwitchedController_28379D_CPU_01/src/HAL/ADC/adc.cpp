@@ -2,12 +2,17 @@
 
 namespace ADC_HAL
 {
+    static double vout_mean_buffer[ADC_BUFFER_SIZE];
+    static int buffer_index = 0;
+
     //
     // Configure - Write ADC configurations and power up the ADC for both
     //                ADC A and ADC B
     //
     void Configure(void)
     {
+        int i;
+
         EALLOW;
 
         //
@@ -42,6 +47,11 @@ namespace ADC_HAL
         DELAY_US(1000);
 
         EDIS;
+
+        for(i=0;i<ADC_BUFFER_SIZE;i++)
+        {
+            vout_mean_buffer[i] = 0;
+        }
     }
 
     void SetupADC(void)
@@ -159,7 +169,7 @@ namespace ADC_HAL
     // ConfigureInterruption - Set the interruption handler and define where
     //                          to send the results from the conversion
     //
-    void ConfigureInterruption(double* variables[])
+    void ConfigureInterruption(double* variables[], double* vout_mean_pointer)
     {
         int i;
 
@@ -167,6 +177,8 @@ namespace ADC_HAL
         {
             resultDestination[i] = variables[i];
         }
+
+        vout_mean = vout_mean_pointer;
     }
 
 
@@ -178,13 +190,20 @@ namespace ADC_HAL
         //
         // Read ADC result
         //
-#if FILTERED_IL_SENSOR
-        (*resultDestination[0]) = READ_IL(AdccResultRegs.ADCRESULT1); // Inductor Current
-#else
-        (*resultDestination[0]) = READ_IL(AdcaResultRegs.ADCRESULT0); // Inductor Current
-#endif
-        (*resultDestination[1]) = READ_VOUT(AdccResultRegs.ADCRESULT0); // Load Voltage
-        (*resultDestination[2]) = READ_VIN(AdcbResultRegs.ADCRESULT0); // Input Voltage
+        (*resultDestination[0]) = READ_IL(ADC_RESULT_IL); // Inductor Current
+        (*resultDestination[1]) = READ_VOUT(ADC_RESULT_VOUT); // Load Voltage
+        (*resultDestination[2]) = READ_VIN(ADC_RESULT_VIN); // Input Voltage
+
+
+        DAC_HAL::Update(ADC_RESULT_IL, ADC_RESULT_VOUT);
+
+        //
+        // Mean Vout value
+        //
+        (*vout_mean) -= vout_mean_buffer[buffer_index];
+        vout_mean_buffer[buffer_index] = (*resultDestination[1])/ADC_BUFFER_SIZE;
+        (*vout_mean) += vout_mean_buffer[buffer_index];
+        buffer_index = (buffer_index + 1) % ADC_BUFFER_SIZE;
 
         //
         // Prepare for next conversion
