@@ -44,7 +44,9 @@ namespace ADC_HAL
         //
         //delay for 1ms to allow ADC time to power up
         //
+#if MEMORY_IN_USE == RAM_MEMORY
         DELAY_US(1000);
+#endif
 
         EDIS;
 

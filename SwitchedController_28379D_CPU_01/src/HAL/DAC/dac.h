@@ -2,6 +2,7 @@
 #define SRC_HAL_DAC_H_
 
 #include "F28x_Project.h"
+#include <src/settings_cpu_01.h>
 
 //
 // Defines

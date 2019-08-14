@@ -10,12 +10,18 @@ namespace DAC_HAL
         DAC_PTR[DAC_NUM_IL]->DACCTL.bit.DACREFSEL = REFERENCE;
         DAC_PTR[DAC_NUM_IL]->DACOUTEN.bit.DACOUTEN = 1;
         DAC_PTR[DAC_NUM_IL]->DACVALS.all = 0;
+
+#if MEMORY_IN_USE == RAM_MEMORY
         DELAY_US(10); // Delay for buffered DAC to power up
+#endif
 
         DAC_PTR[DAC_NUM_VOUT]->DACCTL.bit.DACREFSEL = REFERENCE;
         DAC_PTR[DAC_NUM_VOUT]->DACOUTEN.bit.DACOUTEN = 1;
         DAC_PTR[DAC_NUM_VOUT]->DACVALS.all = 0;
+
+#if MEMORY_IN_USE == RAM_MEMORY
         DELAY_US(10); // Delay for buffered DAC to power up
+#endif
         EDIS;
     }
 

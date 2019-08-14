@@ -1,6 +1,9 @@
 #ifndef SETTINGS_CPU_01_H_
 #define SETTINGS_CPU_01_H_
 
+#define RAM_MEMORY      0
+#define FLASH_MEMORY    1
+#define MEMORY_IN_USE   RAM_MEMORY
 
 #define REFERENCE_UPDATE_ENABLED 1
 #define REFERENCE_CONTROLLER_PERIOD 1000    // Period in Microseconds

@@ -22,7 +22,7 @@ volatile static bool main_loop_wait;
 static double *X;
 static double *u;
 
-static double *Vin, *Vout, *IL;
+__attribute__((unused)) static double *Vin, *Vout, *IL;
 static double Vref;
 static double DutyCycle;
 

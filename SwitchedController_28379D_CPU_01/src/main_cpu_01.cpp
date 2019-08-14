@@ -48,7 +48,6 @@ void main(void)
     // PLL, WatchDog, enable Peripheral Clocks
     //
     InitSysCtrl();
-    InitSysPll(XTAL_OSC,IMULT_40,FMULT_0,PLLCLK_BY_2);
 
     //
     // Set the GPIO to it's default state.
