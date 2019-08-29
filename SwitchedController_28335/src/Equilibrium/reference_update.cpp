@@ -1,25 +1,19 @@
 #include <src/Equilibrium/reference_update.h>
 
-using namespace Math;
-
 namespace Equilibrium
 {
-    const double pid_kp = 0.5;
-    const double pid_ki = 14;
+
+    static double Xe[SYSTEM_ORDER];
 
     static double pid_sum = 0;
 
-    static Vector Xe;
-
-
-
-    void init(void)
+    void Configure(void)
     {
-        Xe.data[0] = 0;
-        Xe.data[1] = 0;
+        Xe[0] = 0;
+        Xe[1] = 0;
     }
 
-    void referenceUpdate(double Vref, Vector* X, double u)
+    void UpdateReference(double Vref, double Vout, double u)
     {
         double Ve;
         double Ie;
@@ -27,12 +21,15 @@ namespace Equilibrium
         double upperLimit, lowerLimit;
         double outsideLimit;
 
-        double erro = Vref - X->data[1];
+#if REFERENCE_UPDATE_ENABLED
+        double erro = Vref - Vout;
 
-
-        pid_sum += erro*BOARD_PERIOD/PERIOD_UNIT;
+        pid_sum += erro*REFERENCE_CONTROLLER_PERIOD/PERIOD_UNIT;
 
         Ve = pid_kp*erro + pid_ki*pid_sum;
+#else
+        Ve = Vref;
+#endif
 
         //
         // Limits for Buck
@@ -43,24 +40,24 @@ namespace Equilibrium
         {
             outsideLimit = lowerLimit - Ve;
             Ve = lowerLimit;
-            pid_sum += outsideLimit/pid_kp;
+            pid_sum += outsideLimit/pid_ki;
         }
         else if (Ve > upperLimit)
         {
             outsideLimit = upperLimit - Ve;
             Ve = upperLimit;
-            pid_sum += outsideLimit/pid_kp;
+            pid_sum += outsideLimit/pid_ki;
         }
 
 
         Ie = Ve/Ro;
 
-        Xe.data[0] = Ie;
-        Xe.data[1] = Ve;
+        Xe[0] = Ie;
+        Xe[1] = Ve;
     }
 
-    Vector* getReference()
+    double* GetReference()
     {
-        return &Xe;
+        return Xe;
     }
 }

@@ -1,56 +1,63 @@
-#include "DSP2833x_Device.h"
+#include <src/Switch/switch.h>
 
 namespace Switch
 {
 
     static short s_switch_state = -1;
 
-    void init()
+    void Configure()
     {
-        //
-        // Configure switches GPIO
-        //
         EALLOW;
 
-        // S1
-        GpioCtrlRegs.GPAMUX1.bit.GPIO9 = 0;
-        GpioCtrlRegs.GPADIR.bit.GPIO9 = 1;
+        // PULL DOWN
+        GpioCtrlRegs.GPAPUD.bit.S1 = 1;
+        GpioCtrlRegs.GPAPUD.bit.S2 = 1;
+        GpioCtrlRegs.GPAPUD.bit.MF = 1;
+        GpioCtrlRegs.GPAPUD.bit.AF = 1;
 
-        // S2
-        GpioCtrlRegs.GPAMUX1.bit.GPIO11 = 0;
-        GpioCtrlRegs.GPADIR.bit.GPIO11 = 1;
+        // UTILIZAR PORTA COMO GPIO
+        GpioCtrlRegs.GPAMUX1.bit.S1 = 0;
+        GpioCtrlRegs.GPAMUX1.bit.S2 = 0;
+        GpioCtrlRegs.GPAMUX1.bit.MF = 0;
+        GpioCtrlRegs.GPAMUX1.bit.AF = 0;
+
+        // CONFIGURA COMO SAÍDA
+        GpioCtrlRegs.GPADIR.bit.S1 = 1;
+        GpioCtrlRegs.GPADIR.bit.S2 = 1;
+        GpioCtrlRegs.GPADIR.bit.MF = 1;
+        GpioCtrlRegs.GPADIR.bit.AF = 1;
 
         EDIS;
 
     }
 
-    void updateState(short state)
+    void SetState(int state)
     {
-        //
+        // Test GPIO. Used to enable frequency measurement
+        GpioDataRegs.GPATOGGLE.bit.MF = 1;
+
         // If the switch is already ate the desired state, do nothing
-        //
         if (state == s_switch_state)
             return;
-
-        //
-        // Toggle switch and register new state
-        //
-        s_switch_state = state;
 
         switch(state)
         {
         case 0:
-            GpioDataRegs.GPASET.bit.GPIO9 = 1;
-            GpioDataRegs.GPACLEAR.bit.GPIO11 = 1;
+            GpioDataRegs.GPACLEAR.bit.S2 = 1;
+            GpioDataRegs.GPASET.bit.S1 = 1;
             break;
         case 1:
-            GpioDataRegs.GPACLEAR.bit.GPIO9 = 1;
-            GpioDataRegs.GPASET.bit.GPIO11 = 1;
+            GpioDataRegs.GPACLEAR.bit.S1 = 1;
+            GpioDataRegs.GPASET.bit.S2 = 1;
             break;
         default:
-            GpioDataRegs.GPACLEAR.bit.GPIO9 = 1;
-            GpioDataRegs.GPACLEAR.bit.GPIO11 = 1;
+            GpioDataRegs.GPACLEAR.bit.S1 = 1;
+            GpioDataRegs.GPACLEAR.bit.S2 = 1;
             break;
         }
+
+        // Register new state
+        s_switch_state = state;
+
     }
 }

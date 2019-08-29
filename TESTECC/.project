@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>SwitchedController_28335</name>
+	<name>TESTECC</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -26,69 +26,65 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>libs/DSP2833x_ADC_cal.asm</name>
+			<name>DSP2833x_Headers_nonBIOS.cmd</name>
+			<type>1</type>
+			<locationURI>DEVICE_SUPPORT_F2833X/headers/cmd/DSP2833x_Headers_nonBIOS.cmd</locationURI>
+		</link>
+		<link>
+			<name>CONFIG/DSP2833x_ADC_cal.asm</name>
 			<type>1</type>
 			<locationURI>DEVICE_SUPPORT_F2833X/common/source/DSP2833x_ADC_cal.asm</locationURI>
 		</link>
 		<link>
-			<name>libs/DSP2833x_Adc.c</name>
+			<name>CONFIG/DSP2833x_Adc.c</name>
 			<type>1</type>
 			<locationURI>DEVICE_SUPPORT_F2833X/common/source/DSP2833x_Adc.c</locationURI>
 		</link>
 		<link>
-			<name>libs/DSP2833x_CodeStartBranch.asm</name>
+			<name>CONFIG/DSP2833x_CodeStartBranch.asm</name>
 			<type>1</type>
 			<locationURI>DEVICE_SUPPORT_F2833X/common/source/DSP2833x_CodeStartBranch.asm</locationURI>
 		</link>
 		<link>
-			<name>libs/DSP2833x_CpuTimers.c</name>
+			<name>CONFIG/DSP2833x_CpuTimers.c</name>
 			<type>1</type>
 			<locationURI>DEVICE_SUPPORT_F2833X/common/source/DSP2833x_CpuTimers.c</locationURI>
 		</link>
 		<link>
-			<name>libs/DSP2833x_DefaultIsr.c</name>
+			<name>CONFIG/DSP2833x_DefaultIsr.c</name>
 			<type>1</type>
 			<locationURI>DEVICE_SUPPORT_F2833X/common/source/DSP2833x_DefaultIsr.c</locationURI>
 		</link>
 		<link>
-			<name>libs/DSP2833x_GlobalVariableDefs.c</name>
+			<name>CONFIG/DSP2833x_GlobalVariableDefs.c</name>
 			<type>1</type>
 			<locationURI>DEVICE_SUPPORT_F2833X/headers/source/DSP2833x_GlobalVariableDefs.c</locationURI>
 		</link>
 		<link>
-			<name>libs/DSP2833x_Gpio.c</name>
-			<type>1</type>
-			<locationURI>DEVICE_SUPPORT_F2833X/common/source/DSP2833x_Gpio.c</locationURI>
-		</link>
-		<link>
-			<name>libs/DSP2833x_PieCtrl.c</name>
+			<name>CONFIG/DSP2833x_PieCtrl.c</name>
 			<type>1</type>
 			<locationURI>DEVICE_SUPPORT_F2833X/common/source/DSP2833x_PieCtrl.c</locationURI>
 		</link>
 		<link>
-			<name>libs/DSP2833x_PieVect.c</name>
+			<name>CONFIG/DSP2833x_PieVect.c</name>
 			<type>1</type>
 			<locationURI>DEVICE_SUPPORT_F2833X/common/source/DSP2833x_PieVect.c</locationURI>
 		</link>
 		<link>
-			<name>libs/DSP2833x_SysCtrl.c</name>
+			<name>CONFIG/DSP2833x_SysCtrl.c</name>
 			<type>1</type>
 			<locationURI>DEVICE_SUPPORT_F2833X/common/source/DSP2833x_SysCtrl.c</locationURI>
 		</link>
 		<link>
-			<name>libs/DSP2833x_usDelay.asm</name>
+			<name>CONFIG/DSP2833x_usDelay.asm</name>
 			<type>1</type>
 			<locationURI>DEVICE_SUPPORT_F2833X/common/source/DSP2833x_usDelay.asm</locationURI>
 		</link>
 	</linkedResources>
 	<variableList>
 		<variable>
-			<name>C2000_WARE</name>
-			<value>file:/C:/ti/c2000/C2000Ware_2_00_00_02</value>
-		</variable>
-		<variable>
 			<name>DEVICE_SUPPORT_F2833X</name>
-			<value>$%7BC2000_WARE%7D/device_support/f2833x</value>
+			<value>file:/C:/ti/C2000Ware_2_00_00_02_Software/device_support/f2833x</value>
 		</variable>
 	</variableList>
 </projectDescription>

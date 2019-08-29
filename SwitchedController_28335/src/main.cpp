@@ -1,128 +1,60 @@
 
+//
+// Includes
+//
 #include "DSP28x_Project.h"
-#include "DSP2833x_Device.h"
-
-#include <src/Math/matrix.h>
+#include <src/Config/CONFIGURATIONS.h>
+#include <src/Config/CONFIG_GPIO_V4_CCARDV2.h>
+#include <src/Config/DEFINESCONTROLCARDV2.h>
+#include <src/Controller/switched_controller.h>
+#include <src/Converter/buck.h>
+#include <src/Equilibrium/reference_update.h>
 #include <src/Sensor/sensor.h>
 #include <src/Switch/switch.h>
 #include <src/SwitchedSystem/switched_system.h>
-#include <src/Equilibrium/reference_update.h>
 #include <src/SwitchingRule/rule2.h>
-#include <src/Converter/buck.h>
-#include <src/Controller/switched_controller.h>
+#include <src/Timer/timer.h>
 
-using namespace Math;
+//
+// Namespaces in use
+//
 using namespace SwitchedSystem;
 
-extern void InitSysCtrl(void);
-extern void InitPieCtrl(void);
-extern void InitPieVectTable(void);
 
+//
+// Functions in main
+//
+void DebugVariables(void);
 
-void init(void);
-void initInterruption(void);
+//
+// Interruptions defined in main
+//
+__interrupt void Interruption_ReferenceUpdate(void);
+
+//
+// Global static variables
+//
+static double *X, *Xe;
+static double *u;
+static double *Vout_mean;
+static double Vref = INITIAL_REFERENCE_VOLTAGE;
+static int BestSubsystem;
+
+//
+// Variables used during debug
+//
+__attribute__((unused)) static double *Vin, *Vout, *IL;
 
 void main(void)
 {
-    Vector *X, *Xe;
-    Matrix *P;
-    double *u;
-    int k;
+    double P[SYSTEM_ORDER][SYSTEM_ORDER];
+    System* sys;
 
-    double Vref = 60;
+    InitSysCtrl();                              // Basic Core Init from DSP2833x_SysCtrl.c
+    Gpio_setup1();                              // Configura os pinos de GPIO de acordo com a ligaçaõ na placa
+    DINT;                                       // Disable all interrupts
 
-    System* sys = Buck::getSys();
-
-    //
-    // General Board initializations
-    //
-    init();
-    initInterruption();
-
-    //
-    // Specific devices initializations
-    //
-    Sensor::init();
-    Switch::init();
-
-    Equilibrium::init();
-
-    X = Sensor::getState();
-    u = Sensor::getInput();
-    Xe = Equilibrium::getReference();
-
-    P = Controller::getP();
-
-    /* =============== */
-    *u = 400;
-    Vref = 100;
-    Xe->data[0] = 1.0331;
-    Xe->data[1] = 100;
-    /* =============== */
-
-    EINT;
-
-    while(1)
-    {
-//        Equilibrium::referenceUpdate(Vref, X, *u);
-
-        k = SwitchingRule2::switchingRule(sys, P, X, Xe, *u);
-
-        Switch::updateState(k);
-    }
-}
-
-
-void init(void)
-{
-    //
-    // Initialize System Control:
-    // PLL, WatchDog, enable Peripheral Clocks
-    // This example function is found in the DSP2833x_SysCtrl.c file.
-    //
-    InitSysCtrl();
-
-    EALLOW;
-    #if (CPU_FRQ_150MHZ)     // Default - 150 MHz SYSCLKOUT
-        //
-        // HSPCLK = SYSCLKOUT/2*ADC_MODCLK2 = 150/(2*3)   = 25.0 MHz
-        //
-        #define ADC_MODCLK 0x3
-    #endif
-    #if (CPU_FRQ_100MHZ)
-        //
-        // HSPCLK = SYSCLKOUT/2*ADC_MODCLK2 = 100/(2*2)   = 25.0 MHz
-        //
-        #define ADC_MODCLK 0x2
-    #endif
-    EDIS;
-
-    //
-    // Define ADCCLK clock frequency ( less than or equal to 25 MHz )
-    // Assuming InitSysCtrl() has set SYSCLKOUT to 150 MHz
-    //
-    EALLOW;
-    SysCtrlRegs.HISPCP.all = ADC_MODCLK;
-    EDIS;
-
-}
-
-void initInterruption(void)
-{
-
-    //
-    // Clear all interrupts and initialize PIE vector table:
-    // Disable CPU interrupts
-    //
-    DINT;
-
-    //
-    // Initialize the PIE control registers to their default state.
-    // The default state is all PIE interrupts disabled and flags
-    // are cleared.
-    // This function is found in the DSP2833x_PieCtrl.c file.
-    //
-    InitPieCtrl();
+    InitPieCtrl();                              // basic setup of PIE table
 
     //
     // Disable CPU interrupts and clear all CPU interrupt flags:
@@ -130,22 +62,75 @@ void initInterruption(void)
     IER = 0x0000;
     IFR = 0x0000;
 
-    //
-    // Initialize the PIE vector table with pointers to the shell Interrupt
-    // Service Routines (ISR).
-    // This will populate the entire table, even if the interrupt
-    // is not used in this example.  This is useful for debug purposes.
-    // The shell ISR routines are found in DSP2833x_DefaultIsr.c.
-    // This function is found in DSP2833x_PieVect.c.
-    //
-    InitPieVectTable();
+    InitPieVectTable();                         // default ISR's in PIE
 
-    //
-    // Interrupts that are used in this example are re-mapped to
-    // ISR functions found within this file.
-    //
-    EALLOW;  // This is needed to write to EALLOW protected register
-    PieVectTable.ADCINT = &(Sensor::isr_interruption);
-    EDIS;    // This is needed to disable write to EALLOW protected registers
+    EALLOW;
+    PieVectTable.ADCINT = &(Sensor::Interruption);
+    PieVectTable.TINT2 = &(Interruption_ReferenceUpdate);
+    EDIS;
+
+    IER |= M_INT1;      // Enable CPU Interrupt 1
+    IER |= M_INT2;      // Enable CPU Interrupt 1
+    IER |= M_INT14;     // Timer02
+
+    PieCtrlRegs.PIEIER1.bit.INTx6 = 1;  // ADC
+    PieCtrlRegs.PIEIER1.bit.INTx7 = 1;  // Timer
+
+    Timer::Configure();
+    Sensor::Configure();
+    Switch::Configure();
+    Equilibrium::Configure();
+
+    X = Sensor::GetState();
+    u = Sensor::GetInput();
+    Vout_mean = Sensor::GetOutput();
+
+    Xe = Equilibrium::GetReference();
+    Equilibrium::UpdateReference(Vref, *Vout_mean, *u);
+
+    sys = Buck::GetSys();
+    Controller::GetP(P);
+
+    DebugVariables();
+
+    Timer::ReferenceUpdate_Start();
+
+    EINT;   // Enable Global interrupt INTM
+    ERTM;   // Enable Global realtime interrupt DBGM
+
+    while(1)
+    {
+#if DAC_ENABLED
+        enviar_dac_spi_uni(0, Sensor::ADC_RESULT_IL);
+        enviar_dac_spi_uni(1, Sensor::ADC_RESULT_VOUT);
+        enviar_dac_spi_uni(2, Sensor::ADC_RESULT_VIN);
+#endif
+
+#if SWITCHING_RULE == 1
+        BestSubsystem = SwitchingRule1::SwitchingRule(sys, P, X, Xe, *u);
+#elif SWITCHING_RULE == 2
+        BestSubsystem = SwitchingRule2::SwitchingRule(sys, P, X, Xe, *u);
+#endif
+
+        Switch::SetState(BestSubsystem);
+    }
 }
 
+
+void DebugVariables(void)
+{
+    Vin = u;
+    Vout = X+1;
+    IL = X;
+}
+
+
+//
+// Interruption_MainLoopPeriod - CPU Timer0 ISR with interrupt counter
+//
+__interrupt void Interruption_ReferenceUpdate(void)
+{
+    CpuTimer2.InterruptCount++;
+
+    Equilibrium::UpdateReference(Vref, *Vout_mean, *u);
+}

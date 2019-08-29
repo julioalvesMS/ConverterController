@@ -1,21 +1,25 @@
 #include <src/Controller/switched_controller.h>
 
-using namespace Math;
-
 namespace Controller
 {
-    static Matrix P;
-
-    Matrix* getP()
+    void GetP(double P[SYSTEM_ORDER][SYSTEM_ORDER])
     {
+#if SWITCHING_RULE == 1
+        //
+        // Buck Converter - Rule 1
+        //
+        P[0][0] = 1.8563e-07;
+        P[0][1] = 2.9480e-07;
+        P[1][0] = 2.9480e-07;
+        P[1][1] = 2.8584e-05;
+#elif SWITCHING_RULE == 2
         //
         // Buck Converter - Rule 2
         //
-        P.data[0][0] = 3.6283e-04;
-        P.data[0][1] = 2.2042e-05;
-        P.data[1][0] = 2.2042e-05;
-        P.data[1][1] = 1.6484e-04;
-
-        return &P;
+        P[0][0] = 1.8563e-07;
+        P[0][1] = 2.9480e-07;
+        P[1][0] = 2.9480e-07;
+        P[1][1] = 2.8584e-05;
+#endif
     }
 }

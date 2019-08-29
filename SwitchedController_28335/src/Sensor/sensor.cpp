@@ -1,68 +1,78 @@
 #include <src/Sensor/sensor.h>
 
-extern void InitAdc(void);
-
-using namespace Math;
-
 namespace Sensor
 {
-    static Vector s_state;
-
-    static double input_voltage = 0;
-
-    void init(void)
+    void Configure(void)
     {
-        InitAdc();
+        //
+        // Configuração do canais analógicos de entrada
+        //
+        InitAdc();          // Inicializa periférico ADC
+        Setup_ADC();        // Configura canais de de ADC e interrupções para leitura
 
         //
-        // Enable ADCINT in PIE
+        // Configuração do canais de PWM e TZ
         //
-        PieCtrlRegs.PIEIER1.bit.INTx6 = 1;
-        IER |= M_INT1;      // Enable CPU Interrupt 1
-        EINT;               // Enable Global interrupt INTM
-        ERTM;               // Enable Global realtime interrupt DBGM
+        Setup_ePWM();
 
         //
-        // Configure ADC
+        // CONFIGURAÇÃO DA DAC POR SPI
         //
-        AdcRegs.ADCMAXCONV.all = 0x0002;       // Setup 3 conv's on SEQ1
-        AdcRegs.ADCCHSELSEQ1.bit.CONV00 = 0x0; // Setup ADCINA0 as 1st SEQ1 conv.
-        AdcRegs.ADCCHSELSEQ1.bit.CONV01 = 0x1; // Setup ADCINA1 as 2nd SEQ1 conv.
-        AdcRegs.ADCCHSELSEQ1.bit.CONV02 = 0x2; // Setup ADCINA2 as 3nd SEQ1 conv.
-
-        //
-        // Enable SOCA from ePWM to start SEQ1
-        //
-        AdcRegs.ADCTRL2.bit.EPWM_SOCA_SEQ1 = 1;
-
-        AdcRegs.ADCTRL2.bit.INT_ENA_SEQ1 = 1;  // Enable SEQ1 interrupt (every EOS)
-
-        //
-        // Assumes ePWM1 clock is already enabled in InitSysCtrl();
-        //
-        EPwm1Regs.ETSEL.bit.SOCAEN = 1;     // Enable SOC on A group
-        EPwm1Regs.ETSEL.bit.SOCASEL = 2;    // Generate SOCA on first event
-        EPwm1Regs.ETPS.bit.SOCAPRD = 1;     // Generate pulse on 1st event
-        EPwm1Regs.TBPRD = 0x0BB7;           // Set period for ePWM1
-        EPwm1Regs.TBCTL.bit.CTRMODE = 0;    // count up and start
+        spi_fifo_init();    // Configura SPI-FIFO DA DAC
+        spi_init();         // Inicializa SPI-FIFO DA DAC
 
         //
         // Assume the initial state as zero
         //
-        s_state.data[0] = 0;
-        s_state.data[1] = 0;
+        s_state[0] = 0;
+        s_state[1] = 0;
 
     }
 
+    //
+    //  GetState - Get the pointer to the variable where the state
+    //              vector is stored
+    //
+    double* GetState(void)
+    {
+        return s_state;
+    }
+
+    //
+    //  GetInput - Get the pointer to the variable where the input
+    //              voltage is stored
+    //
+    double* GetInput(void)
+    {
+        return &input_voltage;
+    }
+
+    //
+    //  GetOutput - Get the pointer to the variable where the input
+    //              voltage is stored
+    //
+    double* GetOutput(void)
+    {
+        return &vout_mean;
+    }
 
     __interrupt
-    void isr_interruption(void)
+    void Interruption(void)
     {
+        // Test GPIO. Used to enable frequency measurement
+        GpioDataRegs.GPATOGGLE.bit.AF = 1;
+
         //
         // Read ADC result
         //
-        s_state.data[0] = AdcRegs.ADCRESULT0; // Current
-        s_state.data[1] = AdcRegs.ADCRESULT1; // Voltage
+        s_state[0] = READ_IL(ADC_RESULT_IL);        // Current
+        s_state[1] = READ_VOUT(ADC_RESULT_VOUT);    // Voltage
+        input_voltage = READ_VIN(ADC_RESULT_VIN);   // Input Voltage
+
+        vout_mean -= vout_mean_buffer[buffer_index];
+        vout_mean_buffer[buffer_index] = (s_state[1])/ADC_BUFFER_SIZE;
+        vout_mean += vout_mean_buffer[buffer_index];
+        buffer_index = (buffer_index + 1) % ADC_BUFFER_SIZE;
 
         //
         // Reinitialize for next ADC sequence
@@ -72,15 +82,5 @@ namespace Sensor
         PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;   // Acknowledge interrupt to PIE
 
         return;
-    }
-
-    Vector* getState(void)
-    {
-        return &s_state;
-    }
-
-    double* getInput(void)
-    {
-        return &input_voltage;
     }
 }
