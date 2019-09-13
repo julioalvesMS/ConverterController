@@ -11,6 +11,8 @@ namespace Equilibrium
     {
         Xe[0] = 0;
         Xe[1] = 0;
+
+        pid_sum = 0;
     }
 
     void UpdateReference(double Vref, double Vout, double u)

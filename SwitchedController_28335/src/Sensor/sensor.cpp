@@ -4,6 +4,8 @@ namespace Sensor
 {
     void Configure(void)
     {
+        int i;
+
         //
         // Configuração do canais analógicos de entrada
         //
@@ -15,8 +17,7 @@ namespace Sensor
         //
         Setup_ePWM();
 
-        //
-        // CONFIGURAÇÃO DA DAC POR SPI
+        //        // CONFIGURAÇÃO DA DAC POR SPI
         //
         spi_fifo_init();    // Configura SPI-FIFO DA DAC
         spi_init();         // Inicializa SPI-FIFO DA DAC
@@ -26,6 +27,13 @@ namespace Sensor
         //
         s_state[0] = 0;
         s_state[1] = 0;
+
+        vout_mean = 0;
+        input_voltage = 0;
+        output_current = 0;
+
+        for(i=0;i<ADC_BUFFER_SIZE;i++)
+            vout_mean_buffer[i] = 0;
 
     }
 
@@ -56,30 +64,28 @@ namespace Sensor
         return &vout_mean;
     }
 
-    __interrupt
-    void Interruption(void)
+    //
+    //  GetOutput - Get the pointer to the variable where the input
+    //              voltage is stored
+    //
+    double* GetOutputCurrent(void)
     {
-        // Test GPIO. Used to enable frequency measurement
-        GpioDataRegs.GPATOGGLE.bit.AF = 1;
+        return &output_current;
+    }
 
+    void ReadADCResult(void)    {
         //
         // Read ADC result
         //
         s_state[0] = READ_IL(ADC_RESULT_IL);        // Current
         s_state[1] = READ_VOUT(ADC_RESULT_VOUT);    // Voltage
         input_voltage = READ_VIN(ADC_RESULT_VIN);   // Input Voltage
+        output_current = READ_IOUT(ADC_RESULT_IOUT);   // Output Current
 
         vout_mean -= vout_mean_buffer[buffer_index];
         vout_mean_buffer[buffer_index] = (s_state[1])/ADC_BUFFER_SIZE;
         vout_mean += vout_mean_buffer[buffer_index];
         buffer_index = (buffer_index + 1) % ADC_BUFFER_SIZE;
-
-        //
-        // Reinitialize for next ADC sequence
-        //
-        AdcRegs.ADCTRL2.bit.RST_SEQ1 = 1;         // Reset SEQ1
-        AdcRegs.ADCST.bit.INT_SEQ1_CLR = 1;       // Clear INT SEQ1 bit
-        PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;   // Acknowledge interrupt to PIE
 
         return;
     }

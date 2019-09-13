@@ -3,7 +3,7 @@
 namespace Switch
 {
 
-    static short s_switch_state = -1;
+    static short s_switch_state = DISBALE_SWITCHES;
 
     void Configure()
     {
@@ -33,11 +33,9 @@ namespace Switch
 
     void SetState(int state)
     {
-        // Test GPIO. Used to enable frequency measurement
-        GpioDataRegs.GPATOGGLE.bit.MF = 1;
 
         // If the switch is already ate the desired state, do nothing
-        if (state == s_switch_state)
+        if (state == s_switch_state && s_switch_state!=DISBALE_SWITCHES)
             return;
 
         switch(state)
@@ -50,6 +48,7 @@ namespace Switch
             GpioDataRegs.GPACLEAR.bit.S1 = 1;
             GpioDataRegs.GPASET.bit.S2 = 1;
             break;
+        case DISBALE_SWITCHES:
         default:
             GpioDataRegs.GPACLEAR.bit.S1 = 1;
             GpioDataRegs.GPACLEAR.bit.S2 = 1;

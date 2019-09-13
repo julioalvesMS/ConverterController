@@ -23,16 +23,21 @@ void Setup_ADC(void)
     AdcRegs.ADCTRL3.bit.ADCCLKPS=1;         // ADC clock: FCLK = HSPCLK / 2 * ADCCLKPS
                                             // HSPCLK = 75MHz (see DSP2833x_SysCtrl.c)
                                             // FCLK = 12.5 MHz
-    AdcRegs.ADCMAXCONV.all=0x0003;       //8 conversões
-    AdcRegs.ADCTRL3.bit.SMODE_SEL = 0x1; // amostragem simultânea
-    AdcRegs.ADCCHSELSEQ1.bit.CONV00=0;   // (A0,B0)=(Ix,Iy)=(result0,result1)
-    AdcRegs.ADCCHSELSEQ1.bit.CONV01=1;   // (A1,B1)=(Iz,Ivcc2)=(result2,result3)
-    AdcRegs.ADCCHSELSEQ1.bit.CONV02=2;   // (A2,B2)=(Vx,Vz)=(result4,result5)
-    AdcRegs.ADCCHSELSEQ1.bit.CONV03=3;   // (A3,B3)=(Vy,Vcc2)=(result6,result7)
-    AdcRegs.ADCCHSELSEQ2.bit.CONV04=4;   // (A4,B4)=(Iu,Iv)=(result8,result9)
-    AdcRegs.ADCCHSELSEQ2.bit.CONV05=5;   // (A5,B5)=(Vu,Vv)=(result10,result11)
-    AdcRegs.ADCCHSELSEQ2.bit.CONV06=6;   // (A6,B6)=(Iw,Vw)=(result12,result13)
-    AdcRegs.ADCCHSELSEQ2.bit.CONV07=7;   // (A7,B7)=(Vcc1,Icc1)=(result14,result15)
+    AdcRegs.ADCMAXCONV.all=0x0002;          // 3 conversões (ALTERADO: ORIGINAL DE 8)
+    AdcRegs.ADCTRL3.bit.SMODE_SEL = 0x1;    // amostragem simultânea
+
+    AdcRegs.ADCCHSELSEQ1.bit.CONV00=0;      // (A0,B0)=(Ix,Iy)=(result0,result1)
+    AdcRegs.ADCCHSELSEQ1.bit.CONV01=2;   // (A2,B2)=(Vx,Vz)=(result2,result3)
+    AdcRegs.ADCCHSELSEQ1.bit.CONV02=3;   // (A3,B3)=(Vy,Vcc2)=(result4,result5)
+
+//    AdcRegs.ADCCHSELSEQ1.bit.CONV00=0;   // (A0,B0)=(Ix,Iy)=(result0,result1)
+//    AdcRegs.ADCCHSELSEQ1.bit.CONV01=1;   // (A1,B1)=(Iz,Ivcc2)=(result2,result3)
+//    AdcRegs.ADCCHSELSEQ1.bit.CONV02=2;   // (A2,B2)=(Vx,Vz)=(result4,result5)
+//    AdcRegs.ADCCHSELSEQ1.bit.CONV03=3;   // (A3,B3)=(Vy,Vcc2)=(result6,result7)
+//    AdcRegs.ADCCHSELSEQ2.bit.CONV04=4;   // (A4,B4)=(Iu,Iv)=(result8,result9)
+//    AdcRegs.ADCCHSELSEQ2.bit.CONV05=5;   // (A5,B5)=(Vu,Vv)=(result10,result11)
+//    AdcRegs.ADCCHSELSEQ2.bit.CONV06=6;   // (A6,B6)=(Iw,Vw)=(result12,result13)
+//    AdcRegs.ADCCHSELSEQ2.bit.CONV07=7;   // (A7,B7)=(Vcc1,Icc1)=(result14,result15)
 
 }
 
@@ -41,10 +46,10 @@ void Setup_ADC(void)
 
 void Setup_ePWM(void)
 {
-    EPwm1Regs.TBCTL.bit.CLKDIV=0;       //CLJDIV=1
+    EPwm1Regs.TBCTL.bit.CLKDIV=0;       //CLKDIV=1
     EPwm1Regs.TBCTL.bit.HSPCLKDIV=1;    // HSPCLKDIV =2
     EPwm1Regs.TBCTL.bit.CTRMODE=2;      // up down mode
-    EPwm1Regs.TBPRD=400;
+    EPwm1Regs.TBPRD=2500;               // ~ 20 kHz
     EPwm1Regs.AQCTLA.all=0x0090;        // ZRO=set, PRD-clear
     EPwm1Regs.AQCTLB.all=0x0060;        // ZRO=set, PRD-clear
     EPwm1Regs.ETPS.bit.SOCAPRD=1;       // Generate pulse on first event
@@ -57,16 +62,16 @@ void Setup_ePWM(void)
     EPwm1Regs.ETSEL.bit.SOCBSEL=2; //*
     EPwm1Regs.CMPA.half.CMPA = 0;
 
-    EPwm2Regs.TBCTL.bit.CLKDIV=0;       //CLJDIV=1
+    EPwm2Regs.TBCTL.bit.CLKDIV=0;       //CLKDIV=1
     EPwm2Regs.TBCTL.bit.HSPCLKDIV=1;    // HSPCLKDIV =2
     EPwm2Regs.TBCTL.bit.CTRMODE=2;      // up down mode
-    EPwm2Regs.TBPRD=2500;
+    EPwm2Regs.TBPRD=2500;               // 15 kHz
     EPwm2Regs.AQCTLA.all=0x0090;        // ZRO=set, PRD-clear
     EPwm2Regs.AQCTLB.all=0x0060;        // ZRO=set, PRD-clear
     EPwm2Regs.TBPHS.half.TBPHS=0;       //2*1250;
     EPwm2Regs.CMPA.half.CMPA = 0;
 
-    EPwm3Regs.TBCTL.bit.CLKDIV=0;       //CLJDIV=1
+    EPwm3Regs.TBCTL.bit.CLKDIV=0;       //CLKDIV=1
     EPwm3Regs.TBCTL.bit.HSPCLKDIV=1;    // HSPCLKDIV =2
     EPwm3Regs.TBCTL.bit.CTRMODE=2;      // up down mode
     EPwm3Regs.TBPRD=2500;
@@ -74,7 +79,7 @@ void Setup_ePWM(void)
     EPwm3Regs.AQCTLB.all=0x0060;        // ZRO=set, PRD-clear
     EPwm3Regs.CMPA.half.CMPA = 0;
 
-    EPwm4Regs.TBCTL.bit.CLKDIV=0;   	//CLJDIV=1
+    EPwm4Regs.TBCTL.bit.CLKDIV=0;   	//CLKDIV=1
     EPwm4Regs.TBCTL.bit.HSPCLKDIV=1;	// HSPCLKDIV =2
     EPwm4Regs.TBCTL.bit.CTRMODE=2;  	// up down mode
     EPwm4Regs.AQCTLA.all=0x0090; 		// ZRO=set, PRD-clear
@@ -82,7 +87,7 @@ void Setup_ePWM(void)
     EPwm4Regs.TBPRD=2500;
     EPwm4Regs.CMPA.half.CMPA = 0;
 
-    EPwm5Regs.TBCTL.bit.CLKDIV=0;   	//CLJDIV=1
+    EPwm5Regs.TBCTL.bit.CLKDIV=0;   	//CLKDIV=1
     EPwm5Regs.TBCTL.bit.HSPCLKDIV=1;	// HSPCLKDIV =2
     EPwm5Regs.TBCTL.bit.CTRMODE=2;  	// up down mode
     EPwm5Regs.AQCTLA.all=0x0090; 		// ZRO=set, PRD-clear
@@ -90,7 +95,7 @@ void Setup_ePWM(void)
     EPwm5Regs.TBPRD=2500;
     EPwm5Regs.CMPA.half.CMPA = 0;
 
-    EPwm6Regs.TBCTL.bit.CLKDIV=0;   	//CLJDIV=1
+    EPwm6Regs.TBCTL.bit.CLKDIV=0;   	//CLKDIV=1
     EPwm6Regs.TBCTL.bit.HSPCLKDIV=1;	// HSPCLKDIV =2
     EPwm6Regs.TBCTL.bit.CTRMODE=2;  	// up down mode
     EPwm6Regs.AQCTLA.all=0x0090; 		// ZRO=set, PRD-clear

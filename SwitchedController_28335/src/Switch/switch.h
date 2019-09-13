@@ -4,6 +4,8 @@
 #include "DSP2833x_Device.h"
 #include <src/settings.h>
 
+#define DISBALE_SWITCHES -1
+
 namespace Switch
 {
     void Configure();

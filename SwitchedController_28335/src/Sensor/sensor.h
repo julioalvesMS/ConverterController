@@ -19,9 +19,10 @@ namespace Sensor
     //
     // VARIÁVEIS COM OS VALORES DOS SENSORES
     //
-    static double s_state[SYSTEM_ORDER]; // X - State vector
-    static double input_voltage = 0;     // u - Input Voltage
-    static double vout_mean = 0;        // Vout - Output mean value
+    static double s_state[SYSTEM_ORDER];    // X - State vector
+    static double input_voltage = 0;        // u - Input Voltage
+    static double output_current = 0;       // Iout - Output Current
+    static double vout_mean = 0;            // Vout - Output mean value
 
     void Configure(void);
 
@@ -43,9 +44,9 @@ namespace Sensor
     //
     double* GetOutput(void);
 
+    double* GetOutputCurrent(void);
 
-    __interrupt
-    void Interruption(void);
+    void ReadADCResult(void);
 }
 
 #endif /* SRC_SENSOR_SENSOR_H_ */

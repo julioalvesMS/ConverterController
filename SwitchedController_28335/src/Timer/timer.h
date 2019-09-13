@@ -8,6 +8,8 @@ namespace Timer
 {
     void Configure();
 
+    void Communication_Start();
+
     void ReferenceUpdate_Start();
 }
 

@@ -16,6 +16,11 @@
 #include "SPI_DAC.h"
 #include "COM_SERIAL.h"
 
+extern float filtro_1(float vP);
+extern float filtro_2(float vP);
+extern float filtro_3(float vP);
+extern float filtro_4(float vP);
+
 /////////////////////////////////////////////////////////////////
 ///    PROTÓTIPO DAS FUNÇÕES EXTERNAS PARA CONFIGURAR          //
 /////////////////////////////////////////////////////////////////
@@ -166,14 +171,14 @@ void main(void)
 		 while(1){
 		//TESTA_LEDS();
 		//TESTA_BOTOES();
-		//TESTA_RS232();
+		TESTA_RS232();
 		//TESTA_RELES();
 	   // TESTA_DAC_SPI();
-        //TESTA_PWM();
+        TESTA_PWM();
 	    // TESTA_BKR_RST();
 		//TESTA_SAIDAS_ISOLADAS();
 		//TESTA_ENCODER();
-	    TESTA_ENTRADAS_ANALOGICAS();
+	    //TESTA_ENTRADAS_ANALOGICAS();
 	 	}
 
 }
@@ -520,15 +525,15 @@ interrupt void  adc_isr(void)
 
 // Sensores lado esquerdo da placa
 	// Ix, Iy e Iz e Icc2
-	Ix=(AdcMirror.ADCRESULT0);
+	Ix=filtro_1(AdcMirror.ADCRESULT0);
 	Iy=(AdcMirror.ADCRESULT1);
-	Iz=(AdcMirror.ADCRESULT2);
+	Iz=filtro_3(AdcMirror.ADCRESULT2);
 	Icc2=(AdcMirror.ADCRESULT3);
 
 	// Vx, Vy e Vz Vcc2
-	Vx=((AdcMirror.ADCRESULT4));
+	Vx=filtro_2(AdcMirror.ADCRESULT4);
 	Vy=(AdcMirror.ADCRESULT6);
-	Vz=(AdcMirror.ADCRESULT5);
+	Vz=filtro_4(AdcMirror.ADCRESULT5);
 	Vcc2=(AdcMirror.ADCRESULT7);
 
 // Sensores lado direito da placa
