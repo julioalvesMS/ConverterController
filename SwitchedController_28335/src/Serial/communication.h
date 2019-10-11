@@ -8,7 +8,7 @@
 #include <src/DAC/dac.h>
 #include <src/Protection/protection.h>
 
-#define MESSAGES_COUNT 8
+#define MESSAGES_COUNT 9
 
 namespace Communication
 {

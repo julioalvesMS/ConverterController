@@ -10,7 +10,7 @@ namespace Switch
 {
     void Configure();
 
-    void SetState(int state);
+    bool SetState(int state);
 }
 
 #endif /* SRC_SWITCH_SWITCH_H_ */

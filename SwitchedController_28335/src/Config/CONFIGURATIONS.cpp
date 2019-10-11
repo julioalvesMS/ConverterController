@@ -49,7 +49,7 @@ void Setup_ePWM(void)
     EPwm1Regs.TBCTL.bit.CLKDIV=0;       //CLKDIV=1
     EPwm1Regs.TBCTL.bit.HSPCLKDIV=1;    // HSPCLKDIV =2
     EPwm1Regs.TBCTL.bit.CTRMODE=2;      // up down mode
-    EPwm1Regs.TBPRD=2500;               // ~ 20 kHz
+    EPwm1Regs.TBPRD=1250;               // ~ 20 kHz
     EPwm1Regs.AQCTLA.all=0x0090;        // ZRO=set, PRD-clear
     EPwm1Regs.AQCTLB.all=0x0060;        // ZRO=set, PRD-clear
     EPwm1Regs.ETPS.bit.SOCAPRD=1;       // Generate pulse on first event
@@ -239,8 +239,8 @@ void SCIA_init()
 	// SYSCLOCKOUT = 150MHz; LSPCLK = 1/4 = 37.5 MHz
 	// BRR = (LSPCLK / (9600 x 8)) -1
 	// BRR = 487  gives 9605 Baud
-	SciaRegs.SCIHBAUD    = 487 >> 8;		// Highbyte
-	SciaRegs.SCILBAUD    = 487 & 0x00FF;	// Lowbyte
+	SciaRegs.SCIHBAUD    = 39 >> 8;		// Highbyte
+	SciaRegs.SCILBAUD    = 39 & 0x00FF;	// Lowbyte
 	SciaRegs.SCICTL2.bit.TXINTENA = 1; // enable SCI-A Tx-ISR
 	SciaRegs.SCICTL2.bit.RXBKINTENA = 1; 	// enable SCI_A Rx-ISR ===INCLUIDO
 	SciaRegs.SCIFFTX.all = 0xC060;	// bit 15 = 1 : relinquish from Reset

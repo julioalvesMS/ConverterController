@@ -2,6 +2,7 @@
 
 extern double *Vin, *Vout, *IL, *Iout;
 extern double Vref;
+extern double SwitchingFrequency;
 extern Protection::Problem protection;
 extern bool ConverterEnabled;
 extern DAC_SPI::Channel DacChannel;
@@ -41,11 +42,14 @@ namespace Communication
         case 7:
             sprintf(protocol_message, "$%1d", (int) protection);
             break;
+        case 8:
+            sprintf(protocol_message, "F%03d", (int) (SwitchingFrequency/100));
+            break;
         default:
             break;
         }
 
-        data_index = (data_index+1)%8;
+        data_index = (data_index+1)%MESSAGES_COUNT;
     }
 
     void SendMessage(void)
@@ -91,14 +95,16 @@ namespace Communication
                 DacChannel = (DAC_SPI::Channel) channel;
                 break;
             case 'R':
-                Vref += 0.01;
+                Vref += 0.002;
+                if(Vref > PROTECTION_VOUT_MAX) Vref = PROTECTION_VOUT_MAX;
                 break;
             case 'r':
-                Vref -= 0.01;
+                Vref -= 0.002;
                 if(Vref < 0) Vref = 0;
                 break;
             case 'S':
                 Vref += 10;
+                if(Vref > PROTECTION_VOUT_MAX) Vref = PROTECTION_VOUT_MAX;
                 break;
             case 's':
                 Vref -= 10;

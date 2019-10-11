@@ -50,9 +50,13 @@ double P[SYSTEM_ORDER][SYSTEM_ORDER];
 System* sys;
 
 Protection::Problem protection = Protection::NONE;
-bool ConverterEnabled = true;
+bool ConverterEnabled = false;
 
-DAC_SPI::Channel DacChannel = DAC_SPI::CH_ADC;
+DAC_SPI::Channel DacChannel = DAC_SPI::CH_CONTROLE;
+
+int InterruptionCounter = 0;
+int SwitchCounter = 0;
+double SwitchingFrequency;
 
 //
 // Variables used during debug
@@ -173,6 +177,16 @@ __interrupt void Interruption_ReferenceUpdate(void)
 //
 __interrupt void Interruption_Sensor(void)
 {
+    if(InterruptionCounter >= 300)
+    {
+        // Operando em 15kHz
+        // Medições vão ser a cada 10us
+        SwitchingFrequency = (double) ((double) 100*SwitchCounter);
+        InterruptionCounter = 0;
+        SwitchCounter = 0;
+    }
+    InterruptionCounter++;
+
     // Test GPIO. Used to enable frequency measurement
     GpioDataRegs.GPATOGGLE.bit.AF = 1;
     // Test GPIO. Used to enable frequency measurement
@@ -207,7 +221,7 @@ __interrupt void Interruption_Sensor(void)
         //
         // Signal to the gate
         //
-        Switch::SetState(BestSubsystem);
+        SwitchCounter += Switch::SetState(BestSubsystem);
     }
 
 
