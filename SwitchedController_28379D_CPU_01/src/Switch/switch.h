@@ -3,8 +3,11 @@
 
 #include "F28x_Project.h"
 #include <src/settings.h>
+#include <src/Converter/base_converter.h>
 
 #define DISBALE_SWITCHES -1
+
+extern bool CapacitorPreLoad;
 
 namespace Switch
 {

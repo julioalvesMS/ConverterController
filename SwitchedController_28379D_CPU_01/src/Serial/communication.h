@@ -5,10 +5,14 @@
 #include "F28x_Project.h"
 
 #include <src/Config/CONFIGURATIONS.h>
+#include <src/Equilibrium/reference_update.h>
 #include <src/DAC/dac.h>
+#include <src/OperationManagement/manager.h>
 #include <src/Protection/protection.h>
 
-#define MESSAGES_COUNT 9
+#include <src/Relay/relay.h>
+
+#define MESSAGES_COUNT 10
 
 namespace Communication
 {

@@ -6,6 +6,9 @@ extern int SwitchingFrequency;
 extern Protection::Problem protection;
 extern bool ConverterEnabled;
 extern DAC_SPI::Channel DacChannel;
+extern ConverterID activeConverter;
+extern bool CapacitorPreLoad;
+
 
 namespace Communication
 {
@@ -45,6 +48,9 @@ namespace Communication
         case 8:
             sprintf(protocol_message, "F%03d", (int) (SwitchingFrequency/100));
             break;
+        case 9:
+            sprintf(protocol_message, "@%1d", (int) activeConverter);
+            break;
         default:
             break;
         }
@@ -81,10 +87,10 @@ namespace Communication
             switch(buffer)
             {
             case 'E':
-                ConverterEnabled = true;
+                Manager::EnableOperation();
                 break;
             case 'e':
-                ConverterEnabled = false;
+                Manager::DisableOperation();
                 break;
             case 'D':
                 DacChannel = (DAC_SPI::Channel) ((((int) DacChannel)+1)%DAC_CHANNEL_COUNT);
@@ -115,6 +121,15 @@ namespace Communication
                 break;
             case 'p':
                 protection = Protection::NONE;
+                break;
+            case '0':
+                Manager::ChangeConverter(ID_Buck);
+                break;
+            case '1':
+                Manager::ChangeConverter(ID_Boost);
+                break;
+            case '2':
+                Manager::ChangeConverter(ID_BuckBoost);
                 break;
             default:
                 break;

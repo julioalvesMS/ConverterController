@@ -1,6 +1,8 @@
 #ifndef SETTINGS_H_
 #define SETTINGS_H_
 
+#include <src/Config/DEFINES_LP28379D.h>
+
 //
 // SWITCHED CONTROL
 //
@@ -8,7 +10,7 @@
 #define CONTINUOUS_RULE_2   2
 #define DISCRETE_RULE_1     3
 
-#define SWITCHING_RULE      CONTINUOUS_RULE_2
+#define SWITCHING_RULE      DISCRETE_RULE_1
 
 #define INITIAL_REFERENCE_VOLTAGE   0
 
@@ -62,17 +64,17 @@
 //
 #define S1    GPIO10
 #define S2    GPIO11
-#define MF    GPIO8
-#define AF    GPIO9
+#define S4    GPIO8
+#define S3    GPIO9
 
 
 //
 // Protections
 //
 #define PROTECTION_VIN_MAX      75
-#define PROTECTION_VOUT_MAX     75
-#define PROTECTION_IL_MAX       24
-#define PROTECTION_IOUT_MAX     0.8
+#define PROTECTION_VOUT_MAX     120
+#define PROTECTION_IL_MAX       20
+#define PROTECTION_IOUT_MAX     1.5
 
 //
 // Switching Frequency

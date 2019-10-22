@@ -1,15 +1,15 @@
-#include <src/Converter/buck.h>
+#include <src/Converter/buck_boost.h>
 
 using namespace SwitchedSystem;
 using namespace BaseConverter;
 
-namespace ConverterBuck
+namespace ConverterBuckBoost
 {
     static System system;
     static System discreteSystem;
 
 
-    System* Buck::GetSys()
+    System* BuckBoost::GetSys()
     {
         DefineSystem();
 
@@ -17,7 +17,7 @@ namespace ConverterBuck
     }
 
 
-    System* Buck::GetDiscreteSys()
+    System* BuckBoost::GetDiscreteSys()
     {
         DefineDiscreteSystem();
 
@@ -25,62 +25,77 @@ namespace ConverterBuck
     }
 
 
-    void Buck::GetP(double P[SYSTEM_ORDER][SYSTEM_ORDER])
+    void BuckBoost::GetP(double P[SYSTEM_ORDER][SYSTEM_ORDER])
     {
 #if SWITCHING_RULE == CONTINUOUS_RULE_1
         //
         // Buck Converter - Rule 1
         //
-        P[0][0] = 4.5236e-05;
-        P[0][1] = 9.5852e-06;
-        P[1][0] = 9.5852e-06;
-        P[1][1] = 5.6602e-05;
+        P[0][0] = 4.4977e-05;
+        P[0][1] = 1.9091e-05;
+        P[1][0] = 1.9091e-05;
+        P[1][1] = 6.9922e-05;
 #elif SWITCHING_RULE == CONTINUOUS_RULE_2
         //
         // Buck Converter - Rule 2
         //
-        P[0][0] = 4.5236e-05;
-        P[0][1] = 9.5852e-06;
-        P[1][0] = 9.5852e-06;
-        P[1][1] = 5.6602e-05;
+        P[0][0] = 9.7304e-04;
+        P[0][1] = 5.3437e-07;
+        P[1][0] = 5.3437e-07;
+        P[1][1] = 0.0011;
 #elif SWITCHING_RULE == DISCRETE_RULE_1
         //
         // Buck Converter - Rule 2
         //
-        P[0][0] = 3.8614e-06;
-        P[0][1] = 1.0063e-06;
-        P[1][0] = 1.0063e-06;
-        P[1][1] = 6.8689e-06;
+        P[0][0] = 3.7319e-06;
+        P[0][1] = 2.4064e-06;
+        P[1][0] = 2.4064e-06;
+        P[1][1] = 1.0160e-05;
 #endif
     }
 
-    void Buck::GetH(double h[SYSTEM_ORDER])
+    void BuckBoost::GetH(double h[SYSTEM_ORDER])
     {
 #if SWITCHING_RULE == DISCRETE_RULE_1
         //
         // Buck Converter - Rule 2
         //
-        h[0] = 5.6080e-21;
-        h[1] = -4.5437e-20;
+        h[0] = 5.9279e-06;
+        h[1] = 9.3472e-06;
 #endif
     }
 
 
-    double Buck::GetD(double P[SYSTEM_ORDER][SYSTEM_ORDER], double h[SYSTEM_ORDER])
+    double BuckBoost::GetD(double P[SYSTEM_ORDER][SYSTEM_ORDER], double h[SYSTEM_ORDER])
     {
         double d = 0;
 
 #if SWITCHING_RULE == DISCRETE_RULE_1
-        d = 3.4106e-34;
+        d = 1.2962e-05;
 #endif
 
         return d;
     }
 
 
-    int Buck::SubSystem2SwitchState(int SubSystem)
+    int BuckBoost::SubSystem2SwitchState(int SubSystem)
     {
-        return SubSystem;
+        int switchState;
+
+        switch(SubSystem)
+        {
+        case 0:
+            switchState = 2;
+            break;
+        case 1:
+            switchState = 1;
+            break;
+        default:
+            switchState = -1;
+            break;
+        }
+
+        return switchState;
     }
 
 
@@ -97,8 +112,8 @@ namespace ConverterBuck
         // Subsystem 1 -- Matrix A
         //
         subSys->A[0][0] = -R/L;
-        subSys->A[0][1] = -1/L;
-        subSys->A[1][0] =  1/Co;
+        subSys->A[0][1] =  0;
+        subSys->A[1][0] =  0;
         subSys->A[1][1] = -1/(Ro*Co);
         //
         // Subsystem 1 -- Matrix B

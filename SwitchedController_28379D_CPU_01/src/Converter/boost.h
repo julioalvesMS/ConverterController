@@ -1,5 +1,5 @@
-#ifndef SRC_CONVERTER_BUCK_H_
-#define SRC_CONVERTER_BUCK_H_
+#ifndef SRC_CONVERTER_BOOST_H_
+#define SRC_CONVERTER_BOOST_H_
 
 #include <src/settings.h>
 #include <src/Common/constants.h>
@@ -9,9 +9,9 @@
 using namespace BaseConverter;
 using namespace SwitchedSystem;
 
-namespace ConverterBuck
+namespace ConverterBoost
 {
-    class Buck : public Converter
+    class Boost : public Converter
     {
     public:
         static System* GetSys(void);
@@ -32,4 +32,4 @@ namespace ConverterBuck
     void DefineDiscreteSystem();
 }
 
-#endif  /* SRC_CONVERTER_BUCK_H_ */
+#endif  /* SRC_CONVERTER_BOOST_H_ */

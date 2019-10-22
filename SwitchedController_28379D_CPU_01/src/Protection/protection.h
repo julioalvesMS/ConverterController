@@ -3,6 +3,9 @@
 
 #include <src/settings.h>
 #include <src/Switch/switch.h>
+#include <src/OperationManagement/manager.h>
+
+extern bool ConverterEnabled;
 
 namespace Protection
 {
