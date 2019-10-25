@@ -5,6 +5,7 @@ extern double Vref;
 extern int SwitchingFrequency;
 extern bool ConverterEnabled;
 extern bool ReferenceControlerEnabled;
+extern bool OutputLoadStep;
 extern Protection::Problem protection;
 extern DAC_SPI::Channel DacChannel;
 extern BaseConverter::ConverterID activeConverter;
@@ -57,6 +58,9 @@ namespace Communication
             break;
         case 11:
             sprintf(protocol_message, "E%1d", (int) ReferenceControlerEnabled);
+            break;
+        case 12:
+            sprintf(protocol_message, "C%1d", (int) OutputLoadStep);
             break;
         default:
             break;
@@ -158,6 +162,12 @@ namespace Communication
                 break;
             case 'c':
                 ReferenceControlerEnabled = false;
+                break;
+            case 'L':
+                OutputLoadStep = true;
+                break;
+            case 'l':
+                OutputLoadStep = false;
                 break;
             default:
                 break;

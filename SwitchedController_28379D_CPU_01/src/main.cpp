@@ -90,6 +90,8 @@ bool OpenCommunication = false;
 bool CapacitorPreLoad;
 bool CapacitorPreLoadEngaged = false;
 
+bool OutputLoadStep = false;
+
 //
 // Variables used during debug
 //
@@ -174,6 +176,8 @@ void main(void)
             Manager::CompleteConverterControllerChange();
         }
 
+        Relay::StepOutputLoad(OutputLoadStep);
+
         Communication::ReceiveMessage();
 
         //
@@ -251,7 +255,7 @@ __interrupt void Interruption_SystemEvaluation(void)
     if (Controller::isSwitchedControl(controlStrategy))
         SwitchingFrequency = (10*SwitchCounter)/2;
     else if (Controller::isClassicControl(controlStrategy) && *CurrentOperationState == Manager::OS_RUNNING)
-        SwitchingFrequency = (int) ((double) 25000000/SWITCH_PWM_TBPRD);
+        SwitchingFrequency = (int) (25000000/SWITCH_PWM_TBPRD);
     else
         SwitchingFrequency = 0;
 

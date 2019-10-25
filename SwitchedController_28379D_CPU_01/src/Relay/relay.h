@@ -7,6 +7,8 @@
 namespace Relay
 {
     bool PreLoadCapacitor(bool pre_load);
+
+    bool StepOutputLoad(bool loadStep);
 }
 
 #endif /* SRC_RELAY_RELAY_H_ */
