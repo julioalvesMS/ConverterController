@@ -3,6 +3,7 @@
 
 #include <src/settings.h>
 #include <src/Common/constants.h>
+#include <src/Controller/controller.h>
 #include <src/Converter/base_converter.h>
 #include <src/SwitchedSystem/switched_system.h>
 

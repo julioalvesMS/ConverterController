@@ -10,21 +10,11 @@
 
 namespace Sensor
 {
-    //
-    // VALOR MÉDIO DA TENSÃO DE SAÍDA
-    //
-    static double vout_mean_buffer[ADC_BUFFER_SIZE];
-    static int buffer_index = 0;
-
-    //
-    // VARIÁVEIS COM OS VALORES DOS SENSORES
-    //
-    static double s_state[SYSTEM_ORDER];    // X - State vector
-    static double input_voltage = 0;        // u - Input Voltage
-    static double output_current = 0;       // Iout - Output Current
-    static double vout_mean = 0;            // Vout - Output mean value
-
     void Configure(void);
+
+
+    void ConfigureFrequency(int pwmTBPRD);
+
 
     //
     //  GetState - Get the pointer to the variable where the state

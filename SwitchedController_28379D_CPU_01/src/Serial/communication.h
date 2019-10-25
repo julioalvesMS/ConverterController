@@ -12,7 +12,7 @@
 
 #include <src/Relay/relay.h>
 
-#define MESSAGES_COUNT 10
+#define MESSAGES_COUNT 12
 
 namespace Communication
 {

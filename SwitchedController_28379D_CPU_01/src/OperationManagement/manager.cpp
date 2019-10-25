@@ -3,6 +3,7 @@
 extern double *Vin, *Vout;
 extern bool ConverterEnabled;
 extern ConverterID activeConverter;
+extern ControlStrategy controlStrategy;
 
 namespace Manager
 {
@@ -18,25 +19,52 @@ namespace Manager
 
         activeConverter = newConverter;
 
-        CurrentState = OS_CHANGING_CONVERTER;
+        CurrentState = OS_CHANGING_CONVERTER_CONTROLLER;
     }
 
 
-    void CompleteConverterChange(void)
+    void ChangeController(ControlStrategy newController)
     {
-        if(CurrentState != OS_CHANGING_CONVERTER)
+        if(CurrentState!=OS_OFF)
+            return;
+
+        ConverterEnabled = false;
+
+        if (Controller::isClassicControl(newController))
+        {
+            Sensor::ConfigureFrequency(SWITCH_PWM_TBPRD);
+            Switch::ConfigurePWM();
+        }
+        else if (Controller::isSwitchedControl(newController))
+        {
+            Sensor::ConfigureFrequency(125);
+            Switch::ConfigureGPIO();
+        }
+
+        controlStrategy = newController;
+
+        CurrentState = OS_CHANGING_CONVERTER_CONTROLLER;
+    }
+
+
+    void CompleteConverterControllerChange(void)
+    {
+        if(CurrentState != OS_CHANGING_CONVERTER_CONTROLLER)
             return;
 
         CurrentState = OS_OFF;
     }
 
 
-    void EnableOperation()
+    void EnableOperation(void)
     {
         if(CurrentState!=OS_OFF)
             return;
 
         Equilibrium::ResetController();
+        PID::ResetController();
+
+
 
         if (activeConverter == ID_Boost)
         {
@@ -49,16 +77,23 @@ namespace Manager
             Relay::PreLoadCapacitor(false);
         }
 
+        if (Controller::isClassicControl(controlStrategy) && CurrentState==OS_RUNNING)
+        {
+            Switch::EnablePWM();
+        }
+
         ConverterEnabled = true;
     }
 
 
-    void DisableOperation()
+    void DisableOperation(void)
     {
         if(CurrentState!=OS_RUNNING)
             return;
 
         CurrentState = OS_OFF;
+
+        Switch::DisablePWM();
 
         Relay::PreLoadCapacitor(false);
 
@@ -79,6 +114,11 @@ namespace Manager
         case OS_STARTING_PRE_LOAD:
             if (Relay::PreLoadCapacitor(true))
                 CurrentState = OS_PRE_LOAD;
+
+            if (Controller::isClassicControl(controlStrategy))
+            {
+                Switch::EnablePWM();
+            }
             break;
 
         case OS_PRE_LOAD:
@@ -92,6 +132,7 @@ namespace Manager
         case OS_ENDING_PRE_LOAD:
             if (!Relay::PreLoadCapacitor(false))
                 CurrentState = OS_RUNNING;
+            PID::ResetController();
             break;
         }
 

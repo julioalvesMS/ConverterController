@@ -5,8 +5,11 @@ namespace Switch
 
     static short s_switch_state = DISBALE_SWITCHES;
 
-    void Configure()
+    volatile Uint16 *S_PWM_1, *S_PWM_2;
+
+    void ConfigureGPIO()
     {
+
         EALLOW;
 
         // PULL DOWN
@@ -30,6 +33,71 @@ namespace Switch
         EDIS;
 
     }
+
+    //
+    // Configure - Configure EPWM SOC and compare values
+    //
+    void ConfigurePWM(void)
+    {
+        InitEPwm5Gpio();
+        InitEPwm6Gpio();
+
+        EPwm5Regs.TBPRD=SWITCH_PWM_TBPRD;   // 10 kHz
+        EPwm6Regs.TBCTR = 0x0000;           // Clear counter
+
+        EPwm6Regs.TBPRD=SWITCH_PWM_TBPRD;   // SWITCH_PWM_TBPRD
+        EPwm6Regs.TBCTR = 0x0000;           // Clear counter
+
+        switch(activeConverter)
+        {
+        case BaseConverter::ID_Buck:
+            EPwm6Regs.AQCTLA.all=0x0090;        // ZRO=set, PRD-clear
+            EPwm6Regs.AQCTLB.all=0x00600;       // ZRO=set, PRD-clear
+            EPwm5Regs.AQCTLB.all=0x00900;       // ZRO=set, PRD-clear
+            EPwm5Regs.AQCTLA.all=0x0090;        // ZRO=set, PRD-clear
+
+            EPwm6Regs.CMPA.bit.CMPA = 800;                  // S1
+            EPwm6Regs.CMPB.bit.CMPB = 800;                  // S2
+            EPwm5Regs.CMPB.bit.CMPB = 0;                    // S3
+            EPwm5Regs.CMPA.bit.CMPA = SWITCH_PWM_TBPRD;     // S4
+            break;
+
+        case BaseConverter::ID_Boost:
+            EPwm6Regs.AQCTLA.all=0x0090;        // ZRO=set, PRD-clear
+            EPwm6Regs.AQCTLB.all=0x00900;       // ZRO=set, PRD-clear
+            EPwm5Regs.AQCTLB.all=0x00900;       // ZRO=set, PRD-clear
+            EPwm5Regs.AQCTLA.all=0x0060;        // ZRO=set, PRD-clear
+
+            EPwm6Regs.CMPA.bit.CMPA = SWITCH_PWM_TBPRD;     // S1
+            EPwm6Regs.CMPB.bit.CMPB = 0;                    // S2
+            EPwm5Regs.CMPB.bit.CMPB = 800;                  // S3
+            EPwm5Regs.CMPA.bit.CMPA = 800;                  // S4
+            break;
+
+        case BaseConverter::ID_BuckBoost:
+            EPwm6Regs.AQCTLA.all=0x00900;        // ZRO=set, PRD-clear
+            EPwm6Regs.AQCTLB.all=0x00600;       // ZRO=set, PRD-clear
+            EPwm5Regs.AQCTLB.all=0x00900;       // ZRO=set, PRD-clear
+            EPwm5Regs.AQCTLA.all=0x00600;        // ZRO=set, PRD-clear
+
+            EPwm6Regs.CMPA.bit.CMPA = SWITCH_PWM_TBPRD;     // S1
+            EPwm6Regs.CMPB.bit.CMPB = 800;                  // S2
+            EPwm5Regs.CMPB.bit.CMPB = 800;                  // S3
+            EPwm5Regs.CMPA.bit.CMPA = SWITCH_PWM_TBPRD;     // S4
+            break;
+
+        default:
+            break;
+        }
+
+        EALLOW;
+        EPwm5Regs.TZCLR.bit.OST = 1;
+        EPwm5Regs.TZEINT.bit.OST = 1;
+        EPwm6Regs.TZCLR.bit.OST = 1;
+        EPwm6Regs.TZEINT.bit.OST = 1;
+        EDIS;
+    }
+
 
     bool SetState(int state)
     {
@@ -74,5 +142,49 @@ namespace Switch
         s_switch_state = state;
 
         return switched;
+    }
+
+    void EnablePWM(void)
+    {
+        EALLOW;
+        EPwm5Regs.TZCLR.bit.OST = 1;
+        EPwm5Regs.TZEINT.bit.OST = 1;
+        EPwm6Regs.TZCLR.bit.OST = 1;
+        EPwm6Regs.TZEINT.bit.OST = 1;
+        EDIS;
+    }
+
+    void DisablePWM(void)
+    {
+        EALLOW;
+        EPwm5Regs.TZFRC.bit.OST = 1;
+        EPwm6Regs.TZFRC.bit.OST = 1;
+        EDIS;
+    }
+
+    void UpdateDutyCycle(double DutyCycle)
+    {
+        int valueCMP = ((int) SWITCH_PWM_TBPRD * DutyCycle);
+
+        switch(activeConverter)
+        {
+        case BaseConverter::ID_Buck:
+            EPwm6Regs.CMPA.bit.CMPA = valueCMP;                  // S1
+            EPwm6Regs.CMPB.bit.CMPB = valueCMP;                  // S2
+            break;
+
+        case BaseConverter::ID_Boost:
+            EPwm5Regs.CMPB.bit.CMPB = valueCMP;                  // S3
+            EPwm5Regs.CMPA.bit.CMPA = valueCMP;                  // S4
+            break;
+
+        case BaseConverter::ID_BuckBoost:
+            EPwm6Regs.CMPB.bit.CMPB = valueCMP;                  // S2
+            EPwm5Regs.CMPB.bit.CMPB = valueCMP;                  // S3
+            break;
+
+        default:
+            break;
+        }
     }
 }

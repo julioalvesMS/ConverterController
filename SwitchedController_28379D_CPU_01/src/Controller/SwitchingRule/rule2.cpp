@@ -1,4 +1,4 @@
-#include <src/SwitchingRule/rule2.h>
+#include <src/Controller/SwitchingRule/rule2.h>
 
 using namespace SwitchedSystem;
 

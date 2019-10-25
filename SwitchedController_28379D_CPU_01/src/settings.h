@@ -54,18 +54,23 @@
 #define ADC_RESULT_VOUT         Vy
 #define ADC_BUFFER_SIZE         64
 
-//
-// DAC
-//
-#define DAC_ENABLED     1
 
 //
-// SWITCHS
+// SWITCHES
 //
 #define S1    GPIO10
 #define S2    GPIO11
 #define S4    GPIO8
 #define S3    GPIO9
+
+//
+// SWITCHES PWMs
+//
+#define SWITCH_PWM_TBPRD    1250
+#define SET_DUTY_S1(x)      GPIO10
+#define SET_DUTY_S2(x)      GPIO11
+#define SET_DUTY_S4(x)      GPIO8
+#define SET_DUTY_S3(x)      GPIO9
 
 
 //

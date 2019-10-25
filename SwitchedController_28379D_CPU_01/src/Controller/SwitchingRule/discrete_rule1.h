@@ -1,5 +1,5 @@
-#ifndef SRC_CORE_SWITCHING_RULE_1_H_
-#define SRC_CORE_SWITCHING_RULE_1_H_
+#ifndef SRC_CONTROLLER_DISCRETE_SWITCHING_RULE_1_H_
+#define SRC_CONTROLLER_DISCRETE_SWITCHING_RULE_1_H_
 
 #include <src/Common/constants.h>
 #include <src/SwitchedSystem/switched_system.h>
@@ -13,4 +13,4 @@ namespace DiscreteSwitchingRule1
     double EvaluateSubSystem(SubSystem *subSys, double P[SYSTEM_ORDER][SYSTEM_ORDER], double h[SYSTEM_ORDER], double d, double X[SYSTEM_ORDER], double Xe[SYSTEM_ORDER], double u);
 }
 
-#endif /* SRC_CORE_SWITCHING_RULE_1_H_ */
+#endif /* SRC_CONTROLLER_DISCRETE_SWITCHING_RULE_1_H_ */

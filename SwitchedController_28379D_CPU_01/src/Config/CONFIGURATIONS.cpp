@@ -192,7 +192,7 @@ void Setup_ePWM(void)
     EPwm1Regs.TBCTL.bit.CLKDIV=0;       //CLKDIV=1
     EPwm1Regs.TBCTL.bit.HSPCLKDIV=1;    // HSPCLKDIV =2
     EPwm1Regs.TBCTL.bit.CTRMODE=2;      // up down mode
-    EPwm1Regs.TBPRD=125;                // 100 kHz
+    EPwm1Regs.TBPRD=125;                // 200 kHz
     EPwm1Regs.AQCTLA.all=0x0090;        // ZRO=set, PRD-clear
     EPwm1Regs.AQCTLB.all=0x0060;        // ZRO=set, PRD-clear
     EPwm1Regs.ETPS.bit.SOCAPRD=1;       // Generate pulse on first event
@@ -204,12 +204,12 @@ void Setup_ePWM(void)
     EPwm1Regs.ETSEL.bit.SOCASEL=1;
     EPwm1Regs.ETSEL.bit.SOCBEN=1;
     EPwm1Regs.ETSEL.bit.SOCBSEL=2;
-    EPwm1Regs.CMPA.bit.CMPA = 1250;
+    EPwm1Regs.CMPA.bit.CMPA = 0;
 
     EPwm2Regs.TBCTL.bit.CLKDIV=0;       // CLKDIV=1
     EPwm2Regs.TBCTL.bit.HSPCLKDIV=1;    // HSPCLKDIV =2
     EPwm2Regs.TBCTL.bit.CTRMODE=2;      // up down mode
-    EPwm2Regs.TBPRD=2500;               // 15 kHz
+    EPwm2Regs.TBPRD=2500;               // 10 kHz
     EPwm2Regs.AQCTLA.all=0x0090;        // ZRO=set, PRD-clear
     EPwm2Regs.AQCTLB.all=0x0060;        // ZRO=set, PRD-clear
     EPwm2Regs.TBPHS.bit.TBPHS=0;        // 2*1250;
@@ -230,7 +230,7 @@ void Setup_ePWM(void)
     EPwm4Regs.TBCTL.bit.CTRMODE=2;  	// up down mode
     EPwm4Regs.AQCTLA.all=0x0090; 		// ZRO=set, PRD-clear
     EPwm4Regs.AQCTLB.all=0x0060; 		// ZRO=set, PRD-clear
-    EPwm4Regs.TBPRD=2500;
+    EPwm4Regs.TBPRD=125;
     EPwm4Regs.CMPA.bit.CMPA = 0;
     EPwm4Regs.TBCTR = 0x0000;           // Clear counter
 

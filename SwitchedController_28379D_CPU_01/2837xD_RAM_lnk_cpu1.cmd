@@ -54,7 +54,7 @@ PAGE 1 :
 SECTIONS
 {
    codestart        : > BEGIN,     PAGE = 0
-   .text            : >> RAMD0  |  RAMLS0 | RAMLS1 | RAMLS2 | RAMLS3 | RAMLS4 | RAMGS6,   PAGE = 0
+   .text            : >> RAMD0  |  RAMLS0 | RAMLS1 | RAMLS2 | RAMLS3 | RAMLS4 | RAMGS6 | RAMGS7,   PAGE = 0
    .cinit           : > RAMM0,     PAGE = 0
    .switch          : > RAMM0,     PAGE = 0
    .reset           : > RESET,     PAGE = 0, TYPE = DSECT /* not used, */

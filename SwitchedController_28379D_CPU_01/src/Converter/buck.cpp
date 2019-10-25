@@ -2,6 +2,9 @@
 
 using namespace SwitchedSystem;
 using namespace BaseConverter;
+using namespace Controller;
+
+extern ControlStrategy controlStrategy;
 
 namespace ConverterBuck
 {
@@ -27,42 +30,58 @@ namespace ConverterBuck
 
     void Buck::GetP(double P[SYSTEM_ORDER][SYSTEM_ORDER])
     {
-#if SWITCHING_RULE == CONTINUOUS_RULE_1
-        //
-        // Buck Converter - Rule 1
-        //
-        P[0][0] = 4.5236e-05;
-        P[0][1] = 9.5852e-06;
-        P[1][0] = 9.5852e-06;
-        P[1][1] = 5.6602e-05;
-#elif SWITCHING_RULE == CONTINUOUS_RULE_2
-        //
-        // Buck Converter - Rule 2
-        //
-        P[0][0] = 4.5236e-05;
-        P[0][1] = 9.5852e-06;
-        P[1][0] = 9.5852e-06;
-        P[1][1] = 5.6602e-05;
-#elif SWITCHING_RULE == DISCRETE_RULE_1
-        //
-        // Buck Converter - Rule 2
-        //
-        P[0][0] = 3.8614e-06;
-        P[0][1] = 1.0063e-06;
-        P[1][0] = 1.0063e-06;
-        P[1][1] = 6.8689e-06;
-#endif
+        switch(controlStrategy)
+        {
+        case CS_CONTINUOUS_THEOREM_1:
+            //
+            // Buck Converter - Rule 1
+            //
+            P[0][0] = 4.5236e-05;
+            P[0][1] = 9.5852e-06;
+            P[1][0] = 9.5852e-06;
+            P[1][1] = 5.6602e-05;
+            break;
+
+        case CS_CONTINUOUS_THEOREM_2:
+            //
+            // Buck Converter - Rule 2
+            //
+            P[0][0] = 4.5236e-05;
+            P[0][1] = 9.5852e-06;
+            P[1][0] = 9.5852e-06;
+            P[1][1] = 5.6602e-05;
+            break;
+
+        case CS_DISCRETE_THEOREM_1:
+            //
+            // Buck Converter - Discrete Rule 1
+            //
+            P[0][0] = 3.8614e-06;
+            P[0][1] = 1.0063e-06;
+            P[1][0] = 1.0063e-06;
+            P[1][1] = 6.8689e-06;
+            break;
+
+        default:
+            break;
+        }
     }
 
     void Buck::GetH(double h[SYSTEM_ORDER])
     {
-#if SWITCHING_RULE == DISCRETE_RULE_1
-        //
-        // Buck Converter - Rule 2
-        //
-        h[0] = 5.6080e-21;
-        h[1] = -4.5437e-20;
-#endif
+        switch(controlStrategy)
+        {
+        case CS_DISCRETE_THEOREM_1:
+            //
+            // Buck Converter - Discrete Rule 1
+            //
+            h[0] = 5.6080e-21;
+            h[1] = -4.5437e-20;
+            break;
+
+        default:
+            break;
+        }
     }
 
 
@@ -70,9 +89,18 @@ namespace ConverterBuck
     {
         double d = 0;
 
-#if SWITCHING_RULE == DISCRETE_RULE_1
-        d = 3.4106e-34;
-#endif
+        switch(controlStrategy)
+        {
+        case CS_DISCRETE_THEOREM_1:
+            //
+            // Buck Converter - Discrete Rule 1
+            //
+            d = 3.4106e-34;
+            break;
+
+        default:
+            break;
+        }
 
         return d;
     }

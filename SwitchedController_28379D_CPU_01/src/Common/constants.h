@@ -23,4 +23,6 @@ const double L  = 1.954e-3;     //  [H]   - Inductance
 const double Ro = 96.8;     //  [Ohm] - Load Resistance
 const double Co = 2250e-6;  //  [F]   - Output Capacitance
 
+const double Rratio = R/Ro;
+
 #endif /* SRC_COMMON_CONSTANTS_H_ */

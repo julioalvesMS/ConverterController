@@ -2,6 +2,20 @@
 
 namespace Sensor
 {
+    //
+    // VALOR MÉDIO DA TENSÃO DE SAÍDA
+    //
+    static double vout_mean_buffer[ADC_BUFFER_SIZE];
+    static int buffer_index = 0;
+
+    //
+    // VARIÁVEIS COM OS VALORES DOS SENSORES
+    //
+    static double s_state[SYSTEM_ORDER];    // X - State vector
+    static double input_voltage = 0;        // u - Input Voltage
+    static double output_current = 0;       // Iout - Output Current
+    static double vout_mean = 0;            // Vout - Output mean value
+
     void Configure(void)
     {
         int i;
@@ -29,6 +43,12 @@ namespace Sensor
         for(i=0;i<ADC_BUFFER_SIZE;i++)
             vout_mean_buffer[i] = 0;
 
+    }
+
+    void ConfigureFrequency(int pwmTBPRD)
+    {
+        EPwm1Regs.TBPRD = pwmTBPRD;     // 125 = 200 kHz
+        EPwm1Regs.TBCTR = 0x0000;       // Clear counter
     }
 
     //

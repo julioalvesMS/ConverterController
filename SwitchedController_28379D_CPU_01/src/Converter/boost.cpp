@@ -2,6 +2,9 @@
 
 using namespace SwitchedSystem;
 using namespace BaseConverter;
+using namespace Controller;
+
+extern ControlStrategy controlStrategy;
 
 namespace ConverterBoost
 {
@@ -27,42 +30,58 @@ namespace ConverterBoost
 
     void Boost::GetP(double P[SYSTEM_ORDER][SYSTEM_ORDER])
     {
-#if SWITCHING_RULE == CONTINUOUS_RULE_1
-        //
-        // Buck Converter - Rule 1
-        //
-        P[0][0] = 4.5155e-05;
-        P[0][1] = 1.3327e-05;
-        P[1][0] = 1.3327e-05;
-        P[1][1] = 6.0755e-05;
-#elif SWITCHING_RULE == CONTINUOUS_RULE_2
-        //
-        // Buck Converter - Rule 2
-        //
-        P[0][0] = 9.7592e-04;
-        P[0][1] = 5.9817e-07;
-        P[1][0] = 9.5852e-06;
-        P[1][1] = 0.0011;
-#elif SWITCHING_RULE == DISCRETE_RULE_1
-        //
-        // Buck Converter - Rule 2
-        //
-        P[0][0] = 9.5103e-06;
-        P[0][1] = 3.9521e-06;
-        P[1][0] = 3.9521e-06;
-        P[1][1] = 2.0042e-05;
-#endif
+        switch(controlStrategy)
+        {
+        case CS_CONTINUOUS_THEOREM_1:
+            //
+            // Boost Converter - Rule 1
+            //
+            P[0][0] = 4.5155e-05;
+            P[0][1] = 1.3327e-05;
+            P[1][0] = 1.3327e-05;
+            P[1][1] = 6.0755e-05;
+            break;
+
+        case CS_CONTINUOUS_THEOREM_2:
+            //
+            // Boost Converter - Rule 2
+            //
+            P[0][0] = 9.7592e-04;
+            P[0][1] = 5.9817e-07;
+            P[1][0] = 9.5852e-06;
+            P[1][1] = 0.0011;
+            break;
+
+        case CS_DISCRETE_THEOREM_1:
+            //
+            // Boost Converter - Discrete Rule 1
+            //
+            P[0][0] = 9.5103e-06;
+            P[0][1] = 3.9521e-06;
+            P[1][0] = 3.9521e-06;
+            P[1][1] = 2.0042e-05;
+            break;
+
+        default:
+            break;
+        }
     }
 
     void Boost::GetH(double h[SYSTEM_ORDER])
     {
-#if SWITCHING_RULE == DISCRETE_RULE_1
-        //
-        // Buck Converter - Rule 2
-        //
-        h[0] = 6.0121e-06;
-        h[1] = 6.2632e-06;
-#endif
+        switch(controlStrategy)
+        {
+        case CS_DISCRETE_THEOREM_1:
+            //
+            // Boost Converter - Discrete Rule 1
+            //
+            h[0] = 6.0121e-06;
+            h[1] = 6.2632e-06;
+            break;
+
+        default:
+            break;
+        }
     }
 
 
@@ -70,9 +89,18 @@ namespace ConverterBoost
     {
         double d = 0;
 
-#if SWITCHING_RULE == DISCRETE_RULE_1
-        d = 4.5709e-06;
-#endif
+        switch(controlStrategy)
+        {
+        case CS_DISCRETE_THEOREM_1:
+            //
+            // Boost Converter - Discrete Rule 1
+            //
+            d = 4.5709e-06;
+            break;
+
+        default:
+            break;
+        }
 
         return d;
     }

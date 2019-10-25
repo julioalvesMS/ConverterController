@@ -5,14 +5,15 @@ namespace Equilibrium
 
     static double Xe[SYSTEM_ORDER];
 
-    static double pid_sum = 0;
+    static double r[2] = {0, 0};
+    static double e[2] = {0, 0};
 
     void Configure(void)
     {
         Xe[0] = 0;
         Xe[1] = 0;
 
-        pid_sum = 0;
+        ResetController();
     }
 
     void UpdateReference(double Vref, double Vout, double u)
@@ -23,16 +24,20 @@ namespace Equilibrium
         double upperLimit, lowerLimit;
         double outsideLimit;
 
-#if REFERENCE_UPDATE_ENABLED
-        double erro = Vref - Vout;
+        if (ReferenceControlerEnabled)
+        {
+            e[1] = e[0];
+            r[1] = r[0];
 
-        pid_sum += erro*REFERENCE_CONTROLLER_PERIOD/PERIOD_UNIT;
+            e[0] = Vref - Vout;
+            r[0] = 0.5000*e[0] - 0.4700*e[1] + r[1];
 
-        Ve = pid_kp*erro + pid_ki*pid_sum;
-#else
-        Ve = Vref;
-#endif
-
+            Ve = r[0];
+        }
+        else
+        {
+            Ve = Vref;
+        }
 
         switch(activeConverter)
         {
@@ -46,13 +51,13 @@ namespace Equilibrium
             {
                 outsideLimit = lowerLimit - Ve;
                 Ve = lowerLimit;
-                pid_sum += outsideLimit/pid_ki;
+//                pid_sum += outsideLimit/pid_ki;
             }
             else if (Ve > upperLimit)
             {
                 outsideLimit = upperLimit - Ve;
                 Ve = upperLimit;
-                pid_sum += outsideLimit/pid_ki;
+//                pid_sum += outsideLimit/pid_ki;
             }
 
             Ie = Ve/Ro;
@@ -68,13 +73,13 @@ namespace Equilibrium
             {
                 outsideLimit = lowerLimit - Ve;
                 Ve = lowerLimit;
-                pid_sum += outsideLimit/pid_ki;
+//                pid_sum += outsideLimit/pid_ki;
             }
             else if (Ve > upperLimit)
             {
                 outsideLimit = upperLimit - Ve;
                 Ve = upperLimit;
-                pid_sum += outsideLimit/pid_ki;
+//                pid_sum += outsideLimit/pid_ki;
             }
 
             Ie = (u/(2*R) - sqrt( pow(u,2)/(4*pow(R,2)) - pow(Ve,2)/(R*Ro) ) );
@@ -90,13 +95,13 @@ namespace Equilibrium
             {
                 outsideLimit = lowerLimit - Ve;
                 Ve = lowerLimit;
-                pid_sum += outsideLimit/pid_ki;
+//                pid_sum += outsideLimit/pid_ki;
             }
             else if (Ve > upperLimit)
             {
                 outsideLimit = upperLimit - Ve;
                 Ve = upperLimit;
-                pid_sum += outsideLimit/pid_ki;
+//                pid_sum += outsideLimit/pid_ki;
             }
 
             Ie = (u/(2*R) - sqrt( pow(u,2)/(4*pow(R,2)) - Ve*(Ve+u)/(R*Ro) ) );
@@ -115,6 +120,10 @@ namespace Equilibrium
 
     void ResetController(void)
     {
-        pid_sum = 0;
+        r[0] = Xe[1];
+        r[1] = Xe[1];
+
+        e[0] = 0;
+        e[1] = 0;
     }
 }

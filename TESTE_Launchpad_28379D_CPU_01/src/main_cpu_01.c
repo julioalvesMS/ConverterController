@@ -149,9 +149,9 @@ void main(void)
         //TESTA_LEDS();                 // NO
         //TESTA_BOTOES();               // OK
         //TESTA_RS232();                // RS232C - NOK (v1)
-        TESTA_RELES();                // RELE 1 - NOK (v1)
+        //TESTA_RELES();                // RELE 1 - NOK (v1)
         //TESTA_DAC_SPI();              // OK
-        //TESTA_PWM();                  // OK
+        TESTA_PWM();                  // OK
         //TESTA_BKR_RST();              // OK
         //TESTA_SAIDAS_ISOLADAS();      // OK
         //TESTA_ENCODER();              // OK
@@ -574,26 +574,3 @@ interrupt void  adc_isr(void)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%INTERRUPÇÃO ADC%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

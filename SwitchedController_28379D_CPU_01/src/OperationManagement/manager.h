@@ -1,11 +1,16 @@
 #ifndef SRC_OPERATION_MANAGEMENT_MANAGER_H_
 #define SRC_OPERATION_MANAGEMENT_MANAGER_H_
 
+#include <src/Controller/controller.h>
+#include <src/Controller/ClassicController/pid.h>
 #include <src/Converter/base_converter.h>
 #include <src/Equilibrium/reference_update.h>
 #include <src/Relay/relay.h>
+#include <src/Sensor/sensor.h>
+#include <src/Switch/switch.h>
 
 using namespace BaseConverter;
+using namespace Controller;
 
 namespace Manager
 {
@@ -16,20 +21,23 @@ namespace Manager
         OS_STARTING_PRE_LOAD = 2,
         OS_PRE_LOAD = 3,
         OS_ENDING_PRE_LOAD = 4,
-        OS_CHANGING_CONVERTER = 5
+        OS_CHANGING_CONVERTER_CONTROLLER = 5
     };
 
 
     void ChangeConverter(ConverterID newConverter);
 
 
-    void CompleteConverterChange(void);
+    void ChangeController(ControlStrategy newController);
 
 
-    void EnableOperation();
+    void CompleteConverterControllerChange(void);
 
 
-    void DisableOperation();
+    void EnableOperation(void);
+
+
+    void DisableOperation(void);
 
 
     void ContinuePreLoad(void);

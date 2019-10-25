@@ -17,6 +17,7 @@ namespace Protection
     void ProtectSystem(void)
     {
         Switch::SetState(DISBALE_SWITCHES);
+        Switch::DisablePWM();
 
         Manager::DisableOperation();
     }

@@ -2,6 +2,9 @@
 
 using namespace SwitchedSystem;
 using namespace BaseConverter;
+using namespace Controller;
+
+extern ControlStrategy controlStrategy;
 
 namespace ConverterBuckBoost
 {
@@ -27,42 +30,58 @@ namespace ConverterBuckBoost
 
     void BuckBoost::GetP(double P[SYSTEM_ORDER][SYSTEM_ORDER])
     {
-#if SWITCHING_RULE == CONTINUOUS_RULE_1
-        //
-        // Buck Converter - Rule 1
-        //
-        P[0][0] = 4.4977e-05;
-        P[0][1] = 1.9091e-05;
-        P[1][0] = 1.9091e-05;
-        P[1][1] = 6.9922e-05;
-#elif SWITCHING_RULE == CONTINUOUS_RULE_2
-        //
-        // Buck Converter - Rule 2
-        //
-        P[0][0] = 9.7304e-04;
-        P[0][1] = 5.3437e-07;
-        P[1][0] = 5.3437e-07;
-        P[1][1] = 0.0011;
-#elif SWITCHING_RULE == DISCRETE_RULE_1
-        //
-        // Buck Converter - Rule 2
-        //
-        P[0][0] = 3.7319e-06;
-        P[0][1] = 2.4064e-06;
-        P[1][0] = 2.4064e-06;
-        P[1][1] = 1.0160e-05;
-#endif
+        switch(controlStrategy)
+        {
+        case CS_CONTINUOUS_THEOREM_1:
+            //
+            // Buck-Boost Converter - Rule 1
+            //
+            P[0][0] = 4.4977e-05;
+            P[0][1] = 1.9091e-05;
+            P[1][0] = 1.9091e-05;
+            P[1][1] = 6.9922e-05;
+            break;
+
+        case CS_CONTINUOUS_THEOREM_2:
+            //
+            // Buck-Boost Converter - Rule 2
+            //
+            P[0][0] = 9.7304e-04;
+            P[0][1] = 5.3437e-07;
+            P[1][0] = 5.3437e-07;
+            P[1][1] = 0.0011;
+            break;
+
+        case CS_DISCRETE_THEOREM_1:
+            //
+            // Buck-Boost Converter - Discrete Rule 1
+            //
+            P[0][0] = 3.7319e-06;
+            P[0][1] = 2.4064e-06;
+            P[1][0] = 2.4064e-06;
+            P[1][1] = 1.0160e-05;
+            break;
+
+        default:
+            break;
+        }
     }
 
     void BuckBoost::GetH(double h[SYSTEM_ORDER])
     {
-#if SWITCHING_RULE == DISCRETE_RULE_1
-        //
-        // Buck Converter - Rule 2
-        //
-        h[0] = 5.9279e-06;
-        h[1] = 9.3472e-06;
-#endif
+        switch(controlStrategy)
+        {
+        case CS_DISCRETE_THEOREM_1:
+            //
+            // Buck-Boost Converter - Discrete Rule 1
+            //
+            h[0] = 5.9279e-06;
+            h[1] = 9.3472e-06;
+            break;
+
+        default:
+            break;
+        }
     }
 
 
@@ -70,9 +89,18 @@ namespace ConverterBuckBoost
     {
         double d = 0;
 
-#if SWITCHING_RULE == DISCRETE_RULE_1
-        d = 1.2962e-05;
-#endif
+        switch(controlStrategy)
+        {
+        case CS_DISCRETE_THEOREM_1:
+            //
+            // Buck-Boost Converter - Discrete Rule 1
+            //
+            d = 1.2962e-05;
+            break;
+
+        default:
+            break;
+        }
 
         return d;
     }

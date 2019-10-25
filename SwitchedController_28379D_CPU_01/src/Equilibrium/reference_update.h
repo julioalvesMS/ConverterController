@@ -9,6 +9,7 @@
 
 using namespace BaseConverter;
 extern ConverterID activeConverter;
+extern bool ReferenceControlerEnabled;
 
 namespace Equilibrium
 {

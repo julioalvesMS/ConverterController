@@ -7,13 +7,21 @@
 
 #define DISBALE_SWITCHES -1
 
-extern bool CapacitorPreLoad;
+extern BaseConverter::ConverterID activeConverter;
 
 namespace Switch
 {
-    void Configure();
+    void ConfigureGPIO(void);
+
+    void ConfigurePWM(void);
 
     bool SetState(int state);
+
+    void EnablePWM(void);
+
+    void DisablePWM(void);
+
+    void UpdateDutyCycle(double DutyCycle);
 }
 
 #endif /* SRC_SWITCH_SWITCH_H_ */

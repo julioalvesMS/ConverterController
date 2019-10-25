@@ -3,11 +3,12 @@
 extern double *Vin, *Vout, *IL, *Iout;
 extern double Vref;
 extern int SwitchingFrequency;
-extern Protection::Problem protection;
 extern bool ConverterEnabled;
+extern bool ReferenceControlerEnabled;
+extern Protection::Problem protection;
 extern DAC_SPI::Channel DacChannel;
-extern ConverterID activeConverter;
-extern bool CapacitorPreLoad;
+extern BaseConverter::ConverterID activeConverter;
+extern Controller::ControlStrategy controlStrategy;
 
 
 namespace Communication
@@ -50,6 +51,12 @@ namespace Communication
             break;
         case 9:
             sprintf(protocol_message, "@%1d", (int) activeConverter);
+            break;
+        case 10:
+            sprintf(protocol_message, "&%1d", (int) controlStrategy);
+            break;
+        case 11:
+            sprintf(protocol_message, "E%1d", (int) ReferenceControlerEnabled);
             break;
         default:
             break;
@@ -122,6 +129,7 @@ namespace Communication
             case 'p':
                 protection = Protection::NONE;
                 break;
+
             case '0':
                 Manager::ChangeConverter(ID_Buck);
                 break;
@@ -130,6 +138,26 @@ namespace Communication
                 break;
             case '2':
                 Manager::ChangeConverter(ID_BuckBoost);
+                break;
+
+            case '!':
+                Manager::ChangeController(CS_CLASSIC_PWM);
+                break;
+            case '@':
+                Manager::ChangeController(CS_CONTINUOUS_THEOREM_1);
+                break;
+            case '#':
+                Manager::ChangeController(CS_CONTINUOUS_THEOREM_2);
+                break;
+            case '$':
+                Manager::ChangeController(CS_DISCRETE_THEOREM_1);
+                break;
+            case 'C':
+                Equilibrium::ResetController();
+                ReferenceControlerEnabled = true;
+                break;
+            case 'c':
+                ReferenceControlerEnabled = false;
                 break;
             default:
                 break;
