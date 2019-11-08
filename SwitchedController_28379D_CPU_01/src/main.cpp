@@ -6,15 +6,16 @@
 #include <src/Config/CONFIGURATIONS.h>
 #include <src/Config/CONFIG_GPIO_V1_LP28379D.h>
 #include <src/Config/DEFINES_LP28379D.h>
-#include <src/Controller/ClassicController/pid.h>
 #include <src/Controller/SwitchingRule/discrete_rule1.h>
 #include <src/Controller/SwitchingRule/rule1.h>
 #include <src/Controller/SwitchingRule/rule2.h>
 #include <src/Controller/controller.h>
+#include <src/Controller/ClassicController/voltage_controller.h>
 #include <src/Converter/base_converter.h>
 #include <src/Converter/boost.h>
 #include <src/Converter/buck.h>
 #include <src/Converter/buck_boost.h>
+#include <src/Converter/buck_boost_3.h>
 #include <src/DAC/dac.h>
 #include <src/Equilibrium/reference_update.h>
 #include <src/OperationManagement/manager.h>
@@ -34,6 +35,7 @@ using namespace BaseConverter;
 using namespace ConverterBuck;
 using namespace ConverterBoost;
 using namespace ConverterBuckBoost;
+using namespace ConverterBuckBoost3;
 using namespace Controller;
 
 
@@ -236,10 +238,25 @@ void LoadConverterController(void)
         BuckBoost::GetH(h);
         d = BuckBoost::GetD(P,h);
         break;
+    case ID_BuckBoost3:
+        sys = BuckBoost3::GetSys();
+        dsys = BuckBoost3::GetDiscreteSys();
+        BuckBoost3::GetP(P);
+        BuckBoost3::GetH(h);
+        d = BuckBoost3::GetD(P,h);
+        break;
     }
 
     if (Controller::isClassicControl(controlStrategy))
+    {
+        VoltageController::LoadController();
         Switch::ConfigurePWM();
+    }
+
+    if (Controller::isSwitchedControl(controlStrategy))
+    {
+        Equilibrium::LoadController();
+    }
 }
 
 
@@ -361,6 +378,9 @@ void SwitchedControl(void)
     case ID_BuckBoost:
         SwitchState = BuckBoost::SubSystem2SwitchState(BestSubsystem);
         break;
+    case ID_BuckBoost3:
+        SwitchState = BuckBoost3::SubSystem2SwitchState(BestSubsystem);
+        break;
     default:
         SwitchState = DISBALE_SWITCHES;
         break;
@@ -387,7 +407,7 @@ void SwitchedControl(void)
         break;
     }
 
-    if(iterations_since_switch < 10 && *CurrentOperationState == Manager::OS_RUNNING)
+    if(iterations_since_switch < 5 && *CurrentOperationState == Manager::OS_RUNNING)
         iterations_since_switch++;
     else
     {
@@ -409,7 +429,7 @@ void ClassicControl(void)
     switch(controlStrategy)
     {
     case CS_CLASSIC_PWM:
-        DutyCycle = PID::Update(Vref, *Vout, *Vin);
+        DutyCycle = VoltageController::Update(Vref, *Vout, *Vin);
     default:
         break;
     }

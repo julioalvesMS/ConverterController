@@ -1,14 +1,18 @@
-#ifndef SRC_CONVERTER_BASE_CONVERTER_H_
-#define SRC_CONVERTER_BASE_CONVERTER_H_
+#ifndef SRC_CONVERTER_BUCK_BOOST_3_H_
+#define SRC_CONVERTER_BUCK_BOOST_3_H_
 
+#include <src/settings.h>
 #include <src/Common/constants.h>
+#include <src/Controller/controller.h>
+#include <src/Converter/base_converter.h>
 #include <src/SwitchedSystem/switched_system.h>
 
+using namespace BaseConverter;
 using namespace SwitchedSystem;
 
-namespace BaseConverter
+namespace ConverterBuckBoost3
 {
-    class Converter
+    class BuckBoost3 : public Converter
     {
     public:
         static System* GetSys(void);
@@ -21,20 +25,14 @@ namespace BaseConverter
 
         static double GetD(double P[SYSTEM_ORDER][SYSTEM_ORDER], double h[SYSTEM_ORDER]);
 
-        static void GetClassicController(double num[2], double den[2]);
-
         static void GetReferenceController(double num[2], double den[2]);
 
         static int SubSystem2SwitchState(int SubSystem);
     };
 
-    enum ConverterID
-    {
-        ID_Buck = 0,
-        ID_Boost = 1,
-        ID_BuckBoost = 2,
-        ID_BuckBoost3 = 3,
-    };
+    void DefineSystem();
+
+    void DefineDiscreteSystem();
 }
 
-#endif  /* SRC_CONVERTER_BASE_CONVERTER_H_ */
+#endif  /* SRC_CONVERTER_BUCK_BOOST_3_H_ */

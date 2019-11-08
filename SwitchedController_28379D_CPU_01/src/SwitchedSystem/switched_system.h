@@ -20,6 +20,7 @@ namespace SwitchedSystem
     class System
     {
     public:
+        int N;
         SubSystem subSystems[SUBSYSTEMS_COUNT];
     };
 

@@ -25,6 +25,10 @@ namespace ConverterBuckBoost
 
         static double GetD(double P[SYSTEM_ORDER][SYSTEM_ORDER], double h[SYSTEM_ORDER]);
 
+        static void GetClassicController(double num[2], double den[2]);
+
+        static void GetReferenceController(double num[2], double den[2]);
+
         static int SubSystem2SwitchState(int SubSystem);
     };
 

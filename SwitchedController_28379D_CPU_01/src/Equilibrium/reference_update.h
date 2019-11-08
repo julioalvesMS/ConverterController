@@ -5,18 +5,26 @@
 #include "F28x_Project.h"
 #include <src/Common/constants.h>
 #include <src/Converter/base_converter.h>
+#include <src/Converter/buck.h>
+#include <src/Converter/boost.h>
+#include <src/Converter/buck_boost.h>
+#include <src/Converter/buck_boost_3.h>
 #include <src/settings.h>
 
 using namespace BaseConverter;
+using namespace ConverterBuck;
+using namespace ConverterBoost;
+using namespace ConverterBuckBoost;
+using namespace ConverterBuckBoost3;
+
 extern ConverterID activeConverter;
 extern bool ReferenceControlerEnabled;
 
 namespace Equilibrium
 {
-    const double pid_kp = REFERENCE_CONTROLLER_PID_KP;
-    const double pid_ki = REFERENCE_CONTROLLER_PID_KI;
-
     void Configure(void);
+
+    void LoadController(void);
 
     void UpdateReference(double Vref, double Vout, double u);
 

@@ -16,6 +16,8 @@ namespace ConverterBuckBoost
     {
         DefineSystem();
 
+        system.N = 2;
+
         return &(system);
     }
 
@@ -23,6 +25,8 @@ namespace ConverterBuckBoost
     System* BuckBoost::GetDiscreteSys()
     {
         DefineDiscreteSystem();
+
+        discreteSystem.N = 2;
 
         return &(discreteSystem);
     }
@@ -34,32 +38,32 @@ namespace ConverterBuckBoost
         {
         case CS_CONTINUOUS_THEOREM_1:
             //
-            // Buck-Boost Converter - Rule 1
+            // BuckBoost Converter - Rule 1
             //
-            P[0][0] = 4.4977e-05;
-            P[0][1] = 1.9091e-05;
-            P[1][0] = 1.9091e-05;
-            P[1][1] = 6.9922e-05;
+            P[0][0] = 4.48917e-05;
+            P[0][1] = 2.12726e-05;
+            P[1][0] = 2.12726e-05;
+            P[1][1] = 7.42982e-05;
             break;
 
         case CS_CONTINUOUS_THEOREM_2:
             //
-            // Buck-Boost Converter - Rule 2
+            // BuckBoost Converter - Rule 2
             //
-            P[0][0] = 9.7304e-04;
-            P[0][1] = 5.3437e-07;
-            P[1][0] = 5.3437e-07;
-            P[1][1] = 0.0011;
+            P[0][0] = 0.000972027;
+            P[0][1] = 5.07287e-07;
+            P[1][0] = 5.07287e-07;
+            P[1][1] = 0.001125;
             break;
 
         case CS_DISCRETE_THEOREM_1:
             //
-            // Buck-Boost Converter - Discrete Rule 1
+            // BuckBoost Converter - Discrete Rule 1
             //
-            P[0][0] = 3.7319e-06;
-            P[0][1] = 2.4064e-06;
-            P[1][0] = 2.4064e-06;
-            P[1][1] = 1.0160e-05;
+            P[0][0] = 3.04753e-06;
+            P[0][1] = 1.59905e-06;
+            P[1][0] = 1.59905e-06;
+            P[1][1] = 8.8219e-06;
             break;
 
         default:
@@ -67,16 +71,17 @@ namespace ConverterBuckBoost
         }
     }
 
+
     void BuckBoost::GetH(double h[SYSTEM_ORDER])
     {
         switch(controlStrategy)
         {
         case CS_DISCRETE_THEOREM_1:
             //
-            // Buck-Boost Converter - Discrete Rule 1
+            // BuckBoost Converter - Discrete Rule 1
             //
-            h[0] = 5.9279e-06;
-            h[1] = 9.3472e-06;
+            h[0] = 5.93261e-06;
+            h[1] = 9.22972e-06;
             break;
 
         default:
@@ -93,9 +98,9 @@ namespace ConverterBuckBoost
         {
         case CS_DISCRETE_THEOREM_1:
             //
-            // Buck-Boost Converter - Discrete Rule 1
+            // BuckBoost Converter - Discrete Rule 1
             //
-            d = 1.2962e-05;
+            d = 1.6236e-05;
             break;
 
         default:
@@ -103,6 +108,26 @@ namespace ConverterBuckBoost
         }
 
         return d;
+    }
+
+
+    void BuckBoost::GetClassicController(double num[2], double den[2])
+    {
+        num[0] = 0.002;
+        num[1] = -0.00199;
+
+        den[0] = 1;
+        den[1] = -1;
+    }
+
+
+    void BuckBoost::GetReferenceController(double num[2], double den[2])
+    {
+        num[0] = 3;
+        num[1] = -2.9847;
+
+        den[0] = 1;
+        den[1] = -1;
     }
 
 
@@ -183,6 +208,7 @@ namespace ConverterBuckBoost
         subSys->Q[1][1] = 1/Ro;
     }
 
+
     void DefineDiscreteSystem()
     {
         SubSystem* subSys;
@@ -195,22 +221,22 @@ namespace ConverterBuckBoost
         //
         // Subsystem 1 -- Matrix A
         //
-        subSys->A[0][0] =  0.9786;
-        subSys->A[0][1] = -0.0506;
-        subSys->A[1][0] =  0.0440;
-        subSys->A[1][1] =  0.9984;
+        subSys->A[0][0] = 0.989817;
+        subSys->A[0][1] = 0;
+        subSys->A[1][0] = 0;
+        subSys->A[1][1] = 0.99977;
         //
         // Subsystem 1 -- Matrix B
         //
-        subSys->L[0] = 0.0193;
-        subSys->L[1] = 4.3142e-04;
+        subSys->L[0] = 0.0250089;
+        subSys->L[1] = -0.000279266;
         //
         // Subsystem 1 -- Matrix Q
         //
-        subSys->Q[0][0] = 0;
+        subSys->Q[0][0] = 0.01;
         subSys->Q[0][1] = 0;
         subSys->Q[1][0] = 0;
-        subSys->Q[1][1] = 1/Ro;
+        subSys->Q[1][1] = 0.0103306;
 
 
         //
@@ -221,21 +247,22 @@ namespace ConverterBuckBoost
         //
         // Subsystem 2 -- Matrix A
         //
-        subSys->A[0][0] =  0.9786;
-        subSys->A[0][1] = -0.0506;
-        subSys->A[1][0] =  0.0440;
-        subSys->A[1][1] =  0.9984;
+        subSys->A[0][0] = 0.989534;
+        subSys->A[0][1] = -0.0254527;
+        subSys->A[1][0] = 0.0221042;
+        subSys->A[1][1] = 0.999487;
         //
         // Subsystem 2 -- Matrix B
         //
-        subSys->L[0] = -0.0313;
-        subSys->L[1] = -6.9774e-04;
+        subSys->L[0] = -0.0314279;
+        subSys->L[1] = 0.000350945;
         //
         // Subsystem 2 -- Matrix Q
         //
-        subSys->Q[0][0] = 0;
+        subSys->Q[0][0] = 0.01;
         subSys->Q[0][1] = 0;
         subSys->Q[1][0] = 0;
-        subSys->Q[1][1] = 1/Ro;
+        subSys->Q[1][1] = 0.0103306;
+
     }
 }

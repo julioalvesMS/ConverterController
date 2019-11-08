@@ -1,5 +1,5 @@
-#ifndef SRC_CLASSIC_CONTROLLER_PID_H_
-#define SRC_CLASSIC_CONTROLLER_PID_H_
+#ifndef SRC_CLASSIC_CONTROLLER_CURRENT_H_
+#define SRC_CLASSIC_CONTROLLER_CURRENT_H_
 
 #include <math.h>
 #include <src/Common/constants.h>
@@ -7,7 +7,7 @@
 
 extern BaseConverter::ConverterID activeConverter;
 
-namespace PID
+namespace CurrentController
 {
     const double pid_kp = 0.5;
     const double pid_ki = 0.1;
@@ -17,4 +17,4 @@ namespace PID
     void ResetController(void);
 }
 
-#endif /* SRC_CLASSIC_CONTROLLER_PID_H_ */
+#endif /* SRC_CLASSIC_CONTROLLER_CURRENT_H_ */

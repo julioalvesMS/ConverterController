@@ -62,7 +62,7 @@ namespace Manager
             return;
 
         Equilibrium::ResetController();
-        PID::ResetController();
+        VoltageController::ResetController();
 
 
 
@@ -132,7 +132,7 @@ namespace Manager
         case OS_ENDING_PRE_LOAD:
             if (!Relay::PreLoadCapacitor(false))
                 CurrentState = OS_RUNNING;
-            PID::ResetController();
+            VoltageController::ResetController();
             break;
         }
 

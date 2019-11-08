@@ -6,7 +6,7 @@ PAGE 0 :
 
    BEGIN           	: origin = 0x000000, length = 0x000002
    RAMM0           	: origin = 0x000122, length = 0x0002DE
-   RAMD0           	: origin = 0x00B000, length = 0x000800 //2
+   // RAMD0           	: origin = 0x00B000, length = 0x000800 //2
    RAMLS0          	: origin = 0x008000, length = 0x000800
    RAMLS1          	: origin = 0x008800, length = 0x000800
    RAMLS2      		: origin = 0x009000, length = 0x000800
@@ -27,7 +27,7 @@ PAGE 1 :
    RAMM1           : origin = 0x000400, length = 0x000400     /* on-chip RAM block M1 */
    RAMD1           : origin = 0x00B800, length = 0x000800 //3
 
-   RAMLS5      : origin = 0x00A800, length = 0x000800 //1
+   RAMLS5      : origin = 0x00A800, length = 0x001000 //1
 
    RAMGS0      : origin = 0x00C000, length = 0x001000 //4
    RAMGS1      : origin = 0x00D000, length = 0x001000 //5
@@ -54,7 +54,7 @@ PAGE 1 :
 SECTIONS
 {
    codestart        : > BEGIN,     PAGE = 0
-   .text            : >> RAMD0  |  RAMLS0 | RAMLS1 | RAMLS2 | RAMLS3 | RAMLS4 | RAMGS6 | RAMGS7,   PAGE = 0
+   .text            : >> RAMLS0 | RAMLS1 | RAMLS2 | RAMLS3 | RAMLS4 | RAMGS6 | RAMGS7 | RAMGS8,   PAGE = 0
    .cinit           : > RAMM0,     PAGE = 0
    .switch          : > RAMM0,     PAGE = 0
    .reset           : > RESET,     PAGE = 0, TYPE = DSECT /* not used, */

@@ -8,12 +8,37 @@ namespace Equilibrium
     static double r[2] = {0, 0};
     static double e[2] = {0, 0};
 
+    static double numPID[2] = {0, 0};
+    static double denPID[2] = {0, 0};
+
     void Configure(void)
     {
         Xe[0] = 0;
         Xe[1] = 0;
 
         ResetController();
+    }
+
+    void LoadController(void)
+    {
+        switch(activeConverter)
+        {
+        case BaseConverter::ID_Buck:
+            Buck::GetReferenceController(numPID, denPID);
+            break;
+        case BaseConverter::ID_Boost:
+            Boost::GetReferenceController(numPID, denPID);
+            break;
+        case BaseConverter::ID_BuckBoost:
+            BuckBoost::GetReferenceController(numPID, denPID);
+            break;
+        case BaseConverter::ID_BuckBoost3:
+            BuckBoost3::GetReferenceController(numPID, denPID);
+            break;
+
+        default:
+            break;
+        }
     }
 
     void UpdateReference(double Vref, double Vout, double u)
@@ -30,7 +55,8 @@ namespace Equilibrium
             r[1] = r[0];
 
             e[0] = Vref - Vout;
-            r[0] = 0.5000*e[0] - 0.4700*e[1] + r[1];
+//            r[0] = 0.5000*e[0] - 0.4700*e[1] + r[1];
+            r[0] = numPID[0]*e[0] + numPID[1]*e[1] - denPID[1]*r[1];
 
             Ve = r[0];
         }
@@ -86,6 +112,28 @@ namespace Equilibrium
             break;
 
         case ID_BuckBoost:
+            //
+            // Limits for Buck-Boost
+            //
+            upperLimit = 3*u; lowerLimit = -5;
+
+            if (Ve < lowerLimit)
+            {
+                outsideLimit = lowerLimit - Ve;
+                Ve = lowerLimit;
+//                pid_sum += outsideLimit/pid_ki;
+            }
+            else if (Ve > upperLimit)
+            {
+                outsideLimit = upperLimit - Ve;
+                Ve = upperLimit;
+//                pid_sum += outsideLimit/pid_ki;
+            }
+
+            Ie = (u/(2*R) - sqrt( pow(u,2)/(4*pow(R,2)) - Ve*(Ve+u)/(R*Ro) ) );
+            break;
+
+        case ID_BuckBoost3:
             //
             // Limits for Buck-Boost
             //

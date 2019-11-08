@@ -2,12 +2,12 @@
 #define SRC_OPERATION_MANAGEMENT_MANAGER_H_
 
 #include <src/Controller/controller.h>
-#include <src/Controller/ClassicController/pid.h>
 #include <src/Converter/base_converter.h>
 #include <src/Equilibrium/reference_update.h>
 #include <src/Relay/relay.h>
 #include <src/Sensor/sensor.h>
 #include <src/Switch/switch.h>
+#include "../Controller/ClassicController/voltage_controller.h"
 
 using namespace BaseConverter;
 using namespace Controller;

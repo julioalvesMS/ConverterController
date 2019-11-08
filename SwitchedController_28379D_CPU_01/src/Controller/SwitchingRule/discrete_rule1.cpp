@@ -17,7 +17,7 @@ namespace DiscreteSwitchingRule1
         csi[0]  = X[0] - Xe[0];
         csi[1]  = X[1] - Xe[1];
 
-        for (i=0;i<SUBSYSTEMS_COUNT;i++)
+        for (i=0;i<sys->N;i++)
         {
             new_sigma = EvaluateSubSystem(&(sys->subSystems[i]), P, h, d, X, Xe, u);
 
