@@ -133,6 +133,7 @@ namespace Manager
             if (!Relay::PreLoadCapacitor(false))
                 CurrentState = OS_RUNNING;
             VoltageController::ResetController();
+            Equilibrium::ResetController();
             break;
         }
 

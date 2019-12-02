@@ -152,7 +152,7 @@ void main(void)
     Iout = Sensor::GetOutputCurrent();
 
     Xe = Equilibrium::GetReference();
-    Equilibrium::UpdateReference(Vref, *Vout_mean, *u);
+    Equilibrium::UpdateReference(*Vout_mean, *u);
 
     CurrentOperationState = Manager::GetCurrentState();
 
@@ -295,7 +295,7 @@ __interrupt void Interruption_ReferenceUpdate(void)
 {
     CpuTimer2.InterruptCount++;
 
-    Equilibrium::UpdateReference(Vref, *Vout_mean, *u);
+    Equilibrium::UpdateReference(*Vout_mean, *u);
 }
 
 

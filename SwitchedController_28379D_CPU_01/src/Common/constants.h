@@ -11,7 +11,7 @@
 // Sensor calibration
 //
 #define READ_IL(X)      0.0077*X - 4.1675
-#define READ_VOUT(X)    0.0211*X - 11.503
+#define READ_VOUT(X)    0.0355*X - 16.281
 #define READ_VIN(X)     0.021*X - 11.507
 #define READ_IOUT(X)    0.001*X - 0.5465
 

@@ -19,6 +19,7 @@ using namespace ConverterBuckBoost3;
 
 extern ConverterID activeConverter;
 extern bool ReferenceControlerEnabled;
+extern double Vref;
 
 namespace Equilibrium
 {
@@ -26,7 +27,7 @@ namespace Equilibrium
 
     void LoadController(void);
 
-    void UpdateReference(double Vref, double Vout, double u);
+    void UpdateReference(double Vout, double u);
 
     double* GetReference(void);
 

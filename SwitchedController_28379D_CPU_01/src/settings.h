@@ -77,9 +77,9 @@
 // Protections
 //
 #define PROTECTION_VIN_MAX      75
-#define PROTECTION_VOUT_MAX     120
+#define PROTECTION_VOUT_MAX     125
 #define PROTECTION_IL_MAX       20
-#define PROTECTION_IOUT_MAX     1.5
+#define PROTECTION_IOUT_MAX     2.5
 
 //
 // Switching Frequency

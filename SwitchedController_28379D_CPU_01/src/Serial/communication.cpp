@@ -27,10 +27,10 @@ namespace Communication
             sprintf(protocol_message, "U%02d", (int) (*Vin));
             break;
         case 1:
-            sprintf(protocol_message, "Y%03d", (int) (10*(*Vout)));
+            sprintf(protocol_message, "Y%04d", (int) (10*(*Vout)));
             break;
         case 2:
-            sprintf(protocol_message, "R%03d", (int) (10*Vref));
+            sprintf(protocol_message, "R%04d", (int) (10*Vref));
             break;
         case 3:
             sprintf(protocol_message, "I%03d", (int) (100*(*Iout)));

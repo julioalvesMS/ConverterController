@@ -3,12 +3,6 @@
 namespace Sensor
 {
     //
-    // VALOR MÉDIO DA TENSÃO DE SAÍDA
-    //
-    static double vout_mean_buffer[ADC_BUFFER_SIZE];
-    static int buffer_index = 0;
-
-    //
     // VARIÁVEIS COM OS VALORES DOS SENSORES
     //
     static double s_state[SYSTEM_ORDER];    // X - State vector
@@ -18,8 +12,6 @@ namespace Sensor
 
     void Configure(void)
     {
-        int i;
-
         //
         // Configuração do canais analógicos de entrada
         //
@@ -39,9 +31,6 @@ namespace Sensor
         vout_mean = 0;
         input_voltage = 0;
         output_current = 0;
-
-        for(i=0;i<ADC_BUFFER_SIZE;i++)
-            vout_mean_buffer[i] = 0;
 
     }
 
@@ -125,11 +114,6 @@ namespace Sensor
         s_state[1] = READ_VOUT(ADC_RESULT_VOUT);    // Voltage
         input_voltage = READ_VIN(ADC_RESULT_VIN);   // Input Voltage
         output_current = READ_IOUT(ADC_RESULT_IOUT);   // Output Current
-
-//        vout_mean -= vout_mean_buffer[buffer_index];
-//        vout_mean_buffer[buffer_index] = (s_state[1])/ADC_BUFFER_SIZE;
-//        vout_mean += vout_mean_buffer[buffer_index];
-//        buffer_index = (buffer_index + 1) % ADC_BUFFER_SIZE;
 
         vout_mean = filtro_1(s_state[1]);
 

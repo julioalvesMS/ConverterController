@@ -153,9 +153,9 @@ void main(void)
         //TESTA_DAC_SPI();              // OK
         //TESTA_PWM();                  // OK
         //TESTA_BKR_RST();              // OK
-        TESTA_SAIDAS_ISOLADAS();      // OK
+        //TESTA_SAIDAS_ISOLADAS();      // OK
         //TESTA_ENCODER();              // OK
-        //TESTA_ENTRADAS_ANALOGICAS();  // OK - Vx não funciona placa V1.1
+        TESTA_ENTRADAS_ANALOGICAS();  // OK - Vx não funciona placa V1.1
     }
 }
 
@@ -529,7 +529,7 @@ interrupt void  adc_isr(void)
 
 	// Vx, Vy e Vz Vcc2
 	Vx   = (AdcaResultRegs.ADCRESULT2);
-	Vy   = (AdcaResultRegs.ADCRESULT0);
+	Vy   = 0.0355*filtro_1(AdcaResultRegs.ADCRESULT0) - 16.281;
 	Vz   = (AdccResultRegs.ADCRESULT1);
 	Vcc2 = (AdcbResultRegs.ADCRESULT4);
 
