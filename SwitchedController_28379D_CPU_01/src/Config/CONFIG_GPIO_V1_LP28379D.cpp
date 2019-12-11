@@ -129,6 +129,12 @@ EALLOW;
     GpioCtrlRegs.GPCMUX1.bit.GPIO64 = 3;    // GPIO64  = SPIS0MIB
     GpioCtrlRegs.GPCMUX1.bit.GPIO65 = 3;    // GPIO65  = SPISIMIB
     GpioCtrlRegs.GPCMUX1.bit.GPIO66 = 3;    // GPIO66  = SPISTEB
+
+
+    GpioCtrlRegs.GPBCSEL4.bit.GPIO63 = 2;   // CPU2
+    GpioCtrlRegs.GPCCSEL1.bit.GPIO64 = 2;   // CPU2
+    GpioCtrlRegs.GPCCSEL1.bit.GPIO65 = 2;   // CPU2
+    GpioCtrlRegs.GPCCSEL1.bit.GPIO66 = 2;   // CPU2
 EDIS;
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -188,6 +194,7 @@ EALLOW;     //Configura GPIO26 RESETTZ
 //  CONFIGURA CANAIS DE RS232												<
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+
 // ( SCI-B on GPIO18 - GPIO19)
 EALLOW;
     // Enable SCI-A on GPIO18 - GPIO19
@@ -195,6 +202,9 @@ EALLOW;
     GpioCtrlRegs.GPAMUX2.bit.GPIO19 = 2;    // GPIO19 = SCIRXDB_DSP
     GpioCtrlRegs.GPAPUD.bit.GPIO18 = 0;     // Enable pullup on GPIO18
     GpioCtrlRegs.GPAMUX2.bit.GPIO18 = 2;    // GPIO18 = SCITXDB_DSP
+
+    GpioCtrlRegs.GPACSEL3.bit.GPIO18 = 2;   // CPU2
+    GpioCtrlRegs.GPACSEL3.bit.GPIO19 = 2;   // CPU2
 EDIS;
 
 // ( SCI-C on GPIO18 - GPIO19)
@@ -204,6 +214,9 @@ EALLOW;
     GpioCtrlRegs.GPEMUX1.bit.GPIO139 = 2;   // GPIO19 = SCIRXDB_DSP
     GpioCtrlRegs.GPBPUD.bit.GPIO56 = 0;     // Enable pullup on GPIO18
     GpioCtrlRegs.GPBMUX2.bit.GPIO56 = 2;    // GPIO18 = SCITXDB_DSP
+
+    GpioCtrlRegs.GPBCSEL4.bit.GPIO56 = 2;   // CPU2
+    GpioCtrlRegs.GPECSEL2.bit.GPIO139 = 2;  // CPU2
 EDIS;
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

@@ -2,12 +2,109 @@
 
 extern double *Vin, *Vout;
 extern bool ConverterEnabled;
+extern bool OutputLoadStep;
 extern ConverterID activeConverter;
 extern ControlStrategy controlStrategy;
+extern Protection::Problem protection;
+
+extern Protocol::CommunicationCommand IPC_CommandBuffer[];
+extern int IPC_BufferIndex;
+
+static int lastBufferIndex = 0;
 
 namespace Manager
 {
     OperationState CurrentState = OS_OFF;
+
+
+    void ExecuteCommand(void)
+    {
+        if (lastBufferIndex==IPC_BufferIndex)
+            return;
+
+        switch(IPC_CommandBuffer[lastBufferIndex])
+        {
+        case Protocol::EnableOperation:
+            Manager::EnableOperation();
+            break;
+        case Protocol::DisableOperation:
+            Manager::DisableOperation();
+            break;
+        case Protocol::IncreaseDacChannel:
+            break;
+        case Protocol::DecreaseDacChannel:
+            break;
+        case Protocol::RampIncreaseReference:
+            Vref += 0.002;
+            if(Vref > PROTECTION_VOUT_MAX) Vref = PROTECTION_VOUT_MAX;
+            break;
+        case Protocol::RampDecreaseReference:
+            Vref -= 0.002;
+            if(Vref < 0) Vref = 0;
+            break;
+        case Protocol::StepIncreaseReference:
+            Vref += 10;
+            if(Vref > PROTECTION_VOUT_MAX) Vref = PROTECTION_VOUT_MAX;
+            break;
+        case Protocol::StepDecreaseReference:
+            Vref -= 10;
+            if(Vref < 0) Vref = 0;
+            break;
+        case Protocol::EmergencyButtonProtection:
+            protection = Protection::FAULT_EMERGENCY_STOP;
+            break;
+        case Protocol::ResetProtection:
+            protection = Protection::NONE;
+            break;
+
+        case Protocol::ConverterBuck:
+            Manager::ChangeConverter(ID_Buck);
+            break;
+        case Protocol::ConverterBoost:
+            Manager::ChangeConverter(ID_Boost);
+            break;
+        case Protocol::ConverterBuckBoost:
+            Manager::ChangeConverter(ID_BuckBoost);
+            break;
+        case Protocol::ConverterBuckBoost3:
+            Manager::ChangeConverter(ID_BuckBoost3);
+            break;
+
+        case Protocol::ControllerClassic:
+            Manager::ChangeController(CS_CLASSIC_PWM);
+            break;
+        case Protocol::ControllerContinuous1:
+            Manager::ChangeController(CS_CONTINUOUS_THEOREM_1);
+            break;
+        case Protocol::ControllerContinuous2:
+            Manager::ChangeController(CS_CONTINUOUS_THEOREM_2);
+            break;
+        case Protocol::ControllerDiscrete1:
+            Manager::ChangeController(CS_DISCRETE_THEOREM_1);
+            break;
+        case Protocol::EnableEquilibriumController:
+            Equilibrium::ResetController();
+            ReferenceControlerEnabled = true;
+            break;
+        case Protocol::DisableEquilibriumController:
+            ReferenceControlerEnabled = false;
+            break;
+        case Protocol::EngageParallelLoad:
+            OutputLoadStep = true;
+            break;
+        case Protocol::DisengageParallelLoad:
+            OutputLoadStep = false;
+            break;
+        default:
+            break;
+        }
+
+        lastBufferIndex++;
+
+        if (lastBufferIndex >= IPC_COMMAND_BUFFER_SIZE)
+            lastBufferIndex = 0;
+
+    }
 
 
     void ChangeConverter(ConverterID newConverter)

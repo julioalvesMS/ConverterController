@@ -1,20 +1,17 @@
-#ifndef SRC_COMMUNICATION_H_
-#define SRC_COMMUNICATION_H_
+#ifndef SRC_SERIAL_H_
+#define SRC_SERIAL_H_
 
 #include <stdio.h>
 #include "F28x_Project.h"
 
+#include <src/settings.h>
 #include <src/Config/CONFIGURATIONS.h>
-#include <src/Equilibrium/reference_update.h>
 #include <src/DAC/dac.h>
-#include <src/OperationManagement/manager.h>
-#include <src/Protection/protection.h>
+#include <src/IPC/protocol.h>
 
-#include <src/Relay/relay.h>
+#define MESSAGES_COUNT 14
 
-#define MESSAGES_COUNT 13
-
-namespace Communication
+namespace Serial
 {
     static char protocol_message[8];
     static int  data_index = 0;
@@ -28,4 +25,4 @@ namespace Communication
     void ReceiveMessage(void);
 }
 
-#endif /* SRC_COMMUNICATION_H_ */
+#endif /* SRC_SERIAL_H_ */

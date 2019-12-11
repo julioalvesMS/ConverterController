@@ -4,6 +4,11 @@
 #include <src/Config/DEFINES_LP28379D.h>
 
 //
+// IPC
+//
+#define IPC_COMMAND_BUFFER_SIZE         64
+
+//
 // SWITCHED CONTROL
 //
 #define CONTINUOUS_RULE_1   1

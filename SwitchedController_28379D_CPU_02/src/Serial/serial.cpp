@@ -1,18 +1,25 @@
-#include <src/Serial/communication.h>
+#include <src/Serial/serial.h>
 
-extern double *Vin, *Vout, *IL, *Iout;
+extern double Vin, Vout, IL, Iout;
 extern double Vref;
+extern double loadResistance;
 extern int SwitchingFrequency;
 extern bool ConverterEnabled;
 extern bool ReferenceControlerEnabled;
 extern bool OutputLoadStep;
-extern Protection::Problem protection;
-extern DAC_SPI::Channel DacChannel;
-extern BaseConverter::ConverterID activeConverter;
-extern Controller::ControlStrategy controlStrategy;
 
+//
+// Enums
+//
+extern int protection;
+extern int DacChannel;
+extern int activeConverter;
+extern int controlStrategy;
 
-namespace Communication
+extern Protocol::CommunicationCommand IPC_CommandBuffer[];
+extern int IPC_BufferIndex;
+
+namespace Serial
 {
     void Configure(void)
     {
@@ -24,19 +31,19 @@ namespace Communication
         switch(data_index)
         {
         case 0:
-            sprintf(protocol_message, "U%02d", (int) (*Vin));
+            sprintf(protocol_message, "U%02d", (int) (Vin));
             break;
         case 1:
-            sprintf(protocol_message, "Y%04d", (int) (10*(*Vout)));
+            sprintf(protocol_message, "Y%04d", (int) (10*Vout));
             break;
         case 2:
             sprintf(protocol_message, "R%04d", (int) (10*Vref));
             break;
         case 3:
-            sprintf(protocol_message, "I%03d", (int) (100*(*Iout)));
+            sprintf(protocol_message, "I%03d", (int) (100*Iout));
             break;
         case 4:
-            sprintf(protocol_message, "L%04d", (int) (100*(*IL)));
+            sprintf(protocol_message, "L%04d", (int) (100*IL));
             break;
         case 5:
             sprintf(protocol_message, "#%1d", (int) ConverterEnabled);
@@ -61,6 +68,9 @@ namespace Communication
             break;
         case 12:
             sprintf(protocol_message, "C%1d", (int) OutputLoadStep);
+            break;
+        case 13:
+            sprintf(protocol_message, "Z%04d", (int) (loadResistance*10));
             break;
         default:
             break;
@@ -91,90 +101,93 @@ namespace Communication
     {
         if(ScibRegs.SCIFFRX.bit.RXFFST>=1)
         {
+            Protocol::CommunicationCommand command;
             int channel;
-
             char buffer = ScibRegs.SCIRXBUF.bit.SAR;
 
             switch(buffer)
             {
             case 'E':
-                Manager::EnableOperation();
+                command = Protocol::EnableOperation;
                 break;
             case 'e':
-                Manager::DisableOperation();
+                command = Protocol::DisableOperation;
                 break;
             case 'D':
                 DacChannel = (DAC_SPI::Channel) ((((int) DacChannel)+1)%DAC_CHANNEL_COUNT);
+                command = Protocol::IncreaseDacChannel;
                 break;
             case 'd':
                 channel = ((int) DacChannel) - 1;
                 if(channel < 0) channel = channel + DAC_CHANNEL_COUNT;
                 DacChannel = (DAC_SPI::Channel) channel;
+                command = Protocol::DecreaseDacChannel;
                 break;
             case 'R':
-                Vref += 0.002;
-                if(Vref > PROTECTION_VOUT_MAX) Vref = PROTECTION_VOUT_MAX;
+                command = Protocol::RampIncreaseReference;
                 break;
             case 'r':
-                Vref -= 0.002;
-                if(Vref < 0) Vref = 0;
+                command = Protocol::RampDecreaseReference;
                 break;
             case 'S':
-                Vref += 10;
-                if(Vref > PROTECTION_VOUT_MAX) Vref = PROTECTION_VOUT_MAX;
+                command = Protocol::StepIncreaseReference;
                 break;
             case 's':
-                Vref -= 10;
-                if(Vref < 0) Vref = 0;
+                command = Protocol::StepDecreaseReference;
                 break;
             case 'P':
-                protection = Protection::FAULT_EMERGENCY_STOP;
+                command = Protocol::EmergencyButtonProtection;
                 break;
             case 'p':
-                protection = Protection::NONE;
+                command = Protocol::ResetProtection;
                 break;
 
             case '0':
-                Manager::ChangeConverter(ID_Buck);
+                command = Protocol::ConverterBuck;
                 break;
             case '1':
-                Manager::ChangeConverter(ID_Boost);
+                command = Protocol::ConverterBoost;
                 break;
             case '2':
-                Manager::ChangeConverter(ID_BuckBoost);
+                command = Protocol::ConverterBuckBoost;
                 break;
             case '3':
-                Manager::ChangeConverter(ID_BuckBoost3);
+                command = Protocol::ConverterBuckBoost3;
                 break;
 
             case '!':
-                Manager::ChangeController(CS_CLASSIC_PWM);
+                command = Protocol::ControllerClassic;
                 break;
             case '@':
-                Manager::ChangeController(CS_CONTINUOUS_THEOREM_1);
+                command = Protocol::ControllerContinuous1;
                 break;
             case '#':
-                Manager::ChangeController(CS_CONTINUOUS_THEOREM_2);
+                command = Protocol::ControllerContinuous2;
                 break;
             case '$':
-                Manager::ChangeController(CS_DISCRETE_THEOREM_1);
+                command = Protocol::ControllerDiscrete1;
                 break;
             case 'C':
-                Equilibrium::ResetController();
-                ReferenceControlerEnabled = true;
+                command = Protocol::EnableEquilibriumController;
                 break;
             case 'c':
-                ReferenceControlerEnabled = false;
+                command = Protocol::DisableEquilibriumController;
                 break;
             case 'L':
-                OutputLoadStep = true;
+                command = Protocol::EngageParallelLoad;
                 break;
             case 'l':
-                OutputLoadStep = false;
+                command = Protocol::DisengageParallelLoad;
                 break;
             default:
+                command = Protocol::None;
                 break;
             }
+
+            IPC_CommandBuffer[IPC_BufferIndex++] = command;
+
+            if (IPC_BufferIndex >= IPC_COMMAND_BUFFER_SIZE)
+                IPC_BufferIndex -= IPC_COMMAND_BUFFER_SIZE;
 
             ScibRegs.SCIFFRX.bit.RXFIFORESET = 0;   // reset RX-FIFO pointer
             ScibRegs.SCIFFRX.bit.RXFIFORESET = 1;   // enable RX-operation

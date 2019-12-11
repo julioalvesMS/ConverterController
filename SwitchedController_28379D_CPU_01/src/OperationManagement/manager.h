@@ -2,12 +2,14 @@
 #define SRC_OPERATION_MANAGEMENT_MANAGER_H_
 
 #include <src/Controller/controller.h>
+#include <src/Controller/ClassicController/voltage_controller.h>
 #include <src/Converter/base_converter.h>
 #include <src/Equilibrium/reference_update.h>
+#include <src/IPC/protocol.h>
+#include <src/Protection/protection.h>
 #include <src/Relay/relay.h>
 #include <src/Sensor/sensor.h>
 #include <src/Switch/switch.h>
-#include "../Controller/ClassicController/voltage_controller.h"
 
 using namespace BaseConverter;
 using namespace Controller;
@@ -23,6 +25,9 @@ namespace Manager
         OS_ENDING_PRE_LOAD = 4,
         OS_CHANGING_CONVERTER_CONTROLLER = 5
     };
+
+
+    void ExecuteCommand(void);
 
 
     void ChangeConverter(ConverterID newConverter);

@@ -3,6 +3,7 @@
 // Includes
 //
 #include "F28x_Project.h"
+#include <src/settings.h>
 #include <src/Config/CONFIGURATIONS.h>
 #include <src/Config/CONFIG_GPIO_V1_LP28379D.h>
 #include <src/Config/DEFINES_LP28379D.h>
@@ -16,13 +17,12 @@
 #include <src/Converter/buck.h>
 #include <src/Converter/buck_boost.h>
 #include <src/Converter/buck_boost_3.h>
-#include <src/DAC/dac.h>
 #include <src/Equilibrium/reference_update.h>
+#include <src/IPC/ipc.h>
 #include <src/OperationManagement/manager.h>
 #include <src/Protection/protection.h>
 #include <src/Relay/relay.h>
 #include <src/Sensor/sensor.h>
-#include <src/Serial/communication.h>
 #include <src/Switch/switch.h>
 #include <src/SwitchedSystem/switched_system.h>
 #include <src/Timer/timer.h>
@@ -42,10 +42,11 @@ using namespace Controller;
 //
 // Functions in main
 //
-void DebugVariables(void);
+void ConfigureCPU02(void);
 void LoadConverterController(void);
 void SwitchedControl(void);
 void ClassicControl(void);
+
 
 //
 // Interruptions defined in main
@@ -54,43 +55,58 @@ __interrupt void Interruption_SystemEvaluation(void);
 __interrupt void Interruption_ReferenceUpdate(void);
 __interrupt void Interruption_Sensor(void);
 
+
 //
-// Global static variables
+// IPC Communication
+//
+Protocol::CommunicationCommand IPC_CommandBuffer[IPC_COMMAND_BUFFER_SIZE];
+int IPC_BufferIndex = 0;
+
+
+//
+// Converter State Variables
 //
 double *X, *Xe;
 double *u;
 double *Vout_mean;
+double *loadResistance;
 double Vref = INITIAL_REFERENCE_VOLTAGE;
-int BestSubsystem;
-int SwitchState;
 
 
+//
+// Switched Control Variables
+//
 double P[SYSTEM_ORDER][SYSTEM_ORDER];
 double h[SYSTEM_ORDER];
 double d;
 System* sys;
 System* dsys;
+int BestSubsystem;
+int SwitchState;
+
+
+//
+// System Management and Mode of Operation
+//
+bool ConverterEnabled = false;
+bool ReferenceControlerEnabled = true;
+bool CapacitorPreLoad;
+bool CapacitorPreLoadEngaged = false;
+Protection::Problem protection = Protection::NONE;
 ConverterID activeConverter = ID_BuckBoost;
 ControlStrategy controlStrategy = CS_DISCRETE_THEOREM_1;
-
-Protection::Problem protection = Protection::NONE;
-bool ConverterEnabled = false;
 Manager::OperationState *CurrentOperationState;
-bool ReferenceControlerEnabled = true;
 
-DAC_SPI::Channel DacChannel = DAC_SPI::CH_CONTROLE;
 
+//
+// Measurement and Statistics Variables
+//
 int InterruptionCounter = 0;
 int iterations_since_switch = 0;
 int SwitchCounter = 0;
 int SwitchingFrequency, ADCFrequency;
 
 double DutyCycle = 0;
-
-bool OpenCommunication = false;
-
-bool CapacitorPreLoad;
-bool CapacitorPreLoadEngaged = false;
 
 bool OutputLoadStep = false;
 
@@ -101,12 +117,24 @@ double *Vin, *Vout, *IL, *Iout;
 
 void main(void)
 {
-    int loop_count;
-
     InitSysCtrl();          // Inicializações básicas
     InitGpio();             // Inicializações padrão para as GPIOs
     InitIpc();              // Inicializações para comunicação entre as CPUs
     InitCpuTimers();        // Inicializações do timer 0, 1 e 2
+
+    //
+    // Step 2. Give control of SPI-A to CPU2
+    //
+    EALLOW;
+    DevCfgRegs.CPUSEL6.bit.SPI_B = 1;
+    DevCfgRegs.CPUSEL5.bit.SCI_B = 1;
+    CpuSysRegs.SECMSEL.bit.PF1SEL = 1;      // Set EPWM Secondary Master to DMA
+    EDIS;
+
+    //
+    // Step 3. Send IPC to CPU2 telling it to proceed with configuring the SPI
+    //
+    IpcRegs.IPCSET.bit.IPC0 = 1;
 
     DINT;                   // Disable all interrupts
 
@@ -143,13 +171,22 @@ void main(void)
     Sensor::Configure();
     Switch::ConfigureGPIO();
     Equilibrium::Configure();
-    Communication::Configure();
-    DAC_SPI::Configure();
+    IPC::Configure();
+
+
+    EALLOW;
+    IpcRegs.IPCSET.bit.IPC1 = 1;
+    EDIS;
 
     X = Sensor::GetState();
     u = Sensor::GetInput();
     Vout_mean = Sensor::GetOutput();
     Iout = Sensor::GetOutputCurrent();
+    loadResistance = Sensor::GetLoadResistance();
+
+    Vin = u;
+    Vout = X+1;
+    IL = X;
 
     Xe = Equilibrium::GetReference();
     Equilibrium::UpdateReference(*Vout_mean, *u);
@@ -158,7 +195,7 @@ void main(void)
 
     LoadConverterController();
 
-    DebugVariables();
+    ConfigureCPU02();
 
     Timer::SystemEvaluation_Start();
     Timer::ReferenceUpdate_Start();
@@ -168,9 +205,11 @@ void main(void)
     EINT;   // Enable Global interrupt INTM
     ERTM;   // Enable Global realtime interrupt DBGM
 
-    loop_count = 0;
     for(;;)
     {
+        IPC::CPUCommunication();
+
+        Manager::ExecuteCommand();
 
         if (*CurrentOperationState == Manager::OS_CHANGING_CONVERTER_CONTROLLER)
         {
@@ -179,37 +218,26 @@ void main(void)
         }
 
         Relay::StepOutputLoad(OutputLoadStep);
-
-        Communication::ReceiveMessage();
-
-        //
-        // Send to DAC
-        //
-        DAC_SPI::SendData(DacChannel);
-
-        if(OpenCommunication)
-        {
-            loop_count++;
-            //
-            // Send to PC
-            //
-            Communication::SendMessage();
-
-            if (loop_count >= MESSAGES_COUNT)
-            {
-                OpenCommunication = false;
-                loop_count = 0;
-            }
-        }
     }
 }
 
 
-void DebugVariables(void)
+void ConfigureCPU02(void)
 {
-    Vin = u;
-    Vout = X+1;
-    IL = X;
+
+    //
+    // Give Memory Access to GS1 SARAM to CPU02
+    //
+    while( !(MemCfgRegs.GSxMSEL.bit.MSEL_GS1 &
+            MemCfgRegs.GSxMSEL.bit.MSEL_GS12 &
+            MemCfgRegs.GSxMSEL.bit.MSEL_GS13))
+    {
+        EALLOW;
+        MemCfgRegs.GSxMSEL.bit.MSEL_GS1 = 1;
+        MemCfgRegs.GSxMSEL.bit.MSEL_GS12 = 1;
+        MemCfgRegs.GSxMSEL.bit.MSEL_GS13 = 1;
+        EDIS;
+    }
 }
 
 
@@ -284,7 +312,6 @@ __interrupt void Interruption_SystemEvaluation(void)
         Manager::ContinuePreLoad();
 
     i++;
-    OpenCommunication = true;
 }
 
 

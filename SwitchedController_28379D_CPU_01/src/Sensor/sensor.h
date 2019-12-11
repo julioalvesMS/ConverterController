@@ -34,7 +34,12 @@ namespace Sensor
     //
     double* GetOutput(void);
 
+
     double* GetOutputCurrent(void);
+
+
+    double* GetLoadResistance(void);
+
 
     void ReadADCResult(void);
 }

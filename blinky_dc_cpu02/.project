@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>flash_programming_dcsm_cpu01</name>
+	<name>blinky_dc_cpu02</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -26,11 +26,6 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>F021_API_F2837xD_FPU32.lib</name>
-			<type>1</type>
-			<locationURI>PARENT-7-ORIGINAL_PROJECT_ROOT/libraries/flash_api/f2837xd/lib/F021_API_F2837xD_FPU32.lib</locationURI>
-		</link>
-		<link>
 			<name>F2837xD_CodeStartBranch.asm</name>
 			<type>1</type>
 			<locationURI>PARENT-5-ORIGINAL_PROJECT_ROOT/common/source/F2837xD_CodeStartBranch.asm</locationURI>
@@ -49,6 +44,11 @@
 			<name>F2837xD_Gpio.c</name>
 			<type>1</type>
 			<locationURI>PARENT-5-ORIGINAL_PROJECT_ROOT/common/source/F2837xD_Gpio.c</locationURI>
+		</link>
+		<link>
+			<name>F2837xD_Ipc.c</name>
+			<type>1</type>
+			<locationURI>PARENT-5-ORIGINAL_PROJECT_ROOT/common/source/F2837xD_Ipc.c</locationURI>
 		</link>
 		<link>
 			<name>F2837xD_PieCtrl.c</name>
@@ -71,19 +71,9 @@
 			<locationURI>PARENT-5-ORIGINAL_PROJECT_ROOT/common/source/F2837xD_usDelay.asm</locationURI>
 		</link>
 		<link>
-			<name>Fapi_UserDefinedFunctions.c</name>
+			<name>blinky_dc_cpu02.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-ORIGINAL_PROJECT_ROOT/Fapi_UserDefinedFunctions.c</locationURI>
-		</link>
-		<link>
-			<name>flash_programming_dcsm_cpu01.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-ORIGINAL_PROJECT_ROOT/flash_programming_dcsm_cpu01.c</locationURI>
-		</link>
-		<link>
-			<name>flash_programming_dcsm_cpu1_FLASH.cmd</name>
-			<type>1</type>
-			<locationURI>PARENT-1-ORIGINAL_PROJECT_ROOT/flash_programming_dcsm_cpu1_FLASH.cmd</locationURI>
+			<locationURI>PARENT-1-ORIGINAL_PROJECT_ROOT/blinky_dc_cpu02.c</locationURI>
 		</link>
 	</linkedResources>
 	<variableList>
@@ -93,7 +83,7 @@
 		</variable>
 		<variable>
 			<name>ORIGINAL_PROJECT_ROOT</name>
-			<value>$%7BTI_PRODUCTS_DIR__TIREX%7D/C2000Ware_2_00_00_03_Software/device_support/f2837xd/examples/cpu1/flash_programming_dcsm/cpu01/ccs</value>
+			<value>$%7BTI_PRODUCTS_DIR__TIREX%7D/C2000Ware_2_00_00_03_Software/device_support/f2837xd/examples/dual/blinky_dc/cpu02/ccs</value>
 		</variable>
 	</variableList>
 </projectDescription>
