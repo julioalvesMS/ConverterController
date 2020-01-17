@@ -21,7 +21,9 @@ namespace BaseConverter
 
         static double GetD(double P[SYSTEM_ORDER][SYSTEM_ORDER], double h[SYSTEM_ORDER]);
 
-        static void GetClassicController(double num[2], double den[2]);
+        static void GetClassicVoltageController(double num[2], double den[2]);
+
+        static void GetClassicVoltageCurrnetController(double vNum[2], double vDen[2], double iNum[2], double iDen[2]);
 
         static void GetReferenceController(double num[2], double den[2]);
 

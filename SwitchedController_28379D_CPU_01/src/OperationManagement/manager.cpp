@@ -5,6 +5,7 @@ extern bool ConverterEnabled;
 extern bool OutputLoadStep;
 extern ConverterID activeConverter;
 extern ControlStrategy controlStrategy;
+extern Equilibrium::EquilibriumMethod CorrectionMethod;
 extern Protection::Problem protection;
 
 extern Protocol::CommunicationCommand IPC_CommandBuffer[];
@@ -82,12 +83,15 @@ namespace Manager
         case Protocol::ControllerDiscrete1:
             Manager::ChangeController(CS_DISCRETE_THEOREM_1);
             break;
-        case Protocol::EnableEquilibriumController:
-            Equilibrium::ResetController();
-            ReferenceControlerEnabled = true;
+        case Protocol::ControllerClassicVC:
+            Manager::ChangeController(CS_CLASSIC_VC_PWM);
             break;
-        case Protocol::DisableEquilibriumController:
-            ReferenceControlerEnabled = false;
+        case Protocol::EquilibriumNone:
+            CorrectionMethod = Equilibrium::NONE;
+            break;
+        case Protocol::EquilibriumReferenceController:
+            ReferenceUpdate::ResetController();
+            CorrectionMethod = Equilibrium::REFERENCE_UPDATE;
             break;
         case Protocol::EngageParallelLoad:
             OutputLoadStep = true;
@@ -158,8 +162,9 @@ namespace Manager
         if(CurrentState!=OS_OFF)
             return;
 
-        Equilibrium::ResetController();
+        ReferenceUpdate::ResetController();
         VoltageController::ResetController();
+        VoltageCurrentController::ResetController();
 
 
 
@@ -185,7 +190,7 @@ namespace Manager
 
     void DisableOperation(void)
     {
-        if(CurrentState!=OS_RUNNING)
+        if(CurrentState==OS_OFF)
             return;
 
         CurrentState = OS_OFF;
@@ -219,7 +224,7 @@ namespace Manager
             break;
 
         case OS_PRE_LOAD:
-            if (*Vout >= *Vin * 0.95)
+            if (*Vout >= *Vin * 0.9)
             {
                 Relay::PreLoadCapacitor(false);
                 CurrentState = OS_ENDING_PRE_LOAD;
@@ -230,7 +235,8 @@ namespace Manager
             if (!Relay::PreLoadCapacitor(false))
                 CurrentState = OS_RUNNING;
             VoltageController::ResetController();
-            Equilibrium::ResetController();
+            VoltageCurrentController::ResetController();
+            ReferenceUpdate::ResetController();
             break;
         }
 

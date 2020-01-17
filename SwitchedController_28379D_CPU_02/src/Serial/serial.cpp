@@ -5,8 +5,9 @@ extern double Vref;
 extern double loadResistance;
 extern int SwitchingFrequency;
 extern bool ConverterEnabled;
-extern bool ReferenceControlerEnabled;
+extern int CorrectionMethod;
 extern bool OutputLoadStep;
+extern double stateDutyCycle[4];
 
 //
 // Enums
@@ -64,13 +65,25 @@ namespace Serial
             sprintf(protocol_message, "&%1d", (int) controlStrategy);
             break;
         case 11:
-            sprintf(protocol_message, "E%1d", (int) ReferenceControlerEnabled);
+            sprintf(protocol_message, "E%1d", (int) CorrectionMethod);
             break;
         case 12:
             sprintf(protocol_message, "C%1d", (int) OutputLoadStep);
             break;
         case 13:
-            sprintf(protocol_message, "Z%04d", (int) (loadResistance*10));
+            sprintf(protocol_message, "Z%04d", (int) (stateDutyCycle[0]*10));
+            break;
+        case 14:
+            sprintf(protocol_message, "0%04d", (int) (stateDutyCycle[0]*10));
+            break;
+        case 15:
+            sprintf(protocol_message, "1%04d", (int) (stateDutyCycle[1]*10));
+            break;
+        case 16:
+            sprintf(protocol_message, "2%04d", (int) (stateDutyCycle[2]*10));
+            break;
+        case 17:
+            sprintf(protocol_message, "3%04d", (int) (stateDutyCycle[3]*10));
             break;
         default:
             break;
@@ -167,12 +180,23 @@ namespace Serial
             case '$':
                 command = Protocol::ControllerDiscrete1;
                 break;
-            case 'C':
-                command = Protocol::EnableEquilibriumController;
+            case '%':
+                command = Protocol::ControllerClassicVC;
                 break;
-            case 'c':
-                command = Protocol::DisableEquilibriumController;
+
+            case ',':
+                command = Protocol::EquilibriumNone;
                 break;
+            case '.':
+                command = Protocol::EquilibriumReferenceController;
+                break;
+            case ';':
+                command = Protocol::EquilibriumPartialInformation;
+                break;
+            case '<':
+                command = Protocol::EquilibriumCurrentCorrection;
+                break;
+
             case 'L':
                 command = Protocol::EngageParallelLoad;
                 break;

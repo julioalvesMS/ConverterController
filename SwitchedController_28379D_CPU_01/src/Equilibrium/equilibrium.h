@@ -1,5 +1,5 @@
-#ifndef SRC_EQUILIBRIUM_REFERENCE_UPDATE_H_
-#define SRC_EQUILIBRIUM_REFERENCE_UPDATE_H_
+#ifndef SRC_EQUILIBRIUM_H_
+#define SRC_EQUILIBRIUM_H_
 
 #include <math.h>
 #include "F28x_Project.h"
@@ -9,7 +9,6 @@
 #include <src/Converter/boost.h>
 #include <src/Converter/buck_boost.h>
 #include <src/Converter/buck_boost_3.h>
-#include <src/Equilibrium/equilibrium.h>
 #include <src/settings.h>
 
 using namespace BaseConverter;
@@ -20,17 +19,25 @@ using namespace ConverterBuckBoost3;
 
 extern ConverterID activeConverter;
 extern double Vref;
-extern double *Xe;
 
-namespace ReferenceUpdate
+namespace Equilibrium
 {
+    enum EquilibriumMethod
+    {
+        NONE = 0,
+        REFERENCE_UPDATE = 1,
+        PARTIAL_INFORMATION = 2,
+        CURRENT_CORRECTION = 3,
+    };
+
     void Configure(void);
 
-    void LoadController(void);
+    double* GetEquilibrium(void);
 
-    void UpdateReference(double Vout, double u);
+    void UpdateEquilibrium(double u);
 
-    void ResetController(void);
+    double EstimateEquilibriumCurrent(double Ve, double u);
 }
 
-#endif /* SRC_EQUILIBRIUM_REFERENCE_UPDATE_H_ */
+
+#endif /* SRC_EQUILIBRIUM_H_ */

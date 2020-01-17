@@ -3,7 +3,9 @@
 
 #include <src/Controller/controller.h>
 #include <src/Controller/ClassicController/voltage_controller.h>
+#include <src/Controller/ClassicController/voltage_current_controller.h>
 #include <src/Converter/base_converter.h>
+#include <src/Equilibrium/equilibrium.h>
 #include <src/Equilibrium/reference_update.h>
 #include <src/IPC/protocol.h>
 #include <src/Protection/protection.h>

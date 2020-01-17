@@ -13,13 +13,13 @@ namespace VoltageController
         switch(activeConverter)
         {
         case BaseConverter::ID_Buck:
-            Buck::GetClassicController(numPID, denPID);
+            Buck::GetClassicVoltageController(numPID, denPID);
             break;
         case BaseConverter::ID_Boost:
-            Boost::GetClassicController(numPID, denPID);
+            Boost::GetClassicVoltageController(numPID, denPID);
             break;
         case BaseConverter::ID_BuckBoost:
-            BuckBoost::GetClassicController(numPID, denPID);
+            BuckBoost::GetClassicVoltageController(numPID, denPID);
             break;
 
         default:

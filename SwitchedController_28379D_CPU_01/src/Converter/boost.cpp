@@ -111,13 +111,29 @@ namespace ConverterBoost
     }
 
 
-    void Boost::GetClassicController(double num[2], double den[2])
+    void Boost::GetClassicVoltageController(double num[2], double den[2])
     {
         num[0] = 0.0203;
         num[1] = -0.0200615;
 
         den[0] = 1;
         den[1] = -1;
+    }
+
+
+    void Boost::GetClassicVoltageCurrnetController(double vNum[2], double vDen[2], double iNum[2], double iDen[2])
+    {
+        vNum[0] = 0.3161;
+        vNum[1] = -0.3159;
+
+        vDen[0] = 1;
+        vDen[1] = -1;
+
+        iNum[0] = 0.02042;
+        iNum[1] = -0.02018;
+
+        iDen[0] = 1;
+        iDen[1] = -1;
     }
 
 

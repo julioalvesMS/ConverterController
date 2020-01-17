@@ -32,11 +32,11 @@ int ADC_Vout, ADC_Vin, ADC_IL, ADC_Iout;
 
 int activeConverter;
 int controlStrategy;
+int CorrectionMethod;
 int protection;
 int SwitchingFrequency, ADCFrequency;
 
 bool ConverterEnabled;
-bool ReferenceControlerEnabled;
 bool OutputLoadStep;
 
 DAC_SPI::Channel DacChannel = DAC_SPI::CH_CONTROLE;
@@ -45,6 +45,8 @@ CommunicationCommand IPC_CommandBuffer[IPC_COMMAND_BUFFER_SIZE];
 int IPC_BufferIndex = 0;
 
 bool OpenCommunication = false;
+
+double stateDutyCycle[4] = {0, 0, 0, 0};
 
 void main(void)
 {

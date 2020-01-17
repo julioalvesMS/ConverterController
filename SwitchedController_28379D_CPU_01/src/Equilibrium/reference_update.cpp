@@ -1,9 +1,7 @@
 #include <src/Equilibrium/reference_update.h>
 
-namespace Equilibrium
+namespace ReferenceUpdate
 {
-
-    static double Xe[SYSTEM_ORDER];
 
     static double r[2] = {0, 0};
     static double e[2] = {0, 0};
@@ -13,9 +11,6 @@ namespace Equilibrium
 
     void Configure(void)
     {
-        Xe[0] = 0;
-        Xe[1] = 0;
-
         ResetController();
     }
 
@@ -47,123 +42,49 @@ namespace Equilibrium
         double Ie;
 
         double upperLimit, lowerLimit;
-        double outsideLimit;
 
-        if (ReferenceControlerEnabled)
-        {
-            e[1] = e[0];
-            r[1] = r[0];
 
-            e[0] = Vref - Vout;
+        e[1] = e[0];
+        r[1] = r[0];
+
+        e[0] = Vref - Vout;
 //            r[0] = 0.5000*e[0] - 0.4700*e[1] + r[1];
-            r[0] = numPID[0]*e[0] + numPID[1]*e[1] - denPID[1]*r[1];
-
-            Ve = r[0];
-        }
-        else
-        {
-            Ve = Vref;
-        }
+        r[0] = numPID[0]*e[0] + numPID[1]*e[1] - denPID[1]*r[1];
 
         switch(activeConverter)
         {
         case ID_Buck:
-            //
-            // Limits for Buck
-            //
             upperLimit = u; lowerLimit = -5;
-
-            if (Ve < lowerLimit)
-            {
-                outsideLimit = lowerLimit - Ve;
-                Ve = lowerLimit;
-                r[0] += outsideLimit;
-            }
-            else if (Ve > upperLimit)
-            {
-                outsideLimit = upperLimit - Ve;
-                Ve = upperLimit;
-                r[0] += outsideLimit;
-            }
-
-            Ie = Ve/Ro;
             break;
 
         case ID_Boost:
-            //
-            // Limits for Buck
-            //
             upperLimit = 3*u; lowerLimit = u*0.5;
-
-            if (Ve < lowerLimit)
-            {
-                outsideLimit = lowerLimit - Ve;
-                Ve = lowerLimit;
-                r[0] += outsideLimit;
-            }
-            else if (Ve > upperLimit)
-            {
-                outsideLimit = upperLimit - Ve;
-                Ve = upperLimit;
-                r[0] += outsideLimit;
-            }
-
-            Ie = (u/(2*R) - sqrt( pow(u,2)/(4*pow(R,2)) - pow(Ve,2)/(R*Ro) ) );
             break;
 
         case ID_BuckBoost:
-            //
-            // Limits for Buck-Boost
-            //
             upperLimit = 3*u; lowerLimit = -50;
-
-            if (Ve < lowerLimit)
-            {
-                outsideLimit = lowerLimit - Ve;
-                Ve = lowerLimit;
-                r[0] += outsideLimit;
-            }
-            else if (Ve > upperLimit)
-            {
-                outsideLimit = upperLimit - Ve;
-                Ve = upperLimit;
-                r[0] += outsideLimit;
-            }
-
-            Ie = (u/(2*R) - sqrt( pow(u,2)/(4*pow(R,2)) - Ve*(Ve+u)/(R*Ro) ) );
             break;
 
         case ID_BuckBoost3:
-            //
-            // Limits for Buck-Boost
-            //
-            upperLimit = 3*u; lowerLimit = -5;
+            upperLimit = 3*u; lowerLimit = -50;
+            break;
 
-            if (Ve < lowerLimit)
-            {
-                outsideLimit = lowerLimit - Ve;
-                Ve = lowerLimit;
-                r[0] += outsideLimit;
-            }
-            else if (Ve > upperLimit)
-            {
-                outsideLimit = upperLimit - Ve;
-                Ve = upperLimit;
-                r[0] += outsideLimit;
-            }
-
-            Ie = (u/(2*R) - sqrt( pow(u,2)/(4*pow(R,2)) - Ve*(Ve+u)/(R*Ro) ) );
+        default:
+            upperLimit = 0; lowerLimit = 0;
             break;
         }
+
+        if (r[0] < lowerLimit)
+            r[0] = lowerLimit;
+        else if (r[0] > upperLimit)
+            r[0] = upperLimit;
+
+        Ve = r[0];
+        Ie = Equilibrium::EstimateEquilibriumCurrent(Ve, u);
 
 
         Xe[0] = Ie;
         Xe[1] = Ve;
-    }
-
-    double* GetReference(void)
-    {
-        return Xe;
     }
 
     void ResetController(void)

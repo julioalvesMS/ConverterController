@@ -19,7 +19,7 @@ namespace DAC_SPI
             enviar_dac_spi_4Canais(ADC_Vout, ADC_Vin, ADC_IL, ADC_Iout);
             break;
         case CH_CONTROLE:
-            enviar_dac_spi_4Canais(((Uint32) 4095*Vout)/60, ((Uint32) 4095*Vref)/60, ((Uint32) 4095*Vin/60), ADC_IL);
+            enviar_dac_spi_4Canais(Vout*27.3, Vref*27.3, Vin*27.3, (IL+5)*136.5);
             break;
         default:
             break;

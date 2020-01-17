@@ -12,11 +12,13 @@
 #include <src/Controller/SwitchingRule/rule2.h>
 #include <src/Controller/controller.h>
 #include <src/Controller/ClassicController/voltage_controller.h>
+#include <src/Controller/ClassicController/voltage_current_controller.h>
 #include <src/Converter/base_converter.h>
 #include <src/Converter/boost.h>
 #include <src/Converter/buck.h>
 #include <src/Converter/buck_boost.h>
 #include <src/Converter/buck_boost_3.h>
+#include <src/Equilibrium/equilibrium.h>
 #include <src/Equilibrium/reference_update.h>
 #include <src/IPC/ipc.h>
 #include <src/OperationManagement/manager.h>
@@ -89,22 +91,25 @@ int SwitchState;
 // System Management and Mode of Operation
 //
 bool ConverterEnabled = false;
-bool ReferenceControlerEnabled = true;
 bool CapacitorPreLoad;
 bool CapacitorPreLoadEngaged = false;
 Protection::Problem protection = Protection::NONE;
 ConverterID activeConverter = ID_BuckBoost;
 ControlStrategy controlStrategy = CS_DISCRETE_THEOREM_1;
 Manager::OperationState *CurrentOperationState;
+Equilibrium::EquilibriumMethod CorrectionMethod = Equilibrium::NONE;
 
 
 //
 // Measurement and Statistics Variables
 //
-int InterruptionCounter = 0;
-int iterations_since_switch = 0;
-int SwitchCounter = 0;
-int SwitchingFrequency, ADCFrequency;
+Uint32 InterruptionCounter = 0;
+Uint32 iterations_since_switch = 0;
+Uint32 SwitchCounter = 0;
+Uint32 SwitchingFrequency, ADCFrequency;
+
+Uint32 stateCounter[4] = {0, 0, 0, 0};
+double stateDutyCycle[4] = {0, 0, 0, 0};
 
 double DutyCycle = 0;
 
@@ -171,6 +176,7 @@ void main(void)
     Sensor::Configure();
     Switch::ConfigureGPIO();
     Equilibrium::Configure();
+    ReferenceUpdate::Configure();
     IPC::Configure();
 
 
@@ -188,8 +194,8 @@ void main(void)
     Vout = X+1;
     IL = X;
 
-    Xe = Equilibrium::GetReference();
-    Equilibrium::UpdateReference(*Vout_mean, *u);
+    Xe = Equilibrium::GetEquilibrium();
+    Equilibrium::UpdateEquilibrium(*u);
 
     CurrentOperationState = Manager::GetCurrentState();
 
@@ -278,12 +284,59 @@ void LoadConverterController(void)
     if (Controller::isClassicControl(controlStrategy))
     {
         VoltageController::LoadController();
+        VoltageCurrentController::LoadController();
         Switch::ConfigurePWM();
     }
 
     if (Controller::isSwitchedControl(controlStrategy))
     {
-        Equilibrium::LoadController();
+        ReferenceUpdate::LoadController();
+    }
+}
+
+
+//
+// Interrupção executada a cada 100ms para medições temporais
+//
+void CalculateDutyCycle(void)
+{
+    int i;
+
+    if (Controller::isClassicControl(controlStrategy))
+    {
+        switch(activeConverter)
+        {
+        case ID_Buck:
+            stateDutyCycle[0] = 0;
+            stateDutyCycle[1] = 100*DutyCycle;
+            stateDutyCycle[2] = 100*(1-DutyCycle);
+            stateDutyCycle[3] = 0;
+            break;
+        case ID_Boost:
+            stateDutyCycle[0] = 0;
+            stateDutyCycle[1] = 100*(1-DutyCycle);
+            stateDutyCycle[2] = 0;
+            stateDutyCycle[3] = 100*DutyCycle;
+            break;
+        case ID_BuckBoost:
+            stateDutyCycle[0] = 0;
+            stateDutyCycle[1] = 0;
+            stateDutyCycle[2] = 100*(1-DutyCycle);
+            stateDutyCycle[3] = 100*DutyCycle;
+            break;
+        default:
+            break;
+
+        }
+    }
+
+    else if (Controller::isSwitchedControl(controlStrategy))
+    {
+        for (i=0;i<4;i++)
+        {
+            stateDutyCycle[i] = (double) (100*stateCounter[i])/InterruptionCounter;
+            stateCounter[i] = 0;
+        }
     }
 }
 
@@ -304,6 +357,8 @@ __interrupt void Interruption_SystemEvaluation(void)
     else
         SwitchingFrequency = 0;
 
+    CalculateDutyCycle();
+
     ADCFrequency = (10*InterruptionCounter);
     InterruptionCounter = 0;
     SwitchCounter = 0;
@@ -322,7 +377,15 @@ __interrupt void Interruption_ReferenceUpdate(void)
 {
     CpuTimer2.InterruptCount++;
 
-    Equilibrium::UpdateReference(*Vout_mean, *u);
+    switch(CorrectionMethod)
+    {
+    case Equilibrium::REFERENCE_UPDATE:
+        ReferenceUpdate::UpdateReference(*Vout_mean, *u);
+        break;
+    case Equilibrium::NONE:
+    default:
+        Equilibrium::UpdateEquilibrium(*u);
+    }
 }
 
 
@@ -355,6 +418,8 @@ __interrupt void Interruption_Sensor(void)
             ClassicControl();
 
     }
+
+    stateCounter[Switch::GetState() + 1]++;
 
     //
     // Reinitialize for next ADC sequence
@@ -457,6 +522,8 @@ void ClassicControl(void)
     {
     case CS_CLASSIC_PWM:
         DutyCycle = VoltageController::Update(Vref, *Vout, *Vin);
+    case CS_CLASSIC_VC_PWM:
+        DutyCycle = VoltageCurrentController::Update(Vref, *Vout, *IL, *Vin);
     default:
         break;
     }
@@ -476,6 +543,7 @@ void ClassicControl(void)
     case Manager::OS_STARTING_PRE_LOAD:
     case Manager::OS_OFF:
     default:
+        DutyCycle = 0;
         break;
     }
 }

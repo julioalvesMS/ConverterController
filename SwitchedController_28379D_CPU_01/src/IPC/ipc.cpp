@@ -15,12 +15,13 @@ extern double Vref;
 extern double *loadResistance;
 extern int SwitchingFrequency;
 extern bool ConverterEnabled;
-extern bool ReferenceControlerEnabled;
+extern int CorrectionMethod;
 extern bool OutputLoadStep;
 extern int protection;
 extern int DacChannel;
 extern int activeConverter;
 extern int controlStrategy;
+extern double stateDutyCycle[4];
 
 
 //
@@ -64,7 +65,7 @@ volatile int shared_SwitchingFrequency;
 volatile bool shared_ConverterEnabled;
 
 #pragma DATA_SECTION("SHARERAMGS0");
-volatile bool shared_ReferenceControlerEnabled;
+volatile int shared_CorrectionMethod;
 
 #pragma DATA_SECTION("SHARERAMGS0");
 volatile bool shared_OutputLoadStep;
@@ -81,6 +82,9 @@ volatile int shared_controlStrategy;
 #pragma DATA_SECTION("SHARERAMGS0");
 volatile double shared_loadResistance;
 
+#pragma DATA_SECTION("SHARERAMGS0");
+volatile double shared_stateDutyCycle[4];
+
 
 namespace IPC
 {
@@ -93,7 +97,6 @@ namespace IPC
 
     void ReceiveData(void)
     {
-
         int i;
         for(i=0;i<IPC_COMMAND_BUFFER_SIZE; i++)
         {
@@ -105,6 +108,8 @@ namespace IPC
 
     void SendData(void)
     {
+        int i;
+
         shared_ADC_Vout = ADC_RESULT_VOUT;
         shared_ADC_Vin = ADC_RESULT_VIN;
         shared_ADC_IL = ADC_RESULT_IL;
@@ -119,11 +124,14 @@ namespace IPC
 
         shared_SwitchingFrequency = SwitchingFrequency;
         shared_ConverterEnabled = ConverterEnabled;
-        shared_ReferenceControlerEnabled = ReferenceControlerEnabled;
+        shared_CorrectionMethod = CorrectionMethod;
         shared_OutputLoadStep = OutputLoadStep;
         shared_protection = protection;
         shared_activeConverter = activeConverter;
         shared_controlStrategy = controlStrategy;
+
+        for(i=0;i<4;i++)
+            shared_stateDutyCycle[i] = stateDutyCycle[i];
     }
 
 

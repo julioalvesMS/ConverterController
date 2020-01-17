@@ -10,6 +10,7 @@ namespace Controller
         CS_CONTINUOUS_THEOREM_1 = 1,
         CS_CONTINUOUS_THEOREM_2 = 2,
         CS_DISCRETE_THEOREM_1 = 3,
+        CS_CLASSIC_VC_PWM = 4,
     };
 
     bool isSwitchedControl(ControlStrategy controlStrategy);

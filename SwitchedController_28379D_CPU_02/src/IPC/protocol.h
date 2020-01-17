@@ -31,12 +31,15 @@ namespace Protocol
         ControllerContinuous1 = 16,
         ControllerContinuous2 = 17,
         ControllerDiscrete1 = 18,
+        ControllerClassicVC = 19,
 
-        EnableEquilibriumController = 19,
-        DisableEquilibriumController = 20,
+        EquilibriumNone = 20,
+        EquilibriumReferenceController = 21,
+        EquilibriumPartialInformation = 22,
+        EquilibriumCurrentCorrection = 23,
 
-        EngageParallelLoad = 21,
-        DisengageParallelLoad = 22,
+        EngageParallelLoad = 24,
+        DisengageParallelLoad = 25,
     };
 }
 

@@ -17,6 +17,8 @@ namespace Switch
 
     bool SetState(int state);
 
+    short GetState(void);
+
     void EnablePWM(void);
 
     void DisablePWM(void);

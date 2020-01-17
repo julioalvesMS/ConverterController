@@ -3,9 +3,7 @@
 namespace Switch
 {
 
-    static short s_switch_state = DISBALE_SWITCHES;
-
-    volatile Uint16 *S_PWM_1, *S_PWM_2;
+    short current_switch_state = DISBALE_SWITCHES;
 
     void ConfigureGPIO()
     {
@@ -104,7 +102,7 @@ namespace Switch
         bool switched = false;
 
         // If the switch is already ate the desired state, do nothing
-        if (state == s_switch_state && s_switch_state!=DISBALE_SWITCHES)
+        if (state == current_switch_state && current_switch_state!=DISBALE_SWITCHES)
             return switched;
 
         switched = true;
@@ -139,10 +137,17 @@ namespace Switch
         }
 
         // Register new state
-        s_switch_state = state;
+        current_switch_state = state;
 
         return switched;
     }
+
+
+    short GetState(void)
+    {
+        return current_switch_state;
+    }
+
 
     void EnablePWM(void)
     {
@@ -154,6 +159,7 @@ namespace Switch
         EDIS;
     }
 
+
     void DisablePWM(void)
     {
         EALLOW;
@@ -161,6 +167,7 @@ namespace Switch
         EPwm6Regs.TZFRC.bit.OST = 1;
         EDIS;
     }
+
 
     void UpdateDutyCycle(double DutyCycle)
     {

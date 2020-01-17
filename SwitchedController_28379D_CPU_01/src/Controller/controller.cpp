@@ -13,7 +13,8 @@ namespace Controller
 
     bool isClassicControl(ControlStrategy controlStrategy)
     {
-        if(controlStrategy == CS_CLASSIC_PWM)
+        if(controlStrategy == CS_CLASSIC_PWM ||
+                controlStrategy == CS_CLASSIC_VC_PWM)
             return true;
         return false;
     }
