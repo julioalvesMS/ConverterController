@@ -15,18 +15,21 @@ namespace Switch
         GpioCtrlRegs.GPAPUD.bit.S2 = 1;
         GpioCtrlRegs.GPAPUD.bit.S3 = 1;
         GpioCtrlRegs.GPAPUD.bit.S4 = 1;
+        GpioCtrlRegs.GPAPUD.bit.TST = 1;
 
         // UTILIZAR PORTA COMO GPIO
         GpioCtrlRegs.GPAMUX1.bit.S1 = 0;
         GpioCtrlRegs.GPAMUX1.bit.S2 = 0;
         GpioCtrlRegs.GPAMUX1.bit.S3 = 0;
         GpioCtrlRegs.GPAMUX1.bit.S4 = 0;
+        GpioCtrlRegs.GPAMUX1.bit.TST = 0;
 
         // CONFIGURA COMO SAÍDA
         GpioCtrlRegs.GPADIR.bit.S1 = 1;
         GpioCtrlRegs.GPADIR.bit.S2 = 1;
         GpioCtrlRegs.GPADIR.bit.S3 = 1;
         GpioCtrlRegs.GPADIR.bit.S4 = 1;
+        GpioCtrlRegs.GPADIR.bit.TST = 1;
 
         EDIS;
 

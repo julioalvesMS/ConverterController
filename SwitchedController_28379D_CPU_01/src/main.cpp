@@ -13,6 +13,8 @@
 #include <src/Controller/controller.h>
 #include <src/Controller/ClassicController/voltage_controller.h>
 #include <src/Controller/ClassicController/voltage_current_controller.h>
+#include <src/Controller/LimitCycle/cycle_rule_cost.h>
+#include <src/Controller/LimitCycle/cycle_rule_hinf.h>
 #include <src/Converter/base_converter.h>
 #include <src/Converter/boost.h>
 #include <src/Converter/buck.h>
@@ -26,6 +28,7 @@
 #include <src/Relay/relay.h>
 #include <src/Sensor/sensor.h>
 #include <src/Switch/switch.h>
+#include <src/SwitchedSystem/cycle_sequence.h>
 #include <src/SwitchedSystem/switched_system.h>
 #include <src/Timer/timer.h>
 
@@ -33,6 +36,7 @@
 // Namespaces in use
 //
 using namespace SwitchedSystem;
+using namespace CycleSequence;
 using namespace BaseConverter;
 using namespace ConverterBuck;
 using namespace ConverterBoost;
@@ -83,6 +87,7 @@ double h[SYSTEM_ORDER];
 double d;
 System* sys;
 System* dsys;
+Cycle* limitCycle;
 int BestSubsystem;
 int SwitchState;
 
@@ -254,6 +259,7 @@ void LoadConverterController(void)
     case ID_Buck:
         sys = Buck::GetSys();
         dsys = Buck::GetDiscreteSys();
+        limitCycle = Buck::GetLimitCycle();
         Buck::GetP(P);
         Buck::GetH(h);
         d = Buck::GetD(P,h);
@@ -261,6 +267,7 @@ void LoadConverterController(void)
     case ID_Boost:
         sys = Boost::GetSys();
         dsys = Boost::GetDiscreteSys();
+        limitCycle = Boost::GetLimitCycle();
         Boost::GetP(P);
         Boost::GetH(h);
         d = Boost::GetD(P,h);
@@ -268,6 +275,7 @@ void LoadConverterController(void)
     case ID_BuckBoost:
         sys = BuckBoost::GetSys();
         dsys = BuckBoost::GetDiscreteSys();
+        limitCycle = BuckBoost::GetLimitCycle();
         BuckBoost::GetP(P);
         BuckBoost::GetH(h);
         d = BuckBoost::GetD(P,h);
@@ -275,6 +283,7 @@ void LoadConverterController(void)
     case ID_BuckBoost3:
         sys = BuckBoost3::GetSys();
         dsys = BuckBoost3::GetDiscreteSys();
+        limitCycle = BuckBoost3::GetLimitCycle();
         BuckBoost3::GetP(P);
         BuckBoost3::GetH(h);
         d = BuckBoost3::GetD(P,h);
@@ -394,6 +403,7 @@ __interrupt void Interruption_ReferenceUpdate(void)
 //
 __interrupt void Interruption_Sensor(void)
 {
+    GpioDataRegs.GPASET.bit.TST = 1;
     InterruptionCounter++;
 
     //
@@ -434,6 +444,7 @@ __interrupt void Interruption_Sensor(void)
     }
 
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
+    GpioDataRegs.GPACLEAR.bit.TST = 1;
 
     return;
 }
@@ -454,6 +465,13 @@ void SwitchedControl(void)
         break;
     case CS_DISCRETE_THEOREM_1:
         BestSubsystem = DiscreteSwitchingRule1::SwitchingRule(dsys, P, h, d, X, Xe, *u);
+        break;
+    case CS_LIMIT_CYCLE_COST:
+    case CS_LIMIT_CYCLE_H2:
+        BestSubsystem = LimitCycleRuleCost::SwitchingRule(dsys, limitCycle, X);
+        break;
+    case CS_LIMIT_CYCLE_Hinf:
+        BestSubsystem = LimitCycleRuleHinf::SwitchingRule(dsys, limitCycle, X);
         break;
     default:
         break;
@@ -499,17 +517,10 @@ void SwitchedControl(void)
         break;
     }
 
-    if(iterations_since_switch < 5 && *CurrentOperationState == Manager::OS_RUNNING)
-        iterations_since_switch++;
-    else
-    {
-        //
-        // Signal to the gate
-        //
-        SwitchCounter += Switch::SetState(SwitchState);
-
-        iterations_since_switch = 0;
-    }
+    //
+    // Signal to the gate
+    //
+    SwitchCounter += Switch::SetState(SwitchState);
 }
 
 

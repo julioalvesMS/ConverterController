@@ -11,21 +11,8 @@
 //
 // SWITCHED CONTROL
 //
-#define CONTINUOUS_RULE_1   1
-#define CONTINUOUS_RULE_2   2
-#define DISCRETE_RULE_1     3
-
-#define SWITCHING_RULE      DISCRETE_RULE_1
-
 #define INITIAL_REFERENCE_VOLTAGE   0
-
-//
-// REFERENCE UPDATE CONTROLLER
-//
-#define REFERENCE_UPDATE_ENABLED    1
 #define REFERENCE_CONTROLLER_PERIOD 1000    // Period in Microseconds
-#define REFERENCE_CONTROLLER_PID_KP 0.5
-#define REFERENCE_CONTROLLER_PID_KI 30
 
 //
 // ADC
@@ -63,10 +50,12 @@
 //
 // SWITCHES
 //
+#define SWITCH_SWITCHED_PWM_TBPRD    625
 #define S1    GPIO10
 #define S2    GPIO11
 #define S4    GPIO8
 #define S3    GPIO9
+#define TST   GPIO7
 
 //
 // SWITCHES PWMs
@@ -83,7 +72,7 @@
 //
 #define PROTECTION_VIN_MAX      75
 #define PROTECTION_VOUT_MAX     125
-#define PROTECTION_IL_MAX       20
+#define PROTECTION_IL_MAX       23
 #define PROTECTION_IOUT_MAX     2.5
 
 //

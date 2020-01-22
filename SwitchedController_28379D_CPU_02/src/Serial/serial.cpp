@@ -71,7 +71,7 @@ namespace Serial
             sprintf(protocol_message, "C%1d", (int) OutputLoadStep);
             break;
         case 13:
-            sprintf(protocol_message, "Z%04d", (int) (stateDutyCycle[0]*10));
+            sprintf(protocol_message, "Z%04d", (int) loadResistance*10);
             break;
         case 14:
             sprintf(protocol_message, "0%04d", (int) (stateDutyCycle[0]*10));
@@ -182,6 +182,15 @@ namespace Serial
                 break;
             case '%':
                 command = Protocol::ControllerClassicVC;
+                break;
+            case '¨':
+                command = Protocol::ControllerLimitCycleCost;
+                break;
+            case '&':
+                command = Protocol::ControllerLimitCycleH2;
+                break;
+            case '*':
+                command = Protocol::ControllerLimitCycleHinf;
                 break;
 
             case ',':

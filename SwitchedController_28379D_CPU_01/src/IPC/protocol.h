@@ -32,14 +32,17 @@ namespace Protocol
         ControllerContinuous2 = 17,
         ControllerDiscrete1 = 18,
         ControllerClassicVC = 19,
+        ControllerLimitCycleCost = 20,
+        ControllerLimitCycleH2 = 21,
+        ControllerLimitCycleHinf = 22,
 
-        EquilibriumNone = 20,
-        EquilibriumReferenceController = 21,
-        EquilibriumPartialInformation = 22,
-        EquilibriumCurrentCorrection = 23,
+        EquilibriumNone = 23,
+        EquilibriumReferenceController = 24,
+        EquilibriumPartialInformation = 25,
+        EquilibriumCurrentCorrection = 26,
 
-        EngageParallelLoad = 24,
-        DisengageParallelLoad = 25,
+        EngageParallelLoad = 27,
+        DisengageParallelLoad = 28,
     };
 }
 

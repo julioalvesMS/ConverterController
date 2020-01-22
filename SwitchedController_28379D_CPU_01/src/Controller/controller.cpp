@@ -6,7 +6,10 @@ namespace Controller
     {
         if(controlStrategy == CS_CONTINUOUS_THEOREM_1 ||
                 controlStrategy == CS_CONTINUOUS_THEOREM_2 ||
-                controlStrategy == CS_DISCRETE_THEOREM_1)
+                controlStrategy == CS_DISCRETE_THEOREM_1 ||
+                controlStrategy == CS_LIMIT_CYCLE_COST ||
+                controlStrategy == CS_LIMIT_CYCLE_H2 ||
+                controlStrategy == CS_LIMIT_CYCLE_Hinf)
             return true;
         return false;
     }

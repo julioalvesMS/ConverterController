@@ -13,6 +13,10 @@ namespace SwitchedSystem
         double B[SYSTEM_ORDER];
         double L[SYSTEM_ORDER];
 
+        double E[SYSTEM_ORDER][SYSTEM_ORDER];
+        double H[SYSTEM_ORDER];
+        double G[SYSTEM_ORDER];
+
         double Q[SYSTEM_ORDER][SYSTEM_ORDER];
 
     };

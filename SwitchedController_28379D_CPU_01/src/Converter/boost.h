@@ -19,6 +19,8 @@ namespace ConverterBoost
 
         static System* GetDiscreteSys(void);
 
+        static Cycle* GetLimitCycle(void);
+
         static void GetP(double P[SYSTEM_ORDER][SYSTEM_ORDER]);
 
         static void GetH(double h[SYSTEM_ORDER]);
@@ -27,7 +29,7 @@ namespace ConverterBoost
 
         static void GetClassicVoltageController(double num[2], double den[2]);
 
-        static void GetClassicVoltageCurrnetController(double vNum[2], double vDen[2], double iNum[2], double iDen[2]);
+        static void GetClassicVoltageCurrentController(double vNum[2], double vDen[2], double iNum[2], double iDen[2]);
 
         static void GetReferenceController(double num[2], double den[2]);
 
@@ -37,6 +39,12 @@ namespace ConverterBoost
     void DefineSystem();
 
     void DefineDiscreteSystem();
+
+    void DefineLimitCycleCost(void);
+
+    void DefineLimitCycleH2(void);
+
+    void DefineLimitCycleHinf(void);
 }
 
 #endif  /* SRC_CONVERTER_BOOST_H_ */

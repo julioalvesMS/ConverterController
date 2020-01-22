@@ -3,6 +3,7 @@
 
 #define SYSTEM_ORDER 2
 #define SUBSYSTEMS_COUNT 3
+#define LIMIT_CYCLE_STEPS 13
 
 #define BOARD_PERIOD 100
 #define PERIOD_UNIT 1e6

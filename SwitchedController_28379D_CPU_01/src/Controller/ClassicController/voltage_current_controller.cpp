@@ -21,13 +21,13 @@ namespace VoltageCurrentController
         switch(activeConverter)
         {
         case BaseConverter::ID_Buck:
-            Buck::GetClassicVoltageCurrnetController(numVPID, denVPID, numIPID, denIPID);
+            Buck::GetClassicVoltageCurrentController(numVPID, denVPID, numIPID, denIPID);
             break;
         case BaseConverter::ID_Boost:
-            Boost::GetClassicVoltageCurrnetController(numVPID, denVPID, numIPID, denIPID);
+            Boost::GetClassicVoltageCurrentController(numVPID, denVPID, numIPID, denIPID);
             break;
         case BaseConverter::ID_BuckBoost:
-            BuckBoost::GetClassicVoltageCurrnetController(numVPID, denVPID, numIPID, denIPID);
+            BuckBoost::GetClassicVoltageCurrentController(numVPID, denVPID, numIPID, denIPID);
             break;
 
         default:

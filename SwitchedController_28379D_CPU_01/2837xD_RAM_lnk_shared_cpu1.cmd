@@ -12,6 +12,8 @@ PAGE 0 :
    RAMLS2      		: origin = 0x009000, length = 0x000800
    RAMLS3      		: origin = 0x009800, length = 0x000800
    RAMLS4      		: origin = 0x00A000, length = 0x000800
+   RAMGS9      : origin = 0x015000, length = 0x001000
+   RAMGS10     : origin = 0x016000, length = 0x001000
    RAMGS14          : origin = 0x01A000, length = 0x001000     /* Only Available on F28379D, F28377D, F28375D devices. Remove line on other devices. */
    RAMGS15          : origin = 0x01B000, length = 0x001000     /* Only Available on F28379D, F28377D, F28375D devices. Remove line on other devices. */
    RESET           	: origin = 0x3FFFC0, length = 0x000002
@@ -33,8 +35,6 @@ PAGE 1 :
    RAMGS6      : origin = 0x012000, length = 0x001000
    RAMGS7      : origin = 0x013000, length = 0x001000
    RAMGS8      : origin = 0x014000, length = 0x001000
-   RAMGS9      : origin = 0x015000, length = 0x001000
-   RAMGS10     : origin = 0x016000, length = 0x001000
    RAMGS11     : origin = 0x017000, length = 0x001000
    RAMGS12     : origin = 0x018000, length = 0x001000     /* Only Available on F28379D, F28377D, F28375D devices. Remove line on other devices. */
    RAMGS13     : origin = 0x019000, length = 0x001000     /* Only Available on F28379D, F28377D, F28375D devices. Remove line on other devices. */
@@ -47,14 +47,14 @@ SECTIONS
 {
    codestart        : > BEGIN,     PAGE = 0
    // .text            : >>RAMD0 |  RAMLS0 | RAMLS1 | RAMLS2 | RAMLS3 | RAMLS4,   PAGE = 0
-   .text            : >>RAMD0 |  RAMLS0 | RAMLS1 | RAMLS2 | RAMLS3 | RAMLS4 | RAMGS14 | RAMGS14,   PAGE = 0
+   .text            : >>RAMD0 |  RAMLS0 | RAMLS1 | RAMLS2 | RAMLS3 | RAMLS4 | RAMGS14 | RAMGS15 | RAMGS9 | RAMGS10,   PAGE = 0
    .cinit           : > RAMM0,     PAGE = 0
    .pinit           : > RAMM0,     PAGE = 0
    .switch          : > RAMM0,     PAGE = 0
    .reset           : > RESET,     PAGE = 0, TYPE = DSECT /* not used, */
 
    .stack           : > RAMM1,     PAGE = 1
-   .ebss            : > RAMLS5,     PAGE = 1
+   .ebss            : > RAMLS5 | RAMGS11,     PAGE = 1
    .econst          : > RAMLS5,     PAGE = 1
    .esysmem         : > RAMLS5,     PAGE = 1
    Filter_RegsFile  : > RAMGS0,	   PAGE = 1
@@ -68,11 +68,11 @@ SECTIONS
    SHARERAMGS6		: > RAMGS6,		PAGE = 1
    SHARERAMGS7		: > RAMGS7,		PAGE = 1
    SHARERAMGS8		: > RAMGS8,		PAGE = 1
-   SHARERAMGS9		: > RAMGS9,		PAGE = 1
-   SHARERAMGS10		: > RAMGS10,	PAGE = 1
-   SHARERAMGS11		: > RAMGS11,	PAGE = 1
-   SHARERAMGS12		: > RAMGS12,	PAGE = 1     /* Only Available on F28379D, F28377D, F28375D devices. Remove line on other devices. */
-   SHARERAMGS13		: > RAMGS13,	PAGE = 1     /* Only Available on F28379D, F28377D, F28375D devices. Remove line on other devices. */
+   //SHARERAMGS9		: > RAMGS9,		PAGE = 1
+   //SHARERAMGS10		: > RAMGS10,	PAGE = 1
+   //SHARERAMGS11		: > RAMGS11,	PAGE = 1
+   //SHARERAMGS12		: > RAMGS12,	PAGE = 1     /* Only Available on F28379D, F28377D, F28375D devices. Remove line on other devices. */
+   //SHARERAMGS13		: > RAMGS13,	PAGE = 1     /* Only Available on F28379D, F28377D, F28375D devices. Remove line on other devices. */
    //SHARERAMGS14		: > RAMGS14,	PAGE = 0     /* Only Available on F28379D, F28377D, F28375D devices. Remove line on other devices. */
    //SHARERAMGS15		: > RAMGS15,	PAGE = 0     /* Only Available on F28379D, F28377D, F28375D devices. Remove line on other devices. */
 

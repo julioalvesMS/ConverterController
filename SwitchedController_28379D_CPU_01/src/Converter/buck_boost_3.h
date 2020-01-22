@@ -19,6 +19,8 @@ namespace ConverterBuckBoost3
 
         static System* GetDiscreteSys(void);
 
+        static Cycle* GetLimitCycle(void);
+
         static void GetP(double P[SYSTEM_ORDER][SYSTEM_ORDER]);
 
         static void GetH(double h[SYSTEM_ORDER]);
@@ -33,6 +35,12 @@ namespace ConverterBuckBoost3
     void DefineSystem();
 
     void DefineDiscreteSystem();
+
+    void DefineLimitCycleCost(void);
+
+    void DefineLimitCycleH2(void);
+
+    void DefineLimitCycleHinf(void);
 }
 
 #endif  /* SRC_CONVERTER_BUCK_BOOST_3_H_ */

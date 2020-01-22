@@ -86,6 +86,15 @@ namespace Manager
         case Protocol::ControllerClassicVC:
             Manager::ChangeController(CS_CLASSIC_VC_PWM);
             break;
+        case Protocol::ControllerLimitCycleCost:
+            Manager::ChangeController(CS_LIMIT_CYCLE_COST);
+            break;
+        case Protocol::ControllerLimitCycleH2:
+            Manager::ChangeController(CS_LIMIT_CYCLE_H2);
+            break;
+        case Protocol::ControllerLimitCycleHinf:
+            Manager::ChangeController(CS_LIMIT_CYCLE_Hinf);
+            break;
         case Protocol::EquilibriumNone:
             CorrectionMethod = Equilibrium::NONE;
             break;
@@ -138,7 +147,7 @@ namespace Manager
         }
         else if (Controller::isSwitchedControl(newController))
         {
-            Sensor::ConfigureFrequency(125);
+            Sensor::ConfigureFrequency(SWITCH_SWITCHED_PWM_TBPRD);
             Switch::ConfigureGPIO();
         }
 
