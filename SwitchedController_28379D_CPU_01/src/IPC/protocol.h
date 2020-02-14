@@ -7,42 +7,43 @@ namespace Protocol
     {
         None = 0,
 
-        EnableOperation = 1,
-        DisableOperation = 2,
+        EnableOperation,
+        DisableOperation,
 
-        IncreaseDacChannel = 3,
-        DecreaseDacChannel = 4,
+        IncreaseDacChannel,
+        DecreaseDacChannel,
 
-        RampIncreaseReference = 5,
-        RampDecreaseReference = 6,
+        RampIncreaseReference,
+        RampDecreaseReference,
 
-        StepIncreaseReference = 7,
-        StepDecreaseReference = 8,
+        StepIncreaseReference,
+        StepDecreaseReference,
 
-        EmergencyButtonProtection = 9,
-        ResetProtection = 10,
+        EmergencyButtonProtection,
+        ResetProtection,
 
-        ConverterBuck = 11,
-        ConverterBoost = 12,
-        ConverterBuckBoost = 13,
-        ConverterBuckBoost3 = 14,
+        ConverterBuck,
+        ConverterBoost,
+        ConverterBuckBoost,
+        ConverterBuckBoost3,
 
-        ControllerClassic = 15,
-        ControllerContinuous1 = 16,
-        ControllerContinuous2 = 17,
-        ControllerDiscrete1 = 18,
-        ControllerClassicVC = 19,
-        ControllerLimitCycleCost = 20,
-        ControllerLimitCycleH2 = 21,
-        ControllerLimitCycleHinf = 22,
+        ControllerClassic,
+        ControllerContinuous1,
+        ControllerContinuous2,
+        ControllerDiscrete1,
+        ControllerClassicVC,
+        ControllerLimitCycleCost,
+        ControllerLimitCycleH2,
+        ControllerLimitCycleHinf,
+        ControllerStateFeedbackH2,
 
-        EquilibriumNone = 23,
-        EquilibriumReferenceController = 24,
-        EquilibriumPartialInformation = 25,
-        EquilibriumCurrentCorrection = 26,
+        EquilibriumNone,
+        EquilibriumReferenceController,
+        EquilibriumPartialInformation,
+        EquilibriumCurrentCorrection,
 
-        EngageParallelLoad = 27,
-        DisengageParallelLoad = 28,
+        EngageParallelLoad,
+        DisengageParallelLoad,
     };
 }
 

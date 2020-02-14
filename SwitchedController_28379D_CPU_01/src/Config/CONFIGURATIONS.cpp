@@ -192,7 +192,7 @@ void Setup_ePWM(void)
     EPwm1Regs.TBCTL.bit.CLKDIV=0;       //CLKDIV=1
     EPwm1Regs.TBCTL.bit.HSPCLKDIV=1;    // HSPCLKDIV =2
     EPwm1Regs.TBCTL.bit.CTRMODE=2;      // up down mode
-    EPwm1Regs.TBPRD=125;                // 200 kHz
+    EPwm1Regs.TBPRD=625;                // 200 kHz
     EPwm1Regs.AQCTLA.all=0x0090;        // ZRO=set, PRD-clear
     EPwm1Regs.AQCTLB.all=0x0060;        // ZRO=set, PRD-clear
     EPwm1Regs.ETPS.bit.SOCAPRD=1;       // Generate pulse on first event

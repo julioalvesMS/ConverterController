@@ -2,14 +2,12 @@
 #define SRC_EQUILIBRIUM_H_
 
 #include <math.h>
-#include "F28x_Project.h"
 #include <src/Common/constants.h>
 #include <src/Converter/base_converter.h>
 #include <src/Converter/buck.h>
 #include <src/Converter/boost.h>
 #include <src/Converter/buck_boost.h>
 #include <src/Converter/buck_boost_3.h>
-#include <src/settings.h>
 
 using namespace BaseConverter;
 using namespace ConverterBuck;

@@ -95,12 +95,23 @@ namespace Manager
         case Protocol::ControllerLimitCycleHinf:
             Manager::ChangeController(CS_LIMIT_CYCLE_Hinf);
             break;
+        case Protocol::ControllerStateFeedbackH2:
+            Manager::ChangeController(CS_STATE_H2_PWM);
+            break;
         case Protocol::EquilibriumNone:
             CorrectionMethod = Equilibrium::NONE;
             break;
         case Protocol::EquilibriumReferenceController:
             ReferenceUpdate::ResetController();
             CorrectionMethod = Equilibrium::REFERENCE_UPDATE;
+            break;
+        case Protocol::EquilibriumPartialInformation:
+            PartialInformation::ResetFilter();
+            CorrectionMethod = Equilibrium::PARTIAL_INFORMATION;
+            break;
+        case Protocol::EquilibriumCurrentCorrection:
+            CurrentCorrection::ResetController();
+            CorrectionMethod = Equilibrium::CURRENT_CORRECTION;
             break;
         case Protocol::EngageParallelLoad:
             OutputLoadStep = true;
@@ -172,6 +183,8 @@ namespace Manager
             return;
 
         ReferenceUpdate::ResetController();
+        PartialInformation::LoadFilter();
+        CurrentCorrection::ResetController();
         VoltageController::ResetController();
         VoltageCurrentController::ResetController();
 
@@ -246,6 +259,8 @@ namespace Manager
             VoltageController::ResetController();
             VoltageCurrentController::ResetController();
             ReferenceUpdate::ResetController();
+            PartialInformation::LoadFilter();
+            CurrentCorrection::ResetController();
             break;
         }
 

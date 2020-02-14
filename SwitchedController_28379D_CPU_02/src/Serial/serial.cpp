@@ -192,6 +192,9 @@ namespace Serial
             case '*':
                 command = Protocol::ControllerLimitCycleHinf;
                 break;
+            case '(':
+                command = Protocol::ControllerStateFeedbackH2;
+                break;
 
             case ',':
                 command = Protocol::EquilibriumNone;

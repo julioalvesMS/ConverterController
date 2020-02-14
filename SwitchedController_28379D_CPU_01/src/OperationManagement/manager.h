@@ -6,7 +6,9 @@
 #include <src/Controller/ClassicController/voltage_current_controller.h>
 #include <src/Converter/base_converter.h>
 #include <src/Equilibrium/equilibrium.h>
+#include <src/Equilibrium/current_correction.h>
 #include <src/Equilibrium/reference_update.h>
+#include <src/Equilibrium/partial_information.h>
 #include <src/IPC/protocol.h>
 #include <src/Protection/protection.h>
 #include <src/Relay/relay.h>

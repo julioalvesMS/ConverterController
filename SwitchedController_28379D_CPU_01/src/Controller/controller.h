@@ -14,6 +14,7 @@ namespace Controller
         CS_LIMIT_CYCLE_COST = 5,
         CS_LIMIT_CYCLE_H2 = 6,
         CS_LIMIT_CYCLE_Hinf = 7,
+        CS_STATE_H2_PWM = 8,
     };
 
     bool isSwitchedControl(ControlStrategy controlStrategy);

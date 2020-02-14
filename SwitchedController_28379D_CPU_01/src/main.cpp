@@ -11,6 +11,7 @@
 #include <src/Controller/SwitchingRule/rule1.h>
 #include <src/Controller/SwitchingRule/rule2.h>
 #include <src/Controller/controller.h>
+#include <src/Controller/ClassicController/state_feedback_h2_controller.h>
 #include <src/Controller/ClassicController/voltage_controller.h>
 #include <src/Controller/ClassicController/voltage_current_controller.h>
 #include <src/Controller/LimitCycle/cycle_rule_cost.h>
@@ -21,7 +22,9 @@
 #include <src/Converter/buck_boost.h>
 #include <src/Converter/buck_boost_3.h>
 #include <src/Equilibrium/equilibrium.h>
+#include <src/Equilibrium/current_correction.h>
 #include <src/Equilibrium/reference_update.h>
+#include <src/Equilibrium/partial_information.h>
 #include <src/IPC/ipc.h>
 #include <src/OperationManagement/manager.h>
 #include <src/Protection/protection.h>
@@ -294,12 +297,15 @@ void LoadConverterController(void)
     {
         VoltageController::LoadController();
         VoltageCurrentController::LoadController();
+        StateFeedbackH2Controller::LoadController();
         Switch::ConfigurePWM();
     }
 
     if (Controller::isSwitchedControl(controlStrategy))
     {
         ReferenceUpdate::LoadController();
+        PartialInformation::Configure();
+        CurrentCorrection::Configure();
     }
 }
 
@@ -391,9 +397,16 @@ __interrupt void Interruption_ReferenceUpdate(void)
     case Equilibrium::REFERENCE_UPDATE:
         ReferenceUpdate::UpdateReference(*Vout_mean, *u);
         break;
+    case Equilibrium::PARTIAL_INFORMATION:
+        PartialInformation::UpdateReference(*IL);
+        break;
+    case Equilibrium::CURRENT_CORRECTION:
+        CurrentCorrection::UpdateReference(*Vout_mean, *u);
+        break;
     case Equilibrium::NONE:
     default:
         Equilibrium::UpdateEquilibrium(*u);
+        break;
     }
 }
 
@@ -533,8 +546,13 @@ void ClassicControl(void)
     {
     case CS_CLASSIC_PWM:
         DutyCycle = VoltageController::Update(Vref, *Vout, *Vin);
+        break;
     case CS_CLASSIC_VC_PWM:
         DutyCycle = VoltageCurrentController::Update(Vref, *Vout, *IL, *Vin);
+        break;
+    case CS_STATE_H2_PWM:
+        DutyCycle = StateFeedbackH2Controller::Update(Xe, X);
+        break;
     default:
         break;
     }

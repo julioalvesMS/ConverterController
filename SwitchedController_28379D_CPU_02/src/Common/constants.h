@@ -3,9 +3,7 @@
 
 #define SYSTEM_ORDER 2
 #define SUBSYSTEMS_COUNT 3
-
-#define BOARD_PERIOD 100
-#define PERIOD_UNIT 1e6
+#define LIMIT_CYCLE_STEPS 13
 
 //
 // Sensor calibration
@@ -18,8 +16,8 @@
 //
 // Circuit specifications
 //
-const double R  = 0.4;    //  [Ohm] - Inductor Resistance
-const double L  = 1.954e-3;     //  [H]   - Inductance
+const double R  = 0.49;    //  [Ohm] - Inductor Resistance
+const double L  = 1.981e-3;     //  [H]   - Inductance
 const double Ro = 96.8;     //  [Ohm] - Load Resistance
 const double Co = 2250e-6;  //  [F]   - Output Capacitance
 

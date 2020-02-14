@@ -159,6 +159,11 @@ namespace Switch
         EPwm5Regs.TZEINT.bit.OST = 1;
         EPwm6Regs.TZCLR.bit.OST = 1;
         EPwm6Regs.TZEINT.bit.OST = 1;
+
+        EPwm5Regs.TZCTL.bit.TZA = 0x01; // fOR FORCE low
+        EPwm5Regs.TZCTL.bit.TZB = 0x01; //fOR fORCE loW
+        EPwm6Regs.TZCTL.bit.TZA = 0x01; // fOR FORCE low
+        EPwm6Regs.TZCTL.bit.TZB = 0x01; //fOR fORCE loW
         EDIS;
     }
 
@@ -168,6 +173,11 @@ namespace Switch
         EALLOW;
         EPwm5Regs.TZFRC.bit.OST = 1;
         EPwm6Regs.TZFRC.bit.OST = 1;
+
+        EPwm5Regs.TZCTL.bit.TZA = 0x02; // fOR FORCE low
+        EPwm5Regs.TZCTL.bit.TZB = 0x02; //fOR fORCE loW
+        EPwm6Regs.TZCTL.bit.TZA = 0x02; // fOR FORCE low
+        EPwm6Regs.TZCTL.bit.TZB = 0x02; //fOR fORCE loW
         EDIS;
     }
 
