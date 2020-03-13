@@ -5,9 +5,9 @@
 #include "F28x_Project.h"
 
 #include <src/Config/CONFIGURATIONS.h>
-#include <src/DAC/dac.h>
 #include <src/IPC/ipc.h>
 #include <src/IPC/protocol.h>
+#include "../DAC_SPI/dac.h"
 
 #define MESSAGES_COUNT 1
 

@@ -248,6 +248,26 @@ void Setup_ePWM(void)
     EPwm6Regs.CMPA.bit.CMPA = 0;
     EPwm6Regs.TBCTR = 0x0000;           // Clear counter
 
+    EPwm7Regs.TBCTL.bit.CLKDIV=0;       // CLKDIV=1
+    EPwm7Regs.TBCTL.bit.HSPCLKDIV=0;    // HSPCLKDIV =2
+    EPwm7Regs.TBCTL.bit.CTRMODE=2;      // up down mode
+    EPwm7Regs.AQCTLA.all=0x0090;        // ZRO=set, PRD-clear
+    EPwm7Regs.AQCTLB.all=0x00900;       // ZRO=set, PRD-clear
+    EPwm7Regs.TBPRD=100;
+    EPwm7Regs.CMPA.bit.CMPA = 0;
+    EPwm7Regs.CMPB.bit.CMPB = 0;
+    EPwm7Regs.TBCTR = 0x0000;           // Clear counter
+
+    EPwm8Regs.TBCTL.bit.CLKDIV=0;       // CLKDIV=1
+    EPwm8Regs.TBCTL.bit.HSPCLKDIV=0;    // HSPCLKDIV =2
+    EPwm8Regs.TBCTL.bit.CTRMODE=2;      // up down mode
+    EPwm8Regs.AQCTLA.all=0x0090;        // ZRO=set, PRD-clear
+    EPwm8Regs.AQCTLB.all=0x00900;        // ZRO=set, PRD-clear
+    EPwm8Regs.TBPRD=100;
+    EPwm8Regs.CMPA.bit.CMPA = 0;
+    EPwm8Regs.CMPB.bit.CMPB = 0;
+    EPwm8Regs.TBCTR = 0x0000;           // Clear counter
+
     EPwm1Regs.TBCTL.bit.SYNCOSEL=1;
 
     EPwm2Regs.TBCTL.bit.PHSEN=1;
@@ -348,6 +368,32 @@ EALLOW;
     EPwm6Regs.TZCLR.bit.OST = 0;
 EDIS;
 
+    //Tripzones EPWM7
+EALLOW;
+    EPwm7Regs.TZCTL.bit.TZA = 2;        // force ePWM1A to zero
+    EPwm7Regs.TZCTL.bit.TZB = 2;        // force ePWM1B to zero
+    EPwm7Regs.TZSEL.bit.OSHT1 = 0;      // select TZ1 -
+    EPwm7Regs.TZSEL.bit.OSHT2 = 0;      // select TZ2 -
+    EPwm7Regs.TZSEL.bit.OSHT3 = 0;      // select TZ3 -
+    EPwm7Regs.TZSEL.bit.OSHT4 = 0;      // select TZ4 -
+    EPwm7Regs.TZSEL.bit.OSHT5 = 0;      // select TZ5 -
+    EPwm7Regs.TZSEL.bit.OSHT6 = 0;      // select TZ6 -
+    EPwm7Regs.TZCLR.bit.OST = 0;
+EDIS;
+
+    //Tripzones EPWM8
+EALLOW;
+    EPwm8Regs.TZCTL.bit.TZA = 2;        // force ePWM1A to zero
+    EPwm8Regs.TZCTL.bit.TZB = 2;        // force ePWM1B to zero
+    EPwm8Regs.TZSEL.bit.OSHT1 = 0;      // select TZ1 -
+    EPwm8Regs.TZSEL.bit.OSHT2 = 0;      // select TZ2 -
+    EPwm8Regs.TZSEL.bit.OSHT3 = 0;      // select TZ3 -
+    EPwm8Regs.TZSEL.bit.OSHT4 = 0;      // select TZ4 -
+    EPwm8Regs.TZSEL.bit.OSHT5 = 0;      // select TZ5 -
+    EPwm8Regs.TZSEL.bit.OSHT6 = 0;      // select TZ6 -
+    EPwm8Regs.TZCLR.bit.OST = 0;
+EDIS;
+
 
     //Inicialização de pwm com zero
 EALLOW;
@@ -357,6 +403,8 @@ EALLOW;
     EPwm4Regs.TZFRC.bit.OST = 1;
     EPwm5Regs.TZFRC.bit.OST = 1;
     EPwm6Regs.TZFRC.bit.OST = 1;
+    EPwm7Regs.TZFRC.bit.OST = 1;
+    EPwm8Regs.TZFRC.bit.OST = 1;
 EDIS;
 }
 

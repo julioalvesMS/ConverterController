@@ -106,6 +106,7 @@ ConverterID activeConverter = ID_BuckBoost;
 ControlStrategy controlStrategy = CS_DISCRETE_THEOREM_1;
 Manager::OperationState *CurrentOperationState;
 Equilibrium::EquilibriumMethod CorrectionMethod = Equilibrium::NONE;
+DAC_PWM::Channel dacChannel = DAC_PWM::CH_CONTROLE;
 
 
 //
@@ -186,6 +187,7 @@ void main(void)
     Equilibrium::Configure();
     ReferenceUpdate::Configure();
     IPC::Configure();
+    DAC_PWM::Configure();
 
 
     EALLOW;
@@ -206,6 +208,7 @@ void main(void)
     Equilibrium::UpdateEquilibrium(*u);
 
     CurrentOperationState = Manager::GetCurrentState();
+    Manager::ChangeController(controlStrategy);
 
     LoadConverterController();
 
@@ -458,6 +461,8 @@ __interrupt void Interruption_Sensor(void)
 
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
     GpioDataRegs.GPACLEAR.bit.TST = 1;
+
+    DAC_PWM::SendData(dacChannel);
 
     return;
 }

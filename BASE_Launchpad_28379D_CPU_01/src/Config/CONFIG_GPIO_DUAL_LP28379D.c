@@ -1,4 +1,4 @@
-#include <src/Config/CONFIG_GPIO_V1_LP28379D.h>
+#include <src/Config/CONFIG_GPIO_DUAL_LP28379D.h>
 
 void Gpio_setup(void)
 {
@@ -12,6 +12,20 @@ void Gpio_setup(void)
     InitEPwm4Gpio();
     InitEPwm5Gpio();
     InitEPwm6Gpio();
+
+    EALLOW;
+    GpioCtrlRegs.GPEPUD.bit.GPIO157 = 1;    // Disable pull-up on GPIO157 (EPWM7A)
+    GpioCtrlRegs.GPEPUD.bit.GPIO158 = 1;    // Disable pull-up on GPIO158 (EPWM7B)
+    GpioCtrlRegs.GPEMUX2.bit.GPIO157 = 1;   // Configure GPIO157 as EPWM7A
+    GpioCtrlRegs.GPEMUX2.bit.GPIO158 = 1;   // Configure GPIO158 as EPWM7B
+    EDIS;
+
+    EALLOW;
+    GpioCtrlRegs.GPEPUD.bit.GPIO159 = 1;    // Disable pull-up on GPIO159 (EPWM8A)
+    GpioCtrlRegs.GPFPUD.bit.GPIO160 = 1;    // Disable pull-up on GPIO160 (EPWM8B)
+    GpioCtrlRegs.GPEMUX2.bit.GPIO159 = 1;   // Configure GPIO159 as EPWM8A
+    GpioCtrlRegs.GPFMUX1.bit.GPIO160 = 1;   // Configure GPIO160 as EPWM8B
+    EDIS;
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 // CONFIGURA LEDS 1 e 2 COMO SAÍDAS										<

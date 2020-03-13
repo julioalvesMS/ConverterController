@@ -5,6 +5,7 @@
 #include <src/Controller/ClassicController/voltage_controller.h>
 #include <src/Controller/ClassicController/voltage_current_controller.h>
 #include <src/Converter/base_converter.h>
+#include <src/DAC/dac.h>
 #include <src/Equilibrium/equilibrium.h>
 #include <src/Equilibrium/current_correction.h>
 #include <src/Equilibrium/reference_update.h>

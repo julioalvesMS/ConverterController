@@ -5,7 +5,7 @@
 #include "F28x_Project.h"
 #include <src/Config/CONFIGURATIONS.h>
 #include <src/Config/DEFINES_LP28379D.h>
-#include <src/DAC/dac.h>
+#include <src/DAC_SPI/dac.h>
 #include <src/IPC/ipc.h>
 #include <src/IPC/protocol.h>
 #include <src/Serial/serial.h>
@@ -101,7 +101,7 @@ void main(void)
     //
     Timer_Configure();
     Serial_Configure();
-    DAC_Configure();
+    DAC_SPI_Configure();
     IPC_Configure();
 
     //
@@ -127,7 +127,7 @@ void main(void)
         //
         // Send to DAC
         //
-        DAC_SendData(grupo_dac);
+        DAC_SPI_SendData(grupo_dac);
 
 
         if(OpenCommunication)

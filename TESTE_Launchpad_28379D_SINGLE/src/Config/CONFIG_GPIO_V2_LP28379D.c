@@ -1,4 +1,4 @@
-#include <src/Config/CONFIG_GPIO_V1_LP28379D.h>
+#include <src/Config/CONFIG_GPIO_V2_LP28379D.h>
 
 void Gpio_setup(void)
 {
@@ -12,6 +12,20 @@ void Gpio_setup(void)
     InitEPwm4Gpio();
     InitEPwm5Gpio();
     InitEPwm6Gpio();
+
+    EALLOW;
+    GpioCtrlRegs.GPEPUD.bit.GPIO157 = 1;    // Disable pull-up on GPIO157 (EPWM7A)
+    GpioCtrlRegs.GPEPUD.bit.GPIO158 = 1;    // Disable pull-up on GPIO158 (EPWM7B)
+    GpioCtrlRegs.GPEMUX2.bit.GPIO157 = 1;   // Configure GPIO157 as EPWM7A
+    GpioCtrlRegs.GPEMUX2.bit.GPIO158 = 1;   // Configure GPIO158 as EPWM7B
+    EDIS;
+
+    EALLOW;
+    GpioCtrlRegs.GPEPUD.bit.GPIO159 = 1;    // Disable pull-up on GPIO159 (EPWM8A)
+    GpioCtrlRegs.GPFPUD.bit.GPIO160 = 1;    // Disable pull-up on GPIO160 (EPWM8B)
+    GpioCtrlRegs.GPEMUX2.bit.GPIO159 = 1;   // Configure GPIO159 as EPWM8A
+    GpioCtrlRegs.GPFMUX1.bit.GPIO160 = 1;   // Configure GPIO160 as EPWM8B
+    EDIS;
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 // CONFIGURA LEDS 1 e 2 COMO SAÍDAS										<
@@ -85,27 +99,23 @@ EDIS;
 EALLOW;
     GpioCtrlRegs.GPBPUD.bit.GPIO58 = 0;     // GPIO58  (SPISIMOA)
     GpioCtrlRegs.GPBPUD.bit.GPIO59 = 0;     // GPIO59  (SPISOMIA)
-//    GpioCtrlRegs.GPBPUD.bit.GPIO60 = 0;     // GPIO60  (SPICLKA)
+    GpioCtrlRegs.GPBPUD.bit.GPIO60 = 0;     // GPIO60  (SPICLKA)
     GpioCtrlRegs.GPBPUD.bit.GPIO61 = 0;     // GPIO61 (SPISTEA)
 
-//    GpioCtrlRegs.GPBQSEL2.bit.GPIO58 = 3;   // asynch input
+    GpioCtrlRegs.GPBQSEL2.bit.GPIO58 = 3;   // asynch input
     GpioCtrlRegs.GPBQSEL2.bit.GPIO59 = 3;   // asynch input
     GpioCtrlRegs.GPBQSEL2.bit.GPIO60 = 3;   // asynch input
     GpioCtrlRegs.GPBQSEL2.bit.GPIO61 = 3;   // asynch input
 
-//    GpioCtrlRegs.GPBGMUX2.bit.GPIO58 = 3;   // GPIO58  = SPICLKA
+    GpioCtrlRegs.GPBGMUX2.bit.GPIO58 = 3;   // GPIO58  = SPICLKA
     GpioCtrlRegs.GPBGMUX2.bit.GPIO59 = 3;   // GPIO59  = SPIS0MIA
     GpioCtrlRegs.GPBGMUX2.bit.GPIO60 = 3;   // GPIO60  = SPISIMIA
     GpioCtrlRegs.GPBGMUX2.bit.GPIO61 = 3;   // GPIO61 = SPISTEA
 
-//    GpioCtrlRegs.GPBMUX2.bit.GPIO58 = 3;    // GPIO58  = SPICLKA
+    GpioCtrlRegs.GPBMUX2.bit.GPIO58 = 3;    // GPIO58  = SPICLKA
     GpioCtrlRegs.GPBMUX2.bit.GPIO59 = 3;    // GPIO59  = SPIS0MIA
     GpioCtrlRegs.GPBMUX2.bit.GPIO60 = 3;    // GPIO60  = SPISIMIA
     GpioCtrlRegs.GPBMUX2.bit.GPIO61 = 3;    // GPIO61 = SPISTEA
-
-
-    GpioCtrlRegs.GPBMUX2.bit.GPIO58 = 0;    // GPIO58  = SPICLKA
-    GpioCtrlRegs.GPBDIR.bit.GPIO58 = 0;    // GPIO58  = SPICLKA
 EDIS;
 
 
@@ -190,20 +200,20 @@ EALLOW;     //Configura GPIO26 RESETTZ
 
 // ( SCI-B on GPIO18 - GPIO19)
 EALLOW;
-    // Enable SCI-A on GPIO18 - GPIO19
+    // Enable SCI-B on GPIO18 - GPIO19
     GpioCtrlRegs.GPAPUD.bit.GPIO19 = 0;     // Enable pullup on GPIO19
     GpioCtrlRegs.GPAMUX2.bit.GPIO19 = 2;    // GPIO19 = SCIRXDB_DSP
     GpioCtrlRegs.GPAPUD.bit.GPIO18 = 0;     // Enable pullup on GPIO18
     GpioCtrlRegs.GPAMUX2.bit.GPIO18 = 2;    // GPIO18 = SCITXDB_DSP
 EDIS;
 
-// ( SCI-C on GPIO18 - GPIO19)
+// ( SCI-C on GPIO56 - GPIO139)
 EALLOW;
     // Enable SCI-C on GPIO18 - GPIO19
-    GpioCtrlRegs.GPEPUD.bit.GPIO139 = 0;    // Enable pullup on GPIO19
-    GpioCtrlRegs.GPEMUX1.bit.GPIO139 = 2;   // GPIO19 = SCIRXDB_DSP
-    GpioCtrlRegs.GPBPUD.bit.GPIO56 = 0;     // Enable pullup on GPIO18
-    GpioCtrlRegs.GPBMUX2.bit.GPIO56 = 2;    // GPIO18 = SCITXDB_DSP
+    GpioCtrlRegs.GPEPUD.bit.GPIO139 = 0;    // Enable pullup on GPIO139
+    GpioCtrlRegs.GPEMUX1.bit.GPIO139 = 2;   // GPIO139 = SCIRXDB_DSP
+    GpioCtrlRegs.GPBPUD.bit.GPIO56 = 0;     // Enable pullup on GPIO56
+    GpioCtrlRegs.GPBMUX2.bit.GPIO56 = 2;    // GPIO56 = SCITXDB_DSP
 EDIS;
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

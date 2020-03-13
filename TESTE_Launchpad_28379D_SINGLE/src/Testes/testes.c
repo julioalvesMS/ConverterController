@@ -7,7 +7,7 @@
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 void TESTA_LEDS(void){
     int cont=0;
-    float flag;
+    Uint32 flag;
     while(cont<20){
         if(flag > 800000){
             LIGALED1;
@@ -31,6 +31,7 @@ void TESTA_LEDS(void){
     }
 }
 
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%TESTA_BOTOESS%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //Esta função testa os pinos de GPIO 49 e 48, que estão ligados aos botões 1 e 2               %
 //Os LEDS 1,2 -19,18 serão ligados enquanto o botão BOT1 for pressionado                       %
@@ -38,7 +39,7 @@ void TESTA_LEDS(void){
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 void TESTA_BOTOES(void){
     int cont=0;
-    float flag;
+    Uint32 flag;
 
     while(cont<20){
         if(BOT1==1){
@@ -67,15 +68,14 @@ void TESTA_BOTOES(void){
     }
 }
 
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%TESTA_RELÉS%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //Esta função testa os pinos de GPIO 23 e 16, que estão ligados aos relés RELE1 E RELE2        %
 //Os relés são ligados e desligados a cada 1 segundo                                           %
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
 void TESTA_RELES(void){
     int cont=0;
-    float flag;
+    Uint32 flag;
 
     while(cont<20){
         if(flag > 900000)     //9000 //11000
@@ -97,17 +97,18 @@ void TESTA_RELES(void){
         flag++;
     }
 }
+
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%TESTA_DAC_SPI%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //Esta função testa a DAC por SPI                                                              %
 // SÃO CRIADAS SAIDAS EM RAMPAS QUE SÃO ENVIADAS PARA OS CANAIS DA DAC                         %
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 void TESTA_DAC_SPI(void)
 {
     static int C = 0;
 
     int cont=0;
-    float flag;
+    Uint32 flag;
     int i=0;
 
     while(cont<20){
@@ -130,6 +131,55 @@ void TESTA_DAC_SPI(void)
         flag++;
     }
 }
+
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%TESTA_DAC_PWM%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//Esta função testa a DAC por PWM                                                              %
+// SÃO CRIADAS SAIDAS EM RAMPAS QUE SÃO ENVIADAS PARA OS CANAIS DA DAC                         %
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+void TESTA_DAC_PWM(void)
+{
+    static int C = 0;
+
+    EALLOW;
+
+    EPwm1Regs.TZCLR.bit.OST = 1;
+    EPwm1Regs.TZEINT.bit.OST = 1;
+
+    EPwm7Regs.TZCLR.bit.OST = 1;
+    EPwm7Regs.TZEINT.bit.OST = 1;
+
+    EPwm8Regs.TZCLR.bit.OST = 1;
+    EPwm8Regs.TZEINT.bit.OST = 1;
+    EDIS;
+
+    int cont=0;
+    Uint32 flag;
+    Uint32 i=0;
+
+    while(cont<20){
+        C=C+1;
+
+        //enviar_dac_pwm_4Canais(C1,C2,C3,C4);
+        enviar_dac_pwm_4Canais(C,C,C,C);
+
+        for (i = 0; i < 100000; i++);
+
+        //enviar_dac_pwm_uni(3,C);
+        //enviar_dac_pwm_4Canais(C,C,C,C);
+        if(C==200){
+            C=0;
+        }
+        if(flag >= 16000)     //9000 //11000
+        {
+            flag = 0;
+            cont++;
+        }
+        flag++;
+    }
+}
+
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%TESTA_PWN%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //Esta função testa os canais os 12 canais ePWM                                                %
 // OS PWM 1-6 são acionados com indice de modulação (m) que varia de de-1 até1                 %
@@ -198,16 +248,16 @@ void TESTA_PWM(void)
     }
 }
 
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%TESTA_SAIDAS_RESET/BKR%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //Esta função testa as saídas de reset e de break dos VSCs                                     %
 // Caso o botão B1 seja acionado as saidas RESETVSC(gpio62) E RESETVSC2 são acionadas          %
 // Caso o botão B2 seja acionado as saidas BRK e BKR2 são acionadas                            %
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 void TESTA_BKR_RST(void)
 {
     int cont=0;
-    float flag;
+    Uint32 flag;
 
     while(cont<20)
     {
@@ -240,16 +290,15 @@ void TESTA_BKR_RST(void)
     }
 }
 
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%TESTA_SAIDAS ISOLADAS%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //Esta função testa os pinos de GPIO 27,21,61,60 que controlam as SAIDAS ISOLADAS1-4           %
 //AS SAIDAS PISCAM 20 VEZES A CADA CHAMADA  DESTA FUNÇÃO                                       %
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
 void TESTA_SAIDAS_ISOLADAS(void)
 {
     int cont=0;
-    float flag;
+    Uint32 flag;
 
     while(cont<20)
     {
@@ -273,10 +322,10 @@ void TESTA_SAIDAS_ISOLADAS(void)
     }
 }
 
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%TESTA CANAIS DE ENTRADAS ANALÓGICAS %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //Esta função ativa a interrupção do AD adc_isr onde são lidos o 16 canais analógicos           %           %
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 void TESTA_ENTRADAS_ANALOGICAS(void)
 {
     IER |= 3;
@@ -306,7 +355,6 @@ void TESTA_ENTRADAS_ANALOGICAS(void)
 //Esta função ativa a interrupção do AD adc_isr onde é medida a velocidade atraves da função    %
 // medir_velocidade(angulo, direção)                                                            %
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 void TESTA_ENCODER(void)
 {
     IER |= 3;
@@ -320,11 +368,10 @@ void TESTA_ENCODER(void)
 //Esta função testa a comunicação por RS232    SCI-A on GPIO35 - GPIO36                         %
 // Envia a mensagem TX-OK 20 vezes e espera a chegada do caracter  T definido na funçã SCI_RX   %                                                       %
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 void TESTA_RS232(void)
 {
     int cont=0;
-    float flag;
+    Uint32 flag;
 
     while(cont<20)
     {

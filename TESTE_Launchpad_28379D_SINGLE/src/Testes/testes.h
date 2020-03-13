@@ -6,6 +6,7 @@
 #include <src/Config/CONFIGURATIONS.h>
 #include <src/Config/DEFINES_LP28379D.h>
 #include <src/Config/CONFIG_GPIO_V1_LP28379D.h>
+#include <src/Config/PWM_DAC.h>
 #include <src/Config/SPI_DAC.h>
 #include <src/Config/COM_SERIAL.h>
 
@@ -18,6 +19,8 @@ extern float Iu, Iv, Iw, Icc1, Vcc1, Vu, Vv, Vw;
 extern float pos, dir;
 extern float vel_rpm_inst;
 extern float vel_rpm;
+
+extern int C1, C2, C3, C4;
 
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%TESTA_LEDS%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -40,6 +43,13 @@ void TESTA_BOTOES(void);
 //Os relés são ligados e desligados a cada 1 segundo                                           %
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 void TESTA_RELES(void);
+
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%TESTA_DAC_PWM%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//Esta função testa a DAC por PWM                                                              %
+// SÃO CRIADAS SAIDAS EM RAMPAS QUE SÃO ENVIADAS PARA OS CANAIS DA DAC                         %
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+void TESTA_DAC_PWM(void);
 
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%TESTA_DAC_SPI%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

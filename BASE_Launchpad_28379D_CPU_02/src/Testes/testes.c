@@ -7,7 +7,7 @@
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 void TESTA_LEDS(void){
     int cont=0;
-    int flag;
+    Uint32 flag;
     while(cont<20){
         if(flag > 800000){
             LIGALED1;
@@ -38,7 +38,7 @@ void TESTA_LEDS(void){
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 void TESTA_BOTOES(void){
     int cont=0;
-    int flag;
+    Uint32 flag;
 
     while(cont<20){
         if(BOT1==1){
@@ -75,7 +75,7 @@ void TESTA_BOTOES(void){
 
 void TESTA_RELES(void){
     int cont=0;
-    int flag;
+    Uint32 flag;
 
     while(cont<20){
         if(flag > 900000)     //9000 //11000
@@ -107,7 +107,7 @@ void TESTA_DAC_SPI(void)
     static int C = 0;
 
     int cont=0;
-    int flag;
+    Uint32 flag;
     int i=0;
 
     while(cont<20){
@@ -207,7 +207,7 @@ void TESTA_PWM(void)
 void TESTA_BKR_RST(void)
 {
     int cont=0;
-    int flag;
+    Uint32 flag;
 
     while(cont<20)
     {
@@ -249,7 +249,7 @@ void TESTA_BKR_RST(void)
 void TESTA_SAIDAS_ISOLADAS(void)
 {
     int cont=0;
-    int flag;
+    Uint32 flag;
 
     while(cont<20)
     {
@@ -324,7 +324,7 @@ void TESTA_ENCODER(void)
 void TESTA_RS232(void)
 {
     int cont=0;
-    int flag;
+    Uint32 flag;
 
     while(cont<20)
     {

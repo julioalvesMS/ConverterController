@@ -2,10 +2,11 @@
 //
 // Includes
 //
+#include <src/Config/CONFIG_GPIO_DUAL_LP28379D.h>
 #include "F28x_Project.h"
 #include <src/Config/CONFIGURATIONS.h>
-#include <src/Config/CONFIG_GPIO_V1_LP28379D.h>
 #include <src/Config/DEFINES_LP28379D.h>
+#include <src/DAC_PWM/dac.h>
 #include <src/IPC/ipc.h>
 #include <src/Timer/timer.h>
 
@@ -45,6 +46,12 @@ double Iu=0, Iv=0, Iw=0, Icc1=0, Vcc1=0, Vu=0, Vv=0, Vw=0;   // Grandezas medida
 //
 CommunicationCommand IPC_CommandBuffer[IPC_COMMAND_BUFFER_SIZE];
 int IPC_BufferIndex = 0;
+
+
+//
+// DAC PWM
+//
+Uint16 grupo_dac = 0;
 
 
 void main(void)
@@ -97,9 +104,6 @@ void main(void)
     PieCtrlRegs.PIEIER1.bit.INTx6 = 1;
     PieCtrlRegs.PIEIER1.bit.INTx7 = 1;  // Timer
 
-    Timer_Configure();
-    IPC_Configure();
-
     // Configuração do canais analógicos de entrada
     Setup_ADC();
 
@@ -108,6 +112,10 @@ void main(void)
 
     // Configuração do ENCODER  GPIO EQEP
     Setup_EQEP();
+
+    Timer_Configure();
+    IPC_Configure();
+    DAC_PWM_Configure();
 
 
     EALLOW;
@@ -210,6 +218,8 @@ __interrupt void Interruption_ADC(void)
     }
 
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
+
+    DAC_PWM_SendData(grupo_dac);
 
     return;
 }

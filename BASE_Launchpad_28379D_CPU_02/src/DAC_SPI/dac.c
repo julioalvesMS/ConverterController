@@ -1,12 +1,12 @@
-#include <src/DAC/dac.h>
+#include <src/DAC_SPI/dac.h>
 
-void DAC_Configure(void)
+void DAC_SPI_Configure(void)
 {
     spi_fifo_init();    // Configura SPI-FIFO DA DAC
     spi_init();         // Inicializa SPI-FIFO DA DAC
 }
 
-void DAC_SendData(Uint16 opt)
+void DAC_SPI_SendData(Uint16 opt)
 {
     switch(opt)
     {

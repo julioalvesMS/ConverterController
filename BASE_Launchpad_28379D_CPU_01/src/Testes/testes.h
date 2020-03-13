@@ -5,7 +5,7 @@
 #include "F28x_Project.h"
 #include <src/Config/CONFIGURATIONS.h>
 #include <src/Config/DEFINES_LP28379D.h>
-#include <src/Config/CONFIG_GPIO_V1_LP28379D.h>
+#include "../Config/CONFIG_GPIO_DUAL_LP28379D.h"
 
 
 extern int grupo_dac;

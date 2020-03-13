@@ -1,8 +1,9 @@
 #include "F28x_Project.h"
 #include <src/Config/CONFIGURATIONS.h>
 #include <src/Config/DEFINES_LP28379D.h>
-#include <src/Config/CONFIG_GPIO_V1_LP28379D.h>
+#include <src/Config/CONFIG_GPIO_V2_LP28379D.h>
 #include <src/Config/SPI_DAC.h>
+#include <src/Config/PWM_DAC.h>
 #include <src/Config/COM_SERIAL.h>
 #include <src/Testes/testes.h>
 
@@ -65,6 +66,9 @@ float vel_rpm_inst=0;			// Velocidade medida em rpm
 //
 int grupo_dac = 0;
 
+//int C1=60, C2=120, C3=180, C4=240;
+int C1=20, C2=40, C3=60, C4=80;
+
 //#############################################################################################
 //											CÓDIGO PRINCIPAL
 //#############################################################################################
@@ -114,7 +118,6 @@ void main(void)
 
     // Configura SPI-FIFO DA DAC
     spi_fifo_init();
-
     // Inicializa SPI-FIFO DA DAC
     spi_init();
 
@@ -133,13 +136,14 @@ void main(void)
         //TESTA_LEDS();                 // NO
         //TESTA_BOTOES();               // OK
         //TESTA_RS232();                // RS232C - NOK (v1)
-        //TESTA_RELES();                // RELE 1 - NOK (v1)
+        //TESTA_RELES();                // OK
+        //TESTA_DAC_PWM();              // OK
         //TESTA_DAC_SPI();              // OK
         //TESTA_PWM();                  // OK
         //TESTA_BKR_RST();              // OK
         //TESTA_SAIDAS_ISOLADAS();      // OK
         //TESTA_ENCODER();              // OK
-        TESTA_ENTRADAS_ANALOGICAS();  // OK - Vx não funciona placa V1.1
+        //TESTA_ENTRADAS_ANALOGICAS();  // OK - Vx não funciona placa V1.1
     }
 }
 
