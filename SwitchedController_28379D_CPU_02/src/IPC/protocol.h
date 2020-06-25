@@ -44,6 +44,9 @@ namespace Protocol
 
         EngageParallelLoad,
         DisengageParallelLoad,
+
+        EnableModeHopping,
+        DisableModeHopping,
     };
 }
 

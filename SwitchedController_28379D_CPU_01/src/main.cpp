@@ -101,6 +101,8 @@ int SwitchState;
 bool ConverterEnabled = false;
 bool CapacitorPreLoad;
 bool CapacitorPreLoadEngaged = false;
+bool ModeHoppingEnabled = true;
+bool Synchronous = true;
 Protection::Problem protection = Protection::NONE;
 ConverterID activeConverter = ID_BuckBoost;
 ControlStrategy controlStrategy = CS_DISCRETE_THEOREM_1;
@@ -535,10 +537,12 @@ void SwitchedControl(void)
         break;
     }
 
+    Synchronous = Manager::SynchronousOperation(*IL);
+
     //
     // Signal to the gate
     //
-    SwitchCounter += Switch::SetState(SwitchState);
+    SwitchCounter += Switch::SetState(SwitchState, Synchronous);
 }
 
 

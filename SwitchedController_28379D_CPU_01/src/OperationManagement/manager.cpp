@@ -3,6 +3,7 @@
 extern double *Vin, *Vout;
 extern bool ConverterEnabled;
 extern bool OutputLoadStep;
+extern bool ModeHoppingEnabled;
 extern ConverterID activeConverter;
 extern ControlStrategy controlStrategy;
 extern Equilibrium::EquilibriumMethod CorrectionMethod;
@@ -118,6 +119,12 @@ namespace Manager
             break;
         case Protocol::DisengageParallelLoad:
             OutputLoadStep = false;
+            break;
+        case Protocol::EnableModeHopping:
+            ModeHoppingEnabled = true;
+            break;
+        case Protocol::DisableModeHopping:
+            ModeHoppingEnabled = false;
             break;
         default:
             break;
@@ -264,6 +271,15 @@ namespace Manager
             break;
         }
 
+    }
+
+
+    bool SynchronousOperation(double IL)
+    {
+        if (ModeHoppingEnabled)
+            return (IL > 0.1);
+        else
+            return true;
     }
 
 

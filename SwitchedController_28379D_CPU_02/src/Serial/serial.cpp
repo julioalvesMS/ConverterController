@@ -5,6 +5,7 @@ extern double Vref;
 extern double loadResistance;
 extern int SwitchingFrequency;
 extern bool ConverterEnabled;
+extern bool ModeHoppingEnabled;
 extern int CorrectionMethod;
 extern bool OutputLoadStep;
 extern double stateDutyCycle[4];
@@ -84,6 +85,9 @@ namespace Serial
             break;
         case 17:
             sprintf(protocol_message, "3%04d", (int) (stateDutyCycle[3]*10));
+            break;
+        case 18:
+            sprintf(protocol_message, "H%1d", (int) (ModeHoppingEnabled));
             break;
         default:
             break;
@@ -214,6 +218,13 @@ namespace Serial
                 break;
             case 'l':
                 command = Protocol::DisengageParallelLoad;
+                break;
+
+            case 'H':
+                command = Protocol::EnableModeHopping;
+                break;
+            case 'h':
+                command = Protocol::DisableModeHopping;
                 break;
             default:
                 command = Protocol::None;

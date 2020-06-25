@@ -100,7 +100,7 @@ namespace Switch
     }
 
 
-    bool SetState(int state)
+    bool SetState(int state, bool synchronous)
     {
         bool switched = false;
 
@@ -115,13 +115,13 @@ namespace Switch
             GpioDataRegs.GPACLEAR.bit.S2 = 1;
             GpioDataRegs.GPACLEAR.bit.S3 = 1;
             GpioDataRegs.GPASET.bit.S1 = 1;
-            GpioDataRegs.GPASET.bit.S4 = 1;
+            GpioDataRegs.GPASET.bit.S4 = 1 && synchronous;
             break;
         case 1:
             GpioDataRegs.GPACLEAR.bit.S1 = 1;
             GpioDataRegs.GPACLEAR.bit.S3 = 1;
-            GpioDataRegs.GPASET.bit.S2 = 1;
-            GpioDataRegs.GPASET.bit.S4 = 1;
+            GpioDataRegs.GPASET.bit.S2 = 1 && synchronous;
+            GpioDataRegs.GPASET.bit.S4 = 1 && synchronous;
             break;
         case 2:
             GpioDataRegs.GPACLEAR.bit.S2 = 1;

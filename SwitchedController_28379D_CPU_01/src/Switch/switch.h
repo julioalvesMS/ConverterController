@@ -15,7 +15,7 @@ namespace Switch
 
     void ConfigurePWM(void);
 
-    bool SetState(int state);
+    bool SetState(int state, bool synchronous);
 
     short GetState(void);
 

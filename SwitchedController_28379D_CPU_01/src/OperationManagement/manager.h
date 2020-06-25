@@ -53,6 +53,9 @@ namespace Manager
     void ContinuePreLoad(void);
 
 
+    bool SynchronousOperation(double IL);
+
+
     OperationState* GetCurrentState(void);
 
 }
