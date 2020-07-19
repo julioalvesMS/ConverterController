@@ -37,9 +37,9 @@ namespace DiscreteSwitchingRule1
 
         double Xipp[SYSTEM_ORDER];
 
-        Xipp[0]  = subSys->A[0][0] * csi[0]  +  subSys->L[0]*u;
-        Xipp[0] += subSys->A[0][1] * csi[1]  +  subSys->L[1]*u;
-        Xipp[1]  = subSys->A[1][0] * csi[0]  +  subSys->L[0]*u;
+        Xipp[0]  = subSys->A[0][0] * csi[0];
+        Xipp[0] += subSys->A[0][1] * csi[1]  +  subSys->L[0]*u;
+        Xipp[1]  = subSys->A[1][0] * csi[0];
         Xipp[1] += subSys->A[1][1] * csi[1]  +  subSys->L[1]*u;
 
         //

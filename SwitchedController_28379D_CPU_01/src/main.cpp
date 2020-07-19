@@ -34,6 +34,7 @@
 #include <src/SwitchedSystem/cycle_sequence.h>
 #include <src/SwitchedSystem/switched_system.h>
 #include <src/Timer/timer.h>
+#include <src/Filtros/filtro_1.c>
 
 //
 // Namespaces in use
@@ -47,6 +48,8 @@ using namespace ConverterBuckBoost;
 using namespace ConverterBuckBoost3;
 using namespace Controller;
 
+
+extern float filtro_1(float vP);
 
 //
 // Functions in main
@@ -118,7 +121,7 @@ Uint32 InterruptionCounter = 0;
 Uint32 iterations_since_switch = 0;
 Uint32 SwitchCounter = 0;
 Uint32 SwitchingFrequency, ADCFrequency;
-
+double VoltageMinimum, VoltageMaximum, VoltageRipple;
 Uint32 stateCounter[4] = {0, 0, 0, 0};
 double stateDutyCycle[4] = {0, 0, 0, 0};
 
@@ -379,6 +382,10 @@ __interrupt void Interruption_SystemEvaluation(void)
 
     CalculateDutyCycle();
 
+    VoltageRipple = VoltageMaximum - VoltageMinimum;
+    VoltageMaximum = -1e7;
+    VoltageMinimum = 1e7;
+
     ADCFrequency = (10*InterruptionCounter);
     InterruptionCounter = 0;
     SwitchCounter = 0;
@@ -448,6 +455,8 @@ __interrupt void Interruption_Sensor(void)
     }
 
     stateCounter[Switch::GetState() + 1]++;
+    if(*Vout < VoltageMinimum) VoltageMinimum = *Vout;
+    if(*Vout > VoltageMaximum) VoltageMaximum = *Vout;
 
     //
     // Reinitialize for next ADC sequence

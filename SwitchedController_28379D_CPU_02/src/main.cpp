@@ -27,6 +27,7 @@ __interrupt void Interruption_CommunicationTimer(void);
 double Vin, Vout, IL, Iout;
 double Vref;
 double loadResistance;
+double VoltageRipple;
 
 int ADC_Vout, ADC_Vin, ADC_IL, ADC_Iout;
 

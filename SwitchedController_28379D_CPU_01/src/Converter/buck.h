@@ -37,6 +37,8 @@ namespace ConverterBuck
 
         static void GetReferenceController(double num[2], double den[2]);
 
+        static void GetCurrentCorrectionController(double num[2], double den[2]);
+
         static int SubSystem2SwitchState(int SubSystem);
     };
 

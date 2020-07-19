@@ -9,7 +9,7 @@
 #include <src/DAC/dac.h>
 #include <src/IPC/protocol.h>
 
-#define MESSAGES_COUNT 19
+#define MESSAGES_COUNT 20
 
 namespace Serial
 {

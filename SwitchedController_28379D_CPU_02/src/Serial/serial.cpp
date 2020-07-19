@@ -9,6 +9,7 @@ extern bool ModeHoppingEnabled;
 extern int CorrectionMethod;
 extern bool OutputLoadStep;
 extern double stateDutyCycle[4];
+extern double VoltageRipple;
 
 //
 // Enums
@@ -88,6 +89,9 @@ namespace Serial
             break;
         case 18:
             sprintf(protocol_message, "H%1d", (int) (ModeHoppingEnabled));
+            break;
+        case 19:
+            sprintf(protocol_message, "O%03d", (int) (VoltageRipple*10));
             break;
         default:
             break;

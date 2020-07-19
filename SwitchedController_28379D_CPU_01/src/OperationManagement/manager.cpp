@@ -45,11 +45,11 @@ namespace Manager
             if(Vref < 0) Vref = 0;
             break;
         case Protocol::StepIncreaseReference:
-            Vref += 10;
+            Vref += 5;
             if(Vref > PROTECTION_VOUT_MAX) Vref = PROTECTION_VOUT_MAX;
             break;
         case Protocol::StepDecreaseReference:
-            Vref -= 10;
+            Vref -= 5;
             if(Vref < 0) Vref = 0;
             break;
         case Protocol::EmergencyButtonProtection:

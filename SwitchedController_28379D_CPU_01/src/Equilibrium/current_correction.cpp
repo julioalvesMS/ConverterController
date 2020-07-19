@@ -17,11 +17,24 @@ namespace CurrentCorrection
 
     void LoadController(void)
     {
-        numPI[0] = 0.0025;
-        numPI[1] = 0.0025;
+        switch(activeConverter)
+        {
+        case BaseConverter::ID_Buck:
+            Buck::GetCurrentCorrectionController(numPI, denPI);
+            break;
+        case BaseConverter::ID_Boost:
+            Boost::GetCurrentCorrectionController(numPI, denPI);
+            break;
+        case BaseConverter::ID_BuckBoost:
+            BuckBoost::GetCurrentCorrectionController(numPI, denPI);
+            break;
+        case BaseConverter::ID_BuckBoost3:
+            BuckBoost3::GetCurrentCorrectionController(numPI, denPI);
+            break;
 
-        denPI[0] = 1;
-        denPI[1] = -1;
+        default:
+            break;
+        }
     }
 
     void UpdateReference(double Vout, double u)
@@ -29,7 +42,6 @@ namespace CurrentCorrection
         double Ie;
 
         Ie = Equilibrium::EstimateEquilibriumCurrent(Vref, u);
-
 
         e[1] = e[0];
         c[1] = c[0];

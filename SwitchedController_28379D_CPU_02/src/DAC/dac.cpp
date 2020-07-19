@@ -3,6 +3,8 @@
 extern double Vin, Vout, IL, Iout, Vref;
 extern int ADC_Vout, ADC_Vin, ADC_IL, ADC_Iout;
 
+extern bool ConverterEnabled, OutputLoadStep;
+
 namespace DAC_SPI
 {
     void Configure(void)
@@ -20,6 +22,9 @@ namespace DAC_SPI
             break;
         case CH_CONTROLE:
             enviar_dac_spi_4Canais(Vout*27.3, Vref*27.3, Vin*27.3, (IL+5)*136.5);
+            break;
+        case CH_TRIGGER:
+            enviar_dac_spi_4Canais(Vref*27.3, ConverterEnabled*4095, OutputLoadStep*4095, (IL+5)*136.5);
             break;
         default:
             break;

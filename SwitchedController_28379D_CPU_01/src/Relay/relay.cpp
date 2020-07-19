@@ -9,7 +9,7 @@ namespace Relay
     {
         bool relayEngaged = s_pre_load_state;
 
-        // If the switch is already ate the desired state, do nothing
+        // If the switch is already at the desired state, do nothing
         if (pre_load == s_pre_load_state)
             return relayEngaged;
 

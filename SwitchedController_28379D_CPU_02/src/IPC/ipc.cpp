@@ -24,6 +24,7 @@ extern int DacChannel;
 extern int activeConverter;
 extern int controlStrategy;
 extern double stateDutyCycle[4];
+extern double VoltageRipple;
 
 
 //
@@ -90,6 +91,9 @@ volatile double shared_stateDutyCycle[4];
 #pragma DATA_SECTION("SHARERAMGS0");
 volatile bool shared_ModeHoppingEnabled;
 
+#pragma DATA_SECTION("SHARERAMGS0");
+volatile double shared_VoltageRipple;
+
 
 namespace IPC
 {
@@ -137,6 +141,7 @@ namespace IPC
         protection = shared_protection;
         activeConverter = shared_activeConverter;
         controlStrategy = shared_controlStrategy;
+        VoltageRipple = shared_VoltageRipple;
 
         for(i=0;i<4;i++)
             stateDutyCycle[i] = shared_stateDutyCycle[i];
