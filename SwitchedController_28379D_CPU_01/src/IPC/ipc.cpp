@@ -11,6 +11,7 @@ extern int IPC_BufferIndex;
 // Variables - CPU1
 //
 extern double *Vin, *Vout, *IL, *Iout;
+extern double *Vout_mean;
 extern double Vref;
 extern double *loadResistance;
 extern int SwitchingFrequency;
@@ -56,6 +57,9 @@ volatile double shared_Vout;
 volatile double shared_IL;
 #pragma DATA_SECTION("SHARERAMGS0");
 volatile double shared_Iout;
+
+#pragma DATA_SECTION("SHARERAMGS0");
+volatile double shared_Vout_mean;
 
 #pragma DATA_SECTION("SHARERAMGS0");
 volatile double shared_Vref;
@@ -127,6 +131,7 @@ namespace IPC
         shared_Vout = *Vout;
         shared_IL = *IL;
         shared_Iout = *Iout;
+        shared_Vout_mean = *Vout_mean;
         shared_Vref = Vref;
         shared_loadResistance = *loadResistance;
 

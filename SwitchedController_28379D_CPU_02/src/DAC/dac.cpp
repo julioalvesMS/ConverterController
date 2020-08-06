@@ -24,7 +24,7 @@ namespace DAC_SPI
             enviar_dac_spi_4Canais(Vout*27.3, Vref*27.3, Vin*27.3, (IL+5)*136.5);
             break;
         case CH_TRIGGER:
-            enviar_dac_spi_4Canais(Vref*27.3, ConverterEnabled*4095, OutputLoadStep*4095, (IL+5)*136.5);
+            enviar_dac_spi_4Canais(Vout*27.3, ConverterEnabled*4095, OutputLoadStep*4095, (IL+5)*136.5);
             break;
         default:
             break;

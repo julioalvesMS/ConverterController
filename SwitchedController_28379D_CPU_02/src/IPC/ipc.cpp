@@ -12,6 +12,7 @@ extern int IPC_BufferIndex;
 //
 extern int ADC_Vout, ADC_Vin, ADC_IL, ADC_Iout;
 extern double Vin, Vout, IL, Iout;
+extern double Vout_mean;
 extern double Vref;
 extern double loadResistance;
 extern int SwitchingFrequency;
@@ -57,6 +58,9 @@ volatile double shared_Vout;
 volatile double shared_IL;
 #pragma DATA_SECTION("SHARERAMGS0");
 volatile double shared_Iout;
+
+#pragma DATA_SECTION("SHARERAMGS0");
+volatile double shared_Vout_mean;
 
 #pragma DATA_SECTION("SHARERAMGS0");
 volatile double shared_Vref;
@@ -130,6 +134,7 @@ namespace IPC
         Vout = shared_Vout;
         IL = shared_IL;
         Iout = shared_Iout;
+        Vout_mean = shared_Vout_mean;
         Vref = shared_Vref;
         loadResistance = shared_loadResistance;
 

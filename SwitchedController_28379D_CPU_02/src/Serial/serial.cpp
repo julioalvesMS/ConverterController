@@ -1,6 +1,7 @@
 #include <src/Serial/serial.h>
 
 extern double Vin, Vout, IL, Iout;
+extern double Vout_mean;
 extern double Vref;
 extern double loadResistance;
 extern int SwitchingFrequency;
@@ -93,6 +94,9 @@ namespace Serial
         case 19:
             sprintf(protocol_message, "O%03d", (int) (VoltageRipple*10));
             break;
+        case 20:
+            sprintf(protocol_message, "V%04d", (int) (Vout_mean*10));
+            break;
         default:
             break;
         }
@@ -155,6 +159,9 @@ namespace Serial
                 break;
             case 's':
                 command = Protocol::StepDecreaseReference;
+                break;
+            case 'Z':
+                command = Protocol::ResetReference;
                 break;
             case 'P':
                 command = Protocol::EmergencyButtonProtection;

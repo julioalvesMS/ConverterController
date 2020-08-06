@@ -11,7 +11,8 @@ namespace SwitchedSystem
     public:
         double A[SYSTEM_ORDER][SYSTEM_ORDER];
         double B[SYSTEM_ORDER];
-        double L[SYSTEM_ORDER];
+        double L[SYSTEM_ORDER][SYSTEM_ORDER+1];
+        double l[SYSTEM_ORDER];
 
         double E[SYSTEM_ORDER][SYSTEM_ORDER];
         double H[SYSTEM_ORDER];

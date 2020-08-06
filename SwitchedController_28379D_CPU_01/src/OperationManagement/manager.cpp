@@ -52,6 +52,9 @@ namespace Manager
             Vref -= 5;
             if(Vref < 0) Vref = 0;
             break;
+        case Protocol::ResetReference:
+            Vref = 0;
+            break;
         case Protocol::EmergencyButtonProtection:
             protection = Protection::FAULT_EMERGENCY_STOP;
             break;

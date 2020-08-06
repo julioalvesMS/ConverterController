@@ -156,6 +156,9 @@ namespace Sensor
         if(output_current > 0)
             load_resistance = filtro_2(s_state[1]/output_current);
 
+        if(load_resistance < 0)
+            load_resistance = 0;
+
         return;
     }
 }

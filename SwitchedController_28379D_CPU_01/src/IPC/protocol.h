@@ -19,6 +19,8 @@ namespace Protocol
         StepIncreaseReference,
         StepDecreaseReference,
 
+        ResetReference,
+
         EmergencyButtonProtection,
         ResetProtection,
 

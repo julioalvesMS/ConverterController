@@ -32,7 +32,11 @@ namespace Equilibrium
 
     double* GetEquilibrium(void);
 
+    double* GetOriginalEquilibrium(void);
+
     void UpdateEquilibrium(double u);
+
+    void UpdateOriginalEquilibrium(double u);
 
     double EstimateEquilibriumCurrent(double Ve, double u);
 }

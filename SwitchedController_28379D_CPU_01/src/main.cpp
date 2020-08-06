@@ -78,7 +78,7 @@ int IPC_BufferIndex = 0;
 //
 // Converter State Variables
 //
-double *X, *Xe;
+double *X, *Xe, *Xe_o;
 double *u;
 double *Vout_mean;
 double *loadResistance;
@@ -89,8 +89,6 @@ double Vref = INITIAL_REFERENCE_VOLTAGE;
 // Switched Control Variables
 //
 double P[SYSTEM_ORDER][SYSTEM_ORDER];
-double h[SYSTEM_ORDER];
-double d;
 System* sys;
 System* dsys;
 Cycle* limitCycle;
@@ -210,7 +208,9 @@ void main(void)
     IL = X;
 
     Xe = Equilibrium::GetEquilibrium();
+    Xe_o = Equilibrium::GetOriginalEquilibrium();
     Equilibrium::UpdateEquilibrium(*u);
+    Equilibrium::UpdateOriginalEquilibrium(*u);
 
     CurrentOperationState = Manager::GetCurrentState();
     Manager::ChangeController(controlStrategy);
@@ -272,32 +272,24 @@ void LoadConverterController(void)
         dsys = Buck::GetDiscreteSys();
         limitCycle = Buck::GetLimitCycle();
         Buck::GetP(P);
-        Buck::GetH(h);
-        d = Buck::GetD(P,h);
         break;
     case ID_Boost:
         sys = Boost::GetSys();
         dsys = Boost::GetDiscreteSys();
         limitCycle = Boost::GetLimitCycle();
         Boost::GetP(P);
-        Boost::GetH(h);
-        d = Boost::GetD(P,h);
         break;
     case ID_BuckBoost:
         sys = BuckBoost::GetSys();
         dsys = BuckBoost::GetDiscreteSys();
         limitCycle = BuckBoost::GetLimitCycle();
         BuckBoost::GetP(P);
-        BuckBoost::GetH(h);
-        d = BuckBoost::GetD(P,h);
         break;
     case ID_BuckBoost3:
         sys = BuckBoost3::GetSys();
         dsys = BuckBoost3::GetDiscreteSys();
         limitCycle = BuckBoost3::GetLimitCycle();
         BuckBoost3::GetP(P);
-        BuckBoost3::GetH(h);
-        d = BuckBoost3::GetD(P,h);
         break;
     }
 
@@ -420,6 +412,7 @@ __interrupt void Interruption_ReferenceUpdate(void)
         Equilibrium::UpdateEquilibrium(*u);
         break;
     }
+    Equilibrium::UpdateOriginalEquilibrium(*u);
 }
 
 
@@ -493,7 +486,7 @@ void SwitchedControl(void)
         BestSubsystem = SwitchingRule2::SwitchingRule(sys, P, X, Xe, *u);
         break;
     case CS_DISCRETE_THEOREM_1:
-        BestSubsystem = DiscreteSwitchingRule1::SwitchingRule(dsys, P, h, d, X, Xe, *u);
+        BestSubsystem = DiscreteSwitchingRule1::SwitchingRule(dsys, P, X, Xe, Xe_o, *u);
         break;
     case CS_LIMIT_CYCLE_COST:
     case CS_LIMIT_CYCLE_H2:

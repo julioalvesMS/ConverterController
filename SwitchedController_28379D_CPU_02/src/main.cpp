@@ -25,6 +25,7 @@ __interrupt void Interruption_CommunicationTimer(void);
 // Global static variables
 //
 double Vin, Vout, IL, Iout;
+double Vout_mean;
 double Vref;
 double loadResistance;
 double VoltageRipple;

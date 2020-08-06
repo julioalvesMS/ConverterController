@@ -3,11 +3,15 @@
 namespace Equilibrium
 {
     static double Xe[SYSTEM_ORDER];
+    static double Xe_o[SYSTEM_ORDER];
 
     void Configure(void)
     {
         Xe[0] = 0;
         Xe[1] = 0;
+
+        Xe_o[0] = 0;
+        Xe_o[1] = 0;
     }
 
     double* GetEquilibrium(void)
@@ -15,10 +19,21 @@ namespace Equilibrium
         return Xe;
     }
 
+    double* GetOriginalEquilibrium(void)
+    {
+        return Xe_o;
+    }
+
     void UpdateEquilibrium(double u)
     {
         Xe[0] = EstimateEquilibriumCurrent(Vref, u);
         Xe[1] = Vref;
+    }
+
+    void UpdateOriginalEquilibrium(double u)
+    {
+        Xe_o[0] = EstimateEquilibriumCurrent(Vref, u);
+        Xe_o[1] = Vref;
     }
 
     double EstimateEquilibriumCurrent(double Ve, double u)

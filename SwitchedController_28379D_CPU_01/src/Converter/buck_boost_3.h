@@ -23,10 +23,6 @@ namespace ConverterBuckBoost3
 
         static void GetP(double P[SYSTEM_ORDER][SYSTEM_ORDER]);
 
-        static void GetH(double h[SYSTEM_ORDER]);
-
-        static double GetD(double P[SYSTEM_ORDER][SYSTEM_ORDER], double h[SYSTEM_ORDER]);
-
         static void GetReferenceController(double num[2], double den[2]);
 
         static void GetCurrentCorrectionController(double num[2], double den[2]);
