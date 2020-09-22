@@ -50,9 +50,11 @@
 
 #define LIGABKR       	    GpioDataRegs.GPASET.bit.GPIO_BRK1   = 1     // RESETA BKR
 #define DESLIGABKR       	GpioDataRegs.GPACLEAR.bit.GPIO_BRK1 = 1     // DESLIGA BKR
+#define TOGGLEBKR           GpioDataRegs.GPATOGGLE.bit.GPIO_BRK1 = 1     // TOGGLE BKR
 
 #define LIGABKR2	        GpioDataRegs.GPASET.bit.GPIO_BRK2   = 1     // RESETA BKR2
 #define DESLIGABKR2	    	GpioDataRegs.GPACLEAR.bit.GPIO_BRK2 = 1     // DESLIGA BKR2
+#define TOGGLEBKR2          GpioDataRegs.GPATOGGLE.bit.GPIO_BRK2 = 1     // TOGGLE BKR
 
 // RESET DO TZ
 #define DESLISGATZSENSORES  GpioDataRegs.GPASET.bit.GPIO_RTZ    = 1     // RESETA BKR

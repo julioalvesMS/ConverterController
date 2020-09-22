@@ -114,8 +114,8 @@ namespace ConverterBuckBoost3
             //
             // BuckBoost3 Converter - Continuous
             //
-            num[0] = 0.5;
-            num[1] = -0.475;
+            num[0] = 1.5;
+            num[1] = -1.4;
 
             den[0] = 1;
             den[1] = -1;
@@ -125,8 +125,8 @@ namespace ConverterBuckBoost3
             //
             // BuckBoost3 Converter - Discrete
             //
-            num[0] = 0.5;
-            num[1] = -0.475;
+            num[0] = 1.5;
+            num[1] = -1.4;
 
             den[0] = 1;
             den[1] = -1;

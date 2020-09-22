@@ -4,6 +4,7 @@ extern double *Vin, *Vout;
 extern bool ConverterEnabled;
 extern bool OutputLoadStep;
 extern bool ModeHoppingEnabled;
+extern bool RecentReference;
 extern ConverterID activeConverter;
 extern ControlStrategy controlStrategy;
 extern Equilibrium::EquilibriumMethod CorrectionMethod;
@@ -45,10 +46,12 @@ namespace Manager
             if(Vref < 0) Vref = 0;
             break;
         case Protocol::StepIncreaseReference:
+            RecentReference = true;
             Vref += 5;
             if(Vref > PROTECTION_VOUT_MAX) Vref = PROTECTION_VOUT_MAX;
             break;
         case Protocol::StepDecreaseReference:
+            RecentReference = true;
             Vref -= 5;
             if(Vref < 0) Vref = 0;
             break;
@@ -216,6 +219,7 @@ namespace Manager
             Switch::EnablePWM();
         }
 
+        RecentReference = true;
         ConverterEnabled = true;
     }
 
@@ -280,7 +284,7 @@ namespace Manager
     bool SynchronousOperation(double IL)
     {
         if (ModeHoppingEnabled)
-            return (IL > 0.1);
+            return (IL > 1);
         else
             return true;
     }

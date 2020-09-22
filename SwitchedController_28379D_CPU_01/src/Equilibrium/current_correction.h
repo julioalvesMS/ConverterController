@@ -12,7 +12,9 @@ namespace CurrentCorrection
 
     void LoadController(void);
 
-    void UpdateReference(double Vout, double u);
+    void UpdateReference(double Vout, double u, bool enable);
+
+    double ModulateCorrection(double Ie, double u);
 
     void ResetController(void);
 }

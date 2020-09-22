@@ -104,6 +104,7 @@ bool CapacitorPreLoad;
 bool CapacitorPreLoadEngaged = false;
 bool ModeHoppingEnabled = true;
 bool Synchronous = true;
+bool RecentReference = true;
 Protection::Problem protection = Protection::NONE;
 ConverterID activeConverter = ID_BuckBoost;
 ControlStrategy controlStrategy = CS_DISCRETE_THEOREM_1;
@@ -394,7 +395,19 @@ __interrupt void Interruption_SystemEvaluation(void)
 //
 __interrupt void Interruption_ReferenceUpdate(void)
 {
+    static Uint32 i = 0;
     CpuTimer2.InterruptCount++;
+
+    if (RecentReference)
+    {
+        if (i < 1000)
+            i++;
+        else
+        {
+            RecentReference = false;
+            i = 0;
+        }
+    }
 
     switch(CorrectionMethod)
     {
@@ -405,7 +418,7 @@ __interrupt void Interruption_ReferenceUpdate(void)
         PartialInformation::UpdateReference(*IL);
         break;
     case Equilibrium::CURRENT_CORRECTION:
-        CurrentCorrection::UpdateReference(*Vout_mean, *u);
+        CurrentCorrection::UpdateReference(*Vout_mean, *u, !RecentReference);
         break;
     case Equilibrium::NONE:
     default:
@@ -421,6 +434,8 @@ __interrupt void Interruption_ReferenceUpdate(void)
 //
 __interrupt void Interruption_Sensor(void)
 {
+    TOGGLEBKR;
+    LIGABKR2;
     GpioDataRegs.GPASET.bit.TST = 1;
     InterruptionCounter++;
 
@@ -468,6 +483,7 @@ __interrupt void Interruption_Sensor(void)
 
     DAC_PWM::SendData(dacChannel);
 
+    DESLIGABKR2;
     return;
 }
 
