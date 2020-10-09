@@ -61,30 +61,30 @@ namespace ConverterBuckBoost
             //
             // BuckBoost Converter - Rule 1
             //
-            P[0][0] = 0.001492235547;
-            P[0][1] = 0.0008170792702;
-            P[1][0] = 0.0008170792702;
-            P[1][1] = 0.003050191756;
+            P[0][0] = 0.001503055331;
+            P[0][1] = 0.0008184044987;
+            P[1][0] = 0.0008184044987;
+            P[1][1] = 0.003054383809;
             break;
 
         case CS_CONTINUOUS_THEOREM_2:
             //
             // BuckBoost Converter - Rule 2
             //
-            P[0][0] = 0.02310283858;
-            P[0][1] = 0.0011663968;
-            P[1][0] = 0.0011663968;
-            P[1][1] = 0.03461006052;
+            P[0][0] = 0.0231012953;
+            P[0][1] = 0.001167462277;
+            P[1][0] = 0.001167462277;
+            P[1][1] = 0.03461169129;
             break;
 
         case CS_DISCRETE_THEOREM_1:
             //
             // BuckBoost Converter - Discrete Rule 1
             //
-            P[0][0] = 0.8371672588;
-            P[0][1] = 0.419950784;
-            P[1][0] = 0.419950784;
-            P[1][1] = 1.355279634;
+            P[0][0] = 0.8315723594;
+            P[0][1] = 0.4167590316;
+            P[1][0] = 0.4167590316;
+            P[1][1] = 1.345106863;
             break;
 
         default:
@@ -122,23 +122,20 @@ namespace ConverterBuckBoost
 
 
 
-    void BuckBoost::GetStateFeedbackH2Controller(double K[2], double C[2], double* M)
+    void BuckBoost::GetStateFeedbackH2Controller(double K[2], double* M)
     {
-        K[0] = 1.219076922;
-        K[1] = 0.6619065564;
+        K[0] = 0.6072536448;
+        K[1] = 0.299042001;
 
-        C[0] = 1.8;
-        C[1] = 1;
-
-        (*M) = 0.6773671482;
+        (*M) = 0.3202118795;
     }
 
 
 
     void BuckBoost::GetReferenceController(double num[2], double den[2])
     {
-        num[0] = 1;
-        num[1] = -0.9847;
+        num[0] = 1.5;
+        num[1] = -1.4;
 
         den[0] = 1;
         den[1] = -1;
@@ -146,25 +143,17 @@ namespace ConverterBuckBoost
 
 
 
-    void BuckBoost::GetCurrentCorrectionController(double num[2], double den[2])
+    void BuckBoost::GetCurrentCorrectionController(double num[2], double den[2], double *designVoltage)
     {
+        (*designVoltage) = 100;
+
         switch(controlStrategy)
         {
         case CS_CONTINUOUS_THEOREM_1:
         case CS_CONTINUOUS_THEOREM_2:
-            //
-            // BuckBoost Converter - Continuous
-            //
-            num[0] = 1.5;
-            num[1] = -1.4;
-
-            den[0] = 1;
-            den[1] = -1;
-            break;
-
         case CS_DISCRETE_THEOREM_1:
             //
-            // BuckBoost Converter - Discrete
+            // BuckBoost Converter
             //
             num[0] = 1.5;
             num[1] = -1.4;
@@ -218,6 +207,20 @@ namespace ConverterBuckBoost
         subSys->A[1][0] = 0;
         subSys->A[1][1] = -4.591368228;
         //
+        // Subsystem 1 -- Matrix Ar0
+        //
+        subSys->Ar0[0][0] = -247.3498233;
+        subSys->Ar0[0][1] = 0;
+        subSys->Ar0[1][0] = 0;
+        subSys->Ar0[1][1] = 0;
+        //
+        // Subsystem 1 -- Matrix Ard
+        //
+        subSys->Ard[0][0] = 0;
+        subSys->Ard[0][1] = 0;
+        subSys->Ard[1][0] = 0;
+        subSys->Ard[1][1] = -444.4444444;
+        //
         // Subsystem 1 -- Matrix B
         //
         subSys->B[0] = 504.7955578;
@@ -243,6 +246,20 @@ namespace ConverterBuckBoost
         subSys->A[0][1] = -504.7955578;
         subSys->A[1][0] = 444.4444444;
         subSys->A[1][1] = -4.591368228;
+        //
+        // Subsystem 2 -- Matrix Ar0
+        //
+        subSys->Ar0[0][0] = -247.3498233;
+        subSys->Ar0[0][1] = -504.7955578;
+        subSys->Ar0[1][0] = 444.4444444;
+        subSys->Ar0[1][1] = 0;
+        //
+        // Subsystem 2 -- Matrix Ard
+        //
+        subSys->Ard[0][0] = 0;
+        subSys->Ard[0][1] = 0;
+        subSys->Ard[1][0] = 0;
+        subSys->Ard[1][1] = -444.4444444;
         //
         // Subsystem 2 -- Matrix B
         //
@@ -276,6 +293,20 @@ namespace ConverterBuckBoost
         subSys->A[0][1] = 0;
         subSys->A[1][0] = 0;
         subSys->A[1][1] = 0.9998852224;
+        //
+        // Subsystem 1 -- Matrix Ar0
+        //
+        subSys->Ar0[0][0] = 0.9938353344;
+        subSys->Ar0[0][1] = 0;
+        subSys->Ar0[1][0] = 0;
+        subSys->Ar0[1][1] = 1;
+        //
+        // Subsystem 1 -- Matrix Ard
+        //
+        subSys->Ard[0][0] = 0;
+        subSys->Ard[0][1] = 0;
+        subSys->Ard[1][0] = 0;
+        subSys->Ard[1][1] = -0.01111111111;
         //
         // Subsystem 1 -- Matrix L
         //
@@ -323,6 +354,20 @@ namespace ConverterBuckBoost
         subSys->A[0][1] = -0.01257993339;
         subSys->A[1][0] = 0.01107593247;
         subSys->A[1][1] = 0.9998152624;
+        //
+        // Subsystem 2 -- Matrix Ar0
+        //
+        subSys->Ar0[0][0] = 0.9937655131;
+        subSys->Ar0[0][1] = -0.01258065614;
+        subSys->Ar0[1][0] = 0.01107656881;
+        subSys->Ar0[1][1] = 0.9999300346;
+        //
+        // Subsystem 2 -- Matrix Ard
+        //
+        subSys->Ard[0][0] = 0;
+        subSys->Ard[0][1] = 0;
+        subSys->Ard[1][0] = 0;
+        subSys->Ard[1][1] = -0.01111111111;
         //
         // Subsystem 2 -- Matrix L
         //

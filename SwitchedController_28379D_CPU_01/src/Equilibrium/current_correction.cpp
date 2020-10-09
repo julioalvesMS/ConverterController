@@ -9,6 +9,8 @@ namespace CurrentCorrection
     static double numPI[2] = {0, 0};
     static double denPI[2] = {0, 0};
 
+    static double designVoltage = 100;
+
     void Configure(void)
     {
         LoadController();
@@ -20,16 +22,16 @@ namespace CurrentCorrection
         switch(activeConverter)
         {
         case BaseConverter::ID_Buck:
-            Buck::GetCurrentCorrectionController(numPI, denPI);
+            Buck::GetCurrentCorrectionController(numPI, denPI, &designVoltage);
             break;
         case BaseConverter::ID_Boost:
-            Boost::GetCurrentCorrectionController(numPI, denPI);
+            Boost::GetCurrentCorrectionController(numPI, denPI, &designVoltage);
             break;
         case BaseConverter::ID_BuckBoost:
-            BuckBoost::GetCurrentCorrectionController(numPI, denPI);
+            BuckBoost::GetCurrentCorrectionController(numPI, denPI, &designVoltage);
             break;
         case BaseConverter::ID_BuckBoost3:
-            BuckBoost3::GetCurrentCorrectionController(numPI, denPI);
+            BuckBoost3::GetCurrentCorrectionController(numPI, denPI, &designVoltage);
             break;
 
         default:
@@ -37,11 +39,11 @@ namespace CurrentCorrection
         }
     }
 
-    void UpdateReference(double Vout, double u, bool enable)
+    void UpdateReference(double Vout, double u, double Rom, bool enable)
     {
         double Ie, Iec;
 
-        Ie = Equilibrium::EstimateEquilibriumCurrent(Vref, u);
+        Ie = Equilibrium::EstimateEquilibriumCurrent(Vref, u, Rom);
 
         if (enable)
         {
@@ -52,17 +54,17 @@ namespace CurrentCorrection
             c[0] = numPI[0]*e[0] + numPI[1]*e[1] - denPI[1]*c[1];
         }
 
-        Iec = ModulateCorrection(Ie, u);
+        Iec = ModulateCorrection(Ie, u, Rom);
 
         Xe[0] = Ie + Iec;
         Xe[1] = Vref;
     }
 
-    double ModulateCorrection(double Ie, double u)
+    double ModulateCorrection(double Ie, double u, double Rom)
     {
         double Ie100, gain, Iec;
 
-        Ie100 = Equilibrium::EstimateEquilibriumCurrent(100, u);
+        Ie100 = Equilibrium::EstimateEquilibriumCurrent(designVoltage, u, Rom);
         gain = Ie/Ie100;
 
         if (gain < 0.1)

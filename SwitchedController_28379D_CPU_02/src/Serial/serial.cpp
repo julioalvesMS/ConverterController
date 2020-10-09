@@ -7,6 +7,7 @@ extern double loadResistance;
 extern int SwitchingFrequency;
 extern bool ConverterEnabled;
 extern bool ModeHoppingEnabled;
+extern bool LoadEstimationEnabled;
 extern int CorrectionMethod;
 extern bool OutputLoadStep;
 extern double stateDutyCycle[4];
@@ -96,6 +97,9 @@ namespace Serial
             break;
         case 20:
             sprintf(protocol_message, "V%04d", (int) (Vout_mean*10));
+            break;
+        case 21:
+            sprintf(protocol_message, "M%1d", (int) (LoadEstimationEnabled));
             break;
         default:
             break;
@@ -236,6 +240,13 @@ namespace Serial
                 break;
             case 'h':
                 command = Protocol::DisableModeHopping;
+                break;
+
+            case 'O':
+                command = Protocol::EnableLoadEstimation;
+                break;
+            case 'o':
+                command = Protocol::DisableLoadEstimation;
                 break;
             default:
                 command = Protocol::None;

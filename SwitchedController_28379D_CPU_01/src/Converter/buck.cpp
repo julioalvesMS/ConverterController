@@ -61,30 +61,30 @@ namespace ConverterBuck
             //
             // Buck Converter - Rule 1
             //
-            P[0][0] = 0.0002164385836;
-            P[0][1] = 7.95577254e-06;
-            P[1][0] = 7.95577254e-06;
-            P[1][1] = 0.0002503384835;
+            P[0][0] = 0.006403021076;
+            P[0][1] = 0.002988408223;
+            P[1][0] = 0.002988408223;
+            P[1][1] = 0.008962378313;
             break;
 
         case CS_CONTINUOUS_THEOREM_2:
             //
             // Buck Converter - Rule 2
             //
-            P[0][0] = 0.000216438814;
-            P[0][1] = 7.955830817e-06;
-            P[1][0] = 7.955830817e-06;
-            P[1][1] = 0.0002503387422;
+            P[0][0] = 0.006403073046;
+            P[0][1] = 0.002988426322;
+            P[1][0] = 0.002988426322;
+            P[1][1] = 0.008962468963;
             break;
 
         case CS_DISCRETE_THEOREM_1:
             //
             // Buck Converter - Discrete Rule 1
             //
-            P[0][0] = 5.044744814e-06;
-            P[0][1] = 1.356239421e-06;
-            P[1][0] = 1.356239421e-06;
-            P[1][1] = 9.58204939e-06;
+            P[0][0] = 5.986936969;
+            P[0][1] = 2.327900964;
+            P[1][0] = 2.327900964;
+            P[1][1] = 8.142682586;
             break;
 
         default:
@@ -122,15 +122,12 @@ namespace ConverterBuck
 
 
 
-    void Buck::GetStateFeedbackH2Controller(double K[2], double C[2], double* M)
+    void Buck::GetStateFeedbackH2Controller(double K[2], double* M)
     {
-        K[0] = 1.200606059;
-        K[1] = 0.6518776693;
+        K[0] = 0.6090444634;
+        K[1] = 0.2895357471;
 
-        C[0] = 1.8;
-        C[1] = 1;
-
-        (*M) = 0.6671040097;
+        (*M) = 0.3112900208;
     }
 
 
@@ -146,25 +143,17 @@ namespace ConverterBuck
 
 
 
-    void Buck::GetCurrentCorrectionController(double num[2], double den[2])
+    void Buck::GetCurrentCorrectionController(double num[2], double den[2], double *designVoltage)
     {
+        (*designVoltage) = 40;
+
         switch(controlStrategy)
         {
         case CS_CONTINUOUS_THEOREM_1:
         case CS_CONTINUOUS_THEOREM_2:
-            //
-            // Buck Converter - Continuous
-            //
-            num[0] = 1.5;
-            num[1] = -1.4;
-
-            den[0] = 1;
-            den[1] = -1;
-            break;
-
         case CS_DISCRETE_THEOREM_1:
             //
-            // Buck Converter - Discrete
+            // Buck Converter
             //
             num[0] = 1.5;
             num[1] = -1.4;
@@ -203,6 +192,20 @@ namespace ConverterBuck
         subSys->A[1][0] = 444.4444444;
         subSys->A[1][1] = -4.591368228;
         //
+        // Subsystem 1 -- Matrix Ar0
+        //
+        subSys->Ar0[0][0] = -247.3498233;
+        subSys->Ar0[0][1] = -504.7955578;
+        subSys->Ar0[1][0] = 444.4444444;
+        subSys->Ar0[1][1] = 0;
+        //
+        // Subsystem 1 -- Matrix Ard
+        //
+        subSys->Ard[0][0] = 0;
+        subSys->Ard[0][1] = 0;
+        subSys->Ard[1][0] = 0;
+        subSys->Ard[1][1] = -444.4444444;
+        //
         // Subsystem 1 -- Matrix B
         //
         subSys->B[0] = 504.7955578;
@@ -210,10 +213,10 @@ namespace ConverterBuck
         //
         // Subsystem 1 -- Matrix Q
         //
-        subSys->Q[0][0] = 0.1;
+        subSys->Q[0][0] = 0.49;
         subSys->Q[0][1] = 0;
         subSys->Q[1][0] = 0;
-        subSys->Q[1][1] = 0.01033057851;
+        subSys->Q[1][1] = 3.099173554;
 
 
         //
@@ -229,6 +232,20 @@ namespace ConverterBuck
         subSys->A[1][0] = 444.4444444;
         subSys->A[1][1] = -4.591368228;
         //
+        // Subsystem 2 -- Matrix Ar0
+        //
+        subSys->Ar0[0][0] = -247.3498233;
+        subSys->Ar0[0][1] = -504.7955578;
+        subSys->Ar0[1][0] = 444.4444444;
+        subSys->Ar0[1][1] = 0;
+        //
+        // Subsystem 2 -- Matrix Ard
+        //
+        subSys->Ard[0][0] = 0;
+        subSys->Ard[0][1] = 0;
+        subSys->Ard[1][0] = 0;
+        subSys->Ard[1][1] = -444.4444444;
+        //
         // Subsystem 2 -- Matrix B
         //
         subSys->B[0] = 0;
@@ -236,10 +253,10 @@ namespace ConverterBuck
         //
         // Subsystem 2 -- Matrix Q
         //
-        subSys->Q[0][0] = 0.1;
+        subSys->Q[0][0] = 0.49;
         subSys->Q[0][1] = 0;
         subSys->Q[1][0] = 0;
-        subSys->Q[1][1] = 0.01033057851;
+        subSys->Q[1][1] = 3.099173554;
 
     }
 
@@ -261,6 +278,20 @@ namespace ConverterBuck
         subSys->A[0][1] = -0.01257993339;
         subSys->A[1][0] = 0.01107593247;
         subSys->A[1][1] = 0.9998152624;
+        //
+        // Subsystem 1 -- Matrix Ar0
+        //
+        subSys->Ar0[0][0] = 0.9937655131;
+        subSys->Ar0[0][1] = -0.01258065614;
+        subSys->Ar0[1][0] = 0.01107656881;
+        subSys->Ar0[1][1] = 0.9999300346;
+        //
+        // Subsystem 1 -- Matrix Ard
+        //
+        subSys->Ard[0][0] = 0;
+        subSys->Ard[0][1] = 0;
+        subSys->Ard[1][0] = 0;
+        subSys->Ard[1][1] = -0.01111111111;
         //
         // Subsystem 1 -- Matrix L
         //
@@ -290,10 +321,10 @@ namespace ConverterBuck
         //
         // Subsystem 1 -- Matrix Q
         //
-        subSys->Q[0][0] = 0.1;
+        subSys->Q[0][0] = 0.49;
         subSys->Q[0][1] = 0;
         subSys->Q[1][0] = 0;
-        subSys->Q[1][1] = 0.01033057851;
+        subSys->Q[1][1] = 3.099173554;
 
 
         //
@@ -308,6 +339,20 @@ namespace ConverterBuck
         subSys->A[0][1] = -0.01257993339;
         subSys->A[1][0] = 0.01107593247;
         subSys->A[1][1] = 0.9998152624;
+        //
+        // Subsystem 2 -- Matrix Ar0
+        //
+        subSys->Ar0[0][0] = 0.9937655131;
+        subSys->Ar0[0][1] = -0.01258065614;
+        subSys->Ar0[1][0] = 0.01107656881;
+        subSys->Ar0[1][1] = 0.9999300346;
+        //
+        // Subsystem 2 -- Matrix Ard
+        //
+        subSys->Ard[0][0] = 0;
+        subSys->Ard[0][1] = 0;
+        subSys->Ard[1][0] = 0;
+        subSys->Ard[1][1] = -0.01111111111;
         //
         // Subsystem 2 -- Matrix L
         //
@@ -337,10 +382,10 @@ namespace ConverterBuck
         //
         // Subsystem 2 -- Matrix Q
         //
-        subSys->Q[0][0] = 0.1;
+        subSys->Q[0][0] = 0.49;
         subSys->Q[0][1] = 0;
         subSys->Q[1][0] = 0;
-        subSys->Q[1][1] = 0.01033057851;
+        subSys->Q[1][1] = 3.099173554;
 
     }
 
@@ -350,7 +395,7 @@ namespace ConverterBuck
     {
         CycleStep* step;
 
-        limitCycle.kappa = 11;
+        limitCycle.kappa = 13;
 
         //
         // =============== Limit Cycle Step 1 ===============
@@ -360,22 +405,22 @@ namespace ConverterBuck
         //
         // Cycle Step 1 -- Matrix P
         //
-        step->P[0][0] = 8.707719041;
-        step->P[0][1] = 0.3183435623;
-        step->P[1][0] = 0.3183435623;
-        step->P[1][1] = 10.01877227;
+        step->P[0][0] = 254.6682236;
+        step->P[0][1] = 119.5428527;
+        step->P[1][0] = 119.5428527;
+        step->P[1][1] = 358.2866392;
         //
         // Cycle Step 1 -- Vector Xe
         //
-        step->Xe[0] = -0.3665434232;
-        step->Xe[1] = 29.83655133;
+        step->Xe[0] = -1.015837635;
+        step->Xe[1] = 29.84612534;
         //
         // Cycle Step 1 -- Matrix ell
         //
-        step->ell[0][0] = 1.110223025e-16;
-        step->ell[0][1] = 2.938621568e-15;
-        step->ell[1][0] = -0.8303233059;
-        step->ell[1][1] = -0.004617538638;
+        step->ell[0][0] = -1.110223025e-16;
+        step->ell[0][1] = -1.214306433e-17;
+        step->ell[1][0] = -0.8177426497;
+        step->ell[1][1] = -0.004547575931;
 
         //
         // =============== Limit Cycle Step 2 ===============
@@ -385,22 +430,22 @@ namespace ConverterBuck
         //
         // Cycle Step 2 -- Matrix P
         //
-        step->P[0][0] = 8.707719051;
-        step->P[0][1] = 0.3183435827;
-        step->P[1][0] = 0.3183435827;
-        step->P[1][1] = 10.01877232;
+        step->P[0][0] = 254.6682229;
+        step->P[0][1] = 119.542852;
+        step->P[1][0] = 119.542852;
+        step->P[1][1] = 358.2866389;
         //
         // Cycle Step 2 -- Vector Xe
         //
-        step->Xe[0] = 0.09072326343;
-        step->Xe[1] = 29.83159712;
+        step->Xe[0] = -0.5672240304;
+        step->Xe[1] = 29.83390787;
         //
         // Cycle Step 2 -- Matrix ell
         //
-        step->ell[0][0] = -3.330669074e-16;
-        step->ell[0][1] = -4.166805789e-15;
-        step->ell[1][0] = -0.8303233059;
-        step->ell[1][1] = -0.004617538638;
+        step->ell[0][0] = 1.110223025e-16;
+        step->ell[0][1] = -1.214306433e-17;
+        step->ell[1][0] = -0.8177426497;
+        step->ell[1][1] = -0.004547575931;
 
         //
         // =============== Limit Cycle Step 3 ===============
@@ -410,22 +455,22 @@ namespace ConverterBuck
         //
         // Cycle Step 3 -- Matrix P
         //
-        step->P[0][0] = 8.707719058;
-        step->P[0][1] = 0.3183435988;
-        step->P[1][0] = 0.3183435988;
-        step->P[1][1] = 10.01877235;
+        step->P[0][0] = 254.6682225;
+        step->P[0][1] = 119.5428514;
+        step->P[1][0] = 119.5428514;
+        step->P[1][1] = 358.2866385;
         //
         // Cycle Step 3 -- Vector Xe
         //
-        step->Xe[0] = 0.5452014517;
-        step->Xe[1] = 29.83170849;
+        step->Xe[0] = -0.1212536052;
+        step->Xe[1] = 29.82666146;
         //
         // Cycle Step 3 -- Matrix ell
         //
-        step->ell[0][0] = -1.110223025e-16;
-        step->ell[0][1] = 2.938621568e-15;
-        step->ell[1][0] = -0.8303233059;
-        step->ell[1][1] = -0.004617538638;
+        step->ell[0][0] = -5.551115123e-16;
+        step->ell[0][1] = -1.214306433e-17;
+        step->ell[1][0] = -0.8177426497;
+        step->ell[1][1] = -0.004547575931;
 
         //
         // =============== Limit Cycle Step 4 ===============
@@ -435,22 +480,22 @@ namespace ConverterBuck
         //
         // Cycle Step 4 -- Matrix P
         //
-        step->P[0][0] = 8.707719064;
-        step->P[0][1] = 0.3183436106;
-        step->P[1][0] = 0.3183436106;
-        step->P[1][1] = 10.01877238;
+        step->P[0][0] = 254.6682221;
+        step->P[0][1] = 119.5428509;
+        step->P[1][0] = 119.5428509;
+        step->P[1][1] = 358.2866382;
         //
         // Cycle Step 4 -- Vector Xe
         //
-        step->Xe[0] = 0.996844802;
-        step->Xe[1] = 29.8368536;
+        step->Xe[0] = 0.3220275836;
+        step->Xe[1] = 29.82435593;
         //
         // Cycle Step 4 -- Matrix ell
         //
         step->ell[0][0] = -3.330669074e-16;
-        step->ell[0][1] = 2.938621568e-15;
-        step->ell[1][0] = -0.8303233059;
-        step->ell[1][1] = -0.004617538638;
+        step->ell[0][1] = -1.214306433e-17;
+        step->ell[1][0] = -0.8177426497;
+        step->ell[1][1] = -0.004547575931;
 
         //
         // =============== Limit Cycle Step 5 ===============
@@ -460,22 +505,22 @@ namespace ConverterBuck
         //
         // Cycle Step 5 -- Matrix P
         //
-        step->P[0][0] = 8.707719067;
-        step->P[0][1] = 0.3183436182;
-        step->P[1][0] = 0.3183436182;
-        step->P[1][1] = 10.01877239;
+        step->P[0][0] = 254.6682218;
+        step->P[0][1] = 119.5428505;
+        step->P[1][0] = 119.5428505;
+        step->P[1][1] = 358.2866379;
         //
         // Cycle Step 5 -- Vector Xe
         //
-        step->Xe[0] = 1.445607664;
-        step->Xe[1] = 29.84700013;
+        step->Xe[0] = 0.7625741462;
+        step->Xe[1] = 29.82696058;
         //
         // Cycle Step 5 -- Matrix ell
         //
-        step->ell[0][0] = 0.8303233059;
-        step->ell[0][1] = 0.004617538638;
-        step->ell[1][0] = 2.220446049e-16;
-        step->ell[1][1] = -3.552713679e-15;
+        step->ell[0][0] = -3.330669074e-16;
+        step->ell[0][1] = 3.540570614e-15;
+        step->ell[1][0] = -0.8177426497;
+        step->ell[1][1] = -0.004547575931;
 
         //
         // =============== Limit Cycle Step 6 ===============
@@ -485,22 +530,22 @@ namespace ConverterBuck
         //
         // Cycle Step 6 -- Matrix P
         //
-        step->P[0][0] = 8.707719068;
-        step->P[0][1] = 0.3183436217;
-        step->P[1][0] = 0.3183436217;
-        step->P[1][1] = 10.0187724;
+        step->P[0][0] = 254.6682216;
+        step->P[0][1] = 119.5428503;
+        step->P[1][0] = 119.5428503;
+        step->P[1][1] = 358.2866377;
         //
         // Cycle Step 6 -- Vector Xe
         //
-        step->Xe[0] = 1.061121772;
-        step->Xe[1] = 29.85749772;
+        step->Xe[0] = 1.200341362;
+        step->Xe[1] = 29.83444422;
         //
         // Cycle Step 6 -- Matrix ell
         //
-        step->ell[0][0] = 0.8303233059;
-        step->ell[0][1] = 0.004617538638;
-        step->ell[1][0] = 4.440892099e-16;
-        step->ell[1][1] = 0;
+        step->ell[0][0] = 5.551115123e-16;
+        step->ell[0][1] = -3.564856743e-15;
+        step->ell[1][0] = -0.8177426497;
+        step->ell[1][1] = -0.004547575931;
 
         //
         // =============== Limit Cycle Step 7 ===============
@@ -510,22 +555,22 @@ namespace ConverterBuck
         //
         // Cycle Step 7 -- Matrix P
         //
-        step->P[0][0] = 8.707719067;
-        step->P[0][1] = 0.3183436212;
-        step->P[1][0] = 0.3183436212;
-        step->P[1][1] = 10.0187724;
+        step->P[0][0] = 254.6682215;
+        step->P[0][1] = 119.5428501;
+        step->P[1][0] = 119.5428501;
+        step->P[1][1] = 358.2866376;
         //
         // Cycle Step 7 -- Vector Xe
         //
-        step->Xe[0] = 0.6789008922;
-        step->Xe[1] = 29.86373483;
+        step->Xe[0] = 1.635285181;
+        step->Xe[1] = 29.84677515;
         //
         // Cycle Step 7 -- Matrix ell
         //
-        step->ell[0][0] = 0.8303233059;
-        step->ell[0][1] = 0.004617538638;
-        step->ell[1][0] = 4.440892099e-16;
-        step->ell[1][1] = -3.552713679e-15;
+        step->ell[0][0] = 0.8177426497;
+        step->ell[0][1] = 0.004547575931;
+        step->ell[1][0] = 2.220446049e-16;
+        step->ell[1][1] = 0;
 
         //
         // =============== Limit Cycle Step 8 ===============
@@ -535,21 +580,21 @@ namespace ConverterBuck
         //
         // Cycle Step 8 -- Matrix P
         //
-        step->P[0][0] = 8.707719065;
-        step->P[0][1] = 0.3183436168;
-        step->P[1][0] = 0.3183436168;
-        step->P[1][1] = 10.0187724;
+        step->P[0][0] = 254.6682215;
+        step->P[0][1] = 119.5428501;
+        step->P[1][0] = 119.5428501;
+        step->P[1][1] = 358.2866375;
         //
         // Cycle Step 8 -- Vector Xe
         //
-        step->Xe[0] = 0.2989845003;
-        step->Xe[1] = 29.86573733;
+        step->Xe[0] = 1.249619578;
+        step->Xe[1] = 29.85937363;
         //
         // Cycle Step 8 -- Matrix ell
         //
-        step->ell[0][0] = 0.8303233059;
-        step->ell[0][1] = 0.004617538638;
-        step->ell[1][0] = -2.081668171e-16;
+        step->ell[0][0] = 0.8177426497;
+        step->ell[0][1] = 0.004547575931;
+        step->ell[1][0] = -3.330669074e-16;
         step->ell[1][1] = 0;
 
         //
@@ -560,22 +605,22 @@ namespace ConverterBuck
         //
         // Cycle Step 9 -- Matrix P
         //
-        step->P[0][0] = 8.707719061;
-        step->P[0][1] = 0.3183436086;
-        step->P[1][0] = 0.3183436086;
-        step->P[1][1] = 10.01877238;
+        step->P[0][0] = 254.6682216;
+        step->P[0][1] = 119.5428502;
+        step->P[1][0] = 119.5428502;
+        step->P[1][1] = 358.2866375;
         //
         // Cycle Step 9 -- Vector Xe
         //
-        step->Xe[0] = -0.07858850033;
-        step->Xe[1] = 29.86353154;
+        step->Xe[0] = 0.8661999132;
+        step->Xe[1] = 29.86769818;
         //
         // Cycle Step 9 -- Matrix ell
         //
-        step->ell[0][0] = 0.8303233059;
-        step->ell[0][1] = 0.004617538638;
-        step->ell[1][0] = 2.220446049e-16;
-        step->ell[1][1] = 0;
+        step->ell[0][0] = 0.8177426497;
+        step->ell[0][1] = 0.004547575931;
+        step->ell[1][0] = -5.551115123e-17;
+        step->ell[1][1] = 3.552713679e-15;
 
         //
         // =============== Limit Cycle Step 10 ===============
@@ -585,21 +630,21 @@ namespace ConverterBuck
         //
         // Cycle Step 10 -- Matrix P
         //
-        step->P[0][0] = 8.707719056;
-        step->P[0][1] = 0.3183435967;
-        step->P[1][0] = 0.3183435967;
-        step->P[1][1] = 10.01877235;
+        step->P[0][0] = 254.6682218;
+        step->P[0][1] = 119.5428504;
+        step->P[1][0] = 119.5428504;
+        step->P[1][1] = 358.2866376;
         //
         // Cycle Step 10 -- Vector Xe
         //
-        step->Xe[0] = -0.4537797793;
-        step->Xe[1] = 29.85714418;
+        step->Xe[0] = 0.4850659497;
+        step->Xe[1] = 29.87177447;
         //
         // Cycle Step 10 -- Matrix ell
         //
-        step->ell[0][0] = 0.8303233059;
-        step->ell[0][1] = 0.004617538638;
-        step->ell[1][0] = 1.110223025e-15;
+        step->ell[0][0] = 0.8177426497;
+        step->ell[0][1] = 0.004547575931;
+        step->ell[1][0] = 1.665334537e-16;
         step->ell[1][1] = 0;
 
         //
@@ -610,22 +655,72 @@ namespace ConverterBuck
         //
         // Cycle Step 11 -- Matrix P
         //
-        step->P[0][0] = 8.707719049;
-        step->P[0][1] = 0.3183435812;
-        step->P[1][0] = 0.3183435812;
-        step->P[1][1] = 10.01877232;
+        step->P[0][0] = 254.6682221;
+        step->P[0][1] = 119.5428508;
+        step->P[1][0] = 119.5428508;
+        step->P[1][1] = 358.2866379;
         //
         // Cycle Step 11 -- Vector Xe
         //
-        step->Xe[0] = -0.8265515815;
-        step->Xe[1] = 29.84660241;
+        step->Xe[0] = 0.1062568805;
+        step->Xe[1] = 29.87162858;
         //
         // Cycle Step 11 -- Matrix ell
         //
-        step->ell[0][0] = 0;
-        step->ell[0][1] = -6.140921105e-16;
-        step->ell[1][0] = -0.8303233059;
-        step->ell[1][1] = -0.004617538638;
+        step->ell[0][0] = 0.8177426497;
+        step->ell[0][1] = 0.004547575931;
+        step->ell[1][0] = 3.885780586e-16;
+        step->ell[1][1] = -3.552713679e-15;
+
+        //
+        // =============== Limit Cycle Step 12 ===============
+        //
+        step = &(limitCycle.cycleSteps[11]);
+
+        //
+        // Cycle Step 12 -- Matrix P
+        //
+        step->P[0][0] = 254.6682225;
+        step->P[0][1] = 119.5428513;
+        step->P[1][0] = 119.5428513;
+        step->P[1][1] = 358.2866382;
+        //
+        // Cycle Step 12 -- Vector Xe
+        //
+        step->Xe[0] = -0.2701886743;
+        step->Xe[1] = 29.86728706;
+        //
+        // Cycle Step 12 -- Matrix ell
+        //
+        step->ell[0][0] = 0.8177426497;
+        step->ell[0][1] = 0.004547575931;
+        step->ell[1][0] = -6.661338148e-16;
+        step->ell[1][1] = 3.552713679e-15;
+
+        //
+        // =============== Limit Cycle Step 13 ===============
+        //
+        step = &(limitCycle.cycleSteps[12]);
+
+        //
+        // Cycle Step 13 -- Matrix P
+        //
+        step->P[0][0] = 254.668223;
+        step->P[0][1] = 119.5428519;
+        step->P[1][0] = 119.5428519;
+        step->P[1][1] = 358.2866386;
+        //
+        // Cycle Step 13 -- Vector Xe
+        //
+        step->Xe[0] = -0.6442326692;
+        step->Xe[1] = 29.85877686;
+        //
+        // Cycle Step 13 -- Matrix ell
+        //
+        step->ell[0][0] = 0.8177426497;
+        step->ell[0][1] = 0.004547575931;
+        step->ell[1][0] = 0;
+        step->ell[1][1] = 0;
 
     }
 
@@ -635,7 +730,7 @@ namespace ConverterBuck
     {
         CycleStep* step;
 
-        limitCycle.kappa = 11;
+        limitCycle.kappa = 13;
 
         //
         // =============== Limit Cycle Step 1 ===============
@@ -645,22 +740,22 @@ namespace ConverterBuck
         //
         // Cycle Step 1 -- Matrix P
         //
-        step->P[0][0] = 1.387908262e+16;
-        step->P[0][1] = 3.509093591e+15;
-        step->P[1][0] = 3.509093591e+15;
-        step->P[1][1] = 1.592036476e+16;
+        step->P[0][0] = 6.76101121e+15;
+        step->P[0][1] = 1.639636072e+15;
+        step->P[1][0] = 1.639636072e+15;
+        step->P[1][1] = 9.098361184e+15;
         //
         // Cycle Step 1 -- Vector Xe
         //
-        step->Xe[0] = 0.00348690739;
-        step->Xe[1] = 29.85218998;
+        step->Xe[0] = -0.001048064686;
+        step->Xe[1] = 29.83805867;
         //
         // Cycle Step 1 -- Matrix ell
         //
-        step->ell[0][0] = 0.8303233059;
-        step->ell[0][1] = 0.004617538638;
-        step->ell[1][0] = 5.551115123e-17;
-        step->ell[1][1] = 0;
+        step->ell[0][0] = 0;
+        step->ell[0][1] = 3.540570614e-15;
+        step->ell[1][0] = -0.8177426497;
+        step->ell[1][1] = -0.004547575931;
 
         //
         // =============== Limit Cycle Step 2 ===============
@@ -670,22 +765,22 @@ namespace ConverterBuck
         //
         // Cycle Step 2 -- Matrix P
         //
-        step->P[0][0] = 1.388218057e+16;
-        step->P[0][1] = 3.510272418e+15;
-        step->P[1][0] = 3.510272418e+15;
-        step->P[1][1] = 1.59226567e+16;
+        step->P[0][0] = 6.761152047e+15;
+        step->P[0][1] = 1.639487737e+15;
+        step->P[1][0] = 1.639487737e+15;
+        step->P[1][1] = 9.09145574e+15;
         //
         // Cycle Step 2 -- Vector Xe
         //
-        step->Xe[0] = -0.3720733932;
-        step->Xe[1] = 29.84671377;
+        step->Xe[0] = 0.4413403285;
+        step->Xe[1] = 29.83708243;
         //
         // Cycle Step 2 -- Matrix ell
         //
-        step->ell[0][0] = -1.110223025e-16;
-        step->ell[0][1] = 2.938621568e-15;
-        step->ell[1][0] = -0.8303233059;
-        step->ell[1][1] = -0.004617538638;
+        step->ell[0][0] = 0;
+        step->ell[0][1] = -3.564856743e-15;
+        step->ell[1][0] = -0.8177426497;
+        step->ell[1][1] = -0.004547575931;
 
         //
         // =============== Limit Cycle Step 3 ===============
@@ -695,22 +790,22 @@ namespace ConverterBuck
         //
         // Cycle Step 3 -- Matrix P
         //
-        step->P[0][0] = 1.388467012e+16;
-        step->P[0][1] = 3.51123892e+15;
-        step->P[1][0] = 3.51123892e+15;
-        step->P[1][1] = 1.592452454e+16;
+        step->P[0][0] = 6.761210916e+15;
+        step->P[0][1] = 1.639460254e+15;
+        step->P[1][0] = 1.639460254e+15;
+        step->P[1][1] = 9.085700985e+15;
         //
         // Cycle Step 3 -- Vector Xe
         //
-        step->Xe[0] = 0.08509992702;
-        step->Xe[1] = 29.84169644;
+        step->Xe[0] = 0.8809829392;
+        step->Xe[1] = 29.84100623;
         //
         // Cycle Step 3 -- Matrix ell
         //
-        step->ell[0][0] = 1.110223025e-16;
-        step->ell[0][1] = -6.140921105e-16;
-        step->ell[1][0] = -0.8303233059;
-        step->ell[1][1] = -0.004617538638;
+        step->ell[0][0] = -4.440892099e-16;
+        step->ell[0][1] = -1.214306433e-17;
+        step->ell[1][0] = -0.8177426497;
+        step->ell[1][1] = -0.004547575931;
 
         //
         // =============== Limit Cycle Step 4 ===============
@@ -720,22 +815,22 @@ namespace ConverterBuck
         //
         // Cycle Step 4 -- Matrix P
         //
-        step->P[0][0] = 1.388654715e+16;
-        step->P[0][1] = 3.511985159e+15;
-        step->P[1][0] = 3.511985159e+15;
-        step->P[1][1] = 1.59259574e+16;
+        step->P[0][0] = 6.761199214e+15;
+        step->P[0][1] = 1.639526278e+15;
+        step->P[1][0] = 1.639526278e+15;
+        step->P[1][1] = 9.081099653e+15;
         //
         // Cycle Step 4 -- Vector Xe
         //
-        step->Xe[0] = 0.5394861251;
-        step->Xe[1] = 29.84174365;
+        step->Xe[0] = 1.317835244;
+        step->Xe[1] = 29.84979875;
         //
         // Cycle Step 4 -- Matrix ell
         //
-        step->ell[0][0] = 0.8303233059;
-        step->ell[0][1] = 0.004617538638;
-        step->ell[1][0] = -2.775557562e-17;
-        step->ell[1][1] = 0;
+        step->ell[0][0] = 0.8177426497;
+        step->ell[0][1] = 0.004547575931;
+        step->ell[1][0] = 1.110223025e-16;
+        step->ell[1][1] = -3.552713679e-15;
 
         //
         // =============== Limit Cycle Step 5 ===============
@@ -745,22 +840,22 @@ namespace ConverterBuck
         //
         // Cycle Step 5 -- Matrix P
         //
-        step->P[0][0] = 1.388780772e+16;
-        step->P[0][1] = 3.512503247e+15;
-        step->P[1][0] = 3.512503247e+15;
-        step->P[1][1] = 1.592694414e+16;
+        step->P[0][0] = 6.761130107e+15;
+        step->P[0][1] = 1.63965879e+15;
+        step->P[1][0] = 1.63965879e+15;
+        step->P[1][1] = 9.077653354e+15;
         //
         // Cycle Step 5 -- Vector Xe
         //
-        step->Xe[0] = 0.1607155599;
-        step->Xe[1] = 29.84220607;
+        step->Xe[0] = 0.9341107408;
+        step->Xe[1] = 29.85888063;
         //
         // Cycle Step 5 -- Matrix ell
         //
-        step->ell[0][0] = -2.220446049e-16;
-        step->ell[0][1] = 2.938621568e-15;
-        step->ell[1][0] = -0.8303233059;
-        step->ell[1][1] = -0.004617538638;
+        step->ell[0][0] = 0.8177426497;
+        step->ell[0][1] = 0.004547575931;
+        step->ell[1][0] = -1.110223025e-16;
+        step->ell[1][1] = 0;
 
         //
         // =============== Limit Cycle Step 6 ===============
@@ -770,22 +865,22 @@ namespace ConverterBuck
         //
         // Cycle Step 6 -- Matrix P
         //
-        step->P[0][0] = 1.38884481e+16;
-        step->P[0][1] = 3.512785356e+15;
-        step->P[1][0] = 3.512785356e+15;
-        step->P[1][1] = 1.592747332e+16;
+        step->P[0][0] = 6.76101857e+15;
+        step->P[0][1] = 1.639831166e+15;
+        step->P[1][0] = 1.639831166e+15;
+        step->P[1][1] = 9.075362599e+15;
         //
         // Cycle Step 6 -- Vector Xe
         //
-        step->Xe[0] = 0.6146239224;
-        step->Xe[1] = 29.84309071;
+        step->Xe[0] = 0.5526643126;
+        step->Xe[1] = 29.86371071;
         //
         // Cycle Step 6 -- Matrix ell
         //
-        step->ell[0][0] = 1.110223025e-16;
-        step->ell[0][1] = -4.166805789e-15;
-        step->ell[1][0] = -0.8303233059;
-        step->ell[1][1] = -0.004617538638;
+        step->ell[0][0] = 0.8177426497;
+        step->ell[0][1] = 0.004547575931;
+        step->ell[1][0] = -2.775557562e-17;
+        step->ell[1][1] = 0;
 
         //
         // =============== Limit Cycle Step 7 ===============
@@ -795,21 +890,21 @@ namespace ConverterBuck
         //
         // Cycle Step 7 -- Matrix P
         //
-        step->P[0][0] = 1.388846474e+16;
-        step->P[0][1] = 3.512823727e+15;
-        step->P[1][0] = 3.512823727e+15;
-        step->P[1][1] = 1.592753324e+16;
+        step->P[0][0] = 6.760881407e+15;
+        step->P[0][1] = 1.640017244e+15;
+        step->P[1][0] = 1.640017244e+15;
+        step->P[1][1] = 9.074226828e+15;
         //
         // Cycle Step 7 -- Vector Xe
         //
-        step->Xe[0] = 1.065691272;
-        step->Xe[1] = 29.84900264;
+        step->Xe[0] = 0.173535244;
+        step->Xe[1] = 29.86431503;
         //
         // Cycle Step 7 -- Matrix ell
         //
-        step->ell[0][0] = 0.8303233059;
-        step->ell[0][1] = 0.004617538638;
-        step->ell[1][0] = 1.110223025e-16;
+        step->ell[0][0] = 0.8177426497;
+        step->ell[0][1] = 0.004547575931;
+        step->ell[1][0] = 1.942890293e-16;
         step->ell[1][1] = 0;
 
         //
@@ -820,21 +915,21 @@ namespace ConverterBuck
         //
         // Cycle Step 8 -- Matrix P
         //
-        step->P[0][0] = 1.388785433e+16;
-        step->P[0][1] = 3.512610672e+15;
-        step->P[1][0] = 3.512610672e+15;
-        step->P[1][1] = 1.59271119e+16;
+        step->P[0][0] = 6.760737279e+15;
+        step->P[0][1] = 1.640191399e+15;
+        step->P[1][0] = 1.640191399e+15;
+        step->P[1][1] = 9.074244447e+15;
         //
         // Cycle Step 8 -- Vector Xe
         //
-        step->Xe[0] = 0.6835487712;
-        step->Xe[1] = 29.85529193;
+        step->Xe[0] = -0.2032377528;
+        step->Xe[1] = 29.86072004;
         //
         // Cycle Step 8 -- Matrix ell
         //
-        step->ell[0][0] = 0.8303233059;
-        step->ell[0][1] = 0.004617538638;
-        step->ell[1][0] = -1.665334537e-16;
+        step->ell[0][0] = 0.8177426497;
+        step->ell[0][1] = 0.004547575931;
+        step->ell[1][0] = -2.220446049e-16;
         step->ell[1][1] = 0;
 
         //
@@ -845,22 +940,22 @@ namespace ConverterBuck
         //
         // Cycle Step 9 -- Matrix P
         //
-        step->P[0][0] = 1.388661373e+16;
-        step->P[0][1] = 3.512138591e+15;
-        step->P[1][0] = 3.512138591e+15;
-        step->P[1][1] = 1.592619705e+16;
+        step->P[0][0] = 6.760606732e+15;
+        step->P[0][1] = 1.640328608e+15;
+        step->P[1][0] = 1.640328608e+15;
+        step->P[1][1] = 9.075412861e+15;
         //
         // Cycle Step 9 -- Vector Xe
         //
-        step->Xe[0] = 0.3037096133;
-        step->Xe[1] = 29.85734747;
+        step->Xe[0] = -0.5776165393;
+        step->Xe[1] = 29.85295259;
         //
         // Cycle Step 9 -- Matrix ell
         //
-        step->ell[0][0] = 0.8303233059;
-        step->ell[0][1] = 0.004617538638;
-        step->ell[1][0] = 5.551115123e-17;
-        step->ell[1][1] = 0;
+        step->ell[0][0] = 0;
+        step->ell[0][1] = 3.540570614e-15;
+        step->ell[1][0] = -0.8177426497;
+        step->ell[1][1] = -0.004547575931;
 
         //
         // =============== Limit Cycle Step 10 ===============
@@ -870,22 +965,22 @@ namespace ConverterBuck
         //
         // Cycle Step 10 -- Matrix P
         //
-        step->P[0][0] = 1.388474003e+16;
-        step->P[0][1] = 3.511399973e+15;
-        step->P[1][0] = 3.511399973e+15;
-        step->P[1][1] = 1.592477615e+16;
+        step->P[0][0] = 6.760512214e+15;
+        step->P[0][1] = 1.640404526e+15;
+        step->P[1][0] = 1.640404526e+15;
+        step->P[1][1] = 9.077728515e+15;
         //
         // Cycle Step 10 -- Vector Xe
         //
-        step->Xe[0] = -0.07378730201;
-        step->Xe[1] = 29.85519556;
+        step->Xe[0] = -0.1318209036;
+        step->Xe[1] = 29.84558756;
         //
         // Cycle Step 10 -- Matrix ell
         //
-        step->ell[0][0] = 1.110223025e-15;
-        step->ell[0][1] = -6.140921105e-16;
-        step->ell[1][0] = -0.8303233059;
-        step->ell[1][1] = -0.004617538638;
+        step->ell[0][0] = 3.330669074e-16;
+        step->ell[0][1] = -1.214306433e-17;
+        step->ell[1][0] = -0.8177426497;
+        step->ell[1][1] = -0.004547575931;
 
         //
         // =============== Limit Cycle Step 11 ===============
@@ -895,21 +990,71 @@ namespace ConverterBuck
         //
         // Cycle Step 11 -- Matrix P
         //
-        step->P[0][0] = 1.38822305e+16;
-        step->P[0][1] = 3.510387407e+15;
-        step->P[1][0] = 3.510387407e+15;
-        step->P[1][1] = 1.592283641e+16;
+        step->P[0][0] = 6.760478101e+15;
+        step->P[0][1] = 1.640395554e+15;
+        step->P[1][0] = 1.640395554e+15;
+        step->P[1][1] = 9.081186932e+15;
         //
         // Cycle Step 11 -- Vector Xe
         //
-        step->Xe[0] = 0.381419658;
-        step->Xe[1] = 29.85348046;
+        step->Xe[0] = 0.3112880778;
+        step->Xe[1] = 29.84316149;
         //
         // Cycle Step 11 -- Matrix ell
         //
-        step->ell[0][0] = 0.8303233059;
-        step->ell[0][1] = 0.004617538638;
-        step->ell[1][0] = -1.864827737e-17;
+        step->ell[0][0] = 0.8177426497;
+        step->ell[0][1] = 0.004547575931;
+        step->ell[1][0] = 4.30211422e-16;
+        step->ell[1][1] = 0;
+
+        //
+        // =============== Limit Cycle Step 12 ===============
+        //
+        step = &(limitCycle.cycleSteps[11]);
+
+        //
+        // Cycle Step 12 -- Matrix P
+        //
+        step->P[0][0] = 6.760530711e+15;
+        step->P[0][1] = 1.640278916e+15;
+        step->P[1][0] = 1.640278916e+15;
+        step->P[1][1] = 9.085782763e+15;
+        //
+        // Cycle Step 12 -- Vector Xe
+        //
+        step->Xe[0] = -0.06607762664;
+        step->Xe[1] = 29.84109614;
+        //
+        // Cycle Step 12 -- Matrix ell
+        //
+        step->ell[0][0] = 3.330669074e-16;
+        step->ell[0][1] = -1.214306433e-17;
+        step->ell[1][0] = -0.8177426497;
+        step->ell[1][1] = -0.004547575931;
+
+        //
+        // =============== Limit Cycle Step 13 ===============
+        //
+        step = &(limitCycle.cycleSteps[12]);
+
+        //
+        // Cycle Step 13 -- Matrix P
+        //
+        step->P[0][0] = 6.760698328e+15;
+        step->P[0][1] = 1.640032727e+15;
+        step->P[1][0] = 1.640032727e+15;
+        step->P[1][1] = 9.091509831e+15;
+        //
+        // Cycle Step 13 -- Vector Xe
+        //
+        step->Xe[0] = 0.3766779811;
+        step->Xe[1] = 29.83939907;
+        //
+        // Cycle Step 13 -- Matrix ell
+        //
+        step->ell[0][0] = 0.8177426497;
+        step->ell[0][1] = 0.004547575931;
+        step->ell[1][0] = 2.623769257e-17;
         step->ell[1][1] = 0;
 
     }
@@ -920,8 +1065,8 @@ namespace ConverterBuck
     {
         CycleStep* step;
 
-        limitCycle.kappa = 11;
-        limitCycle.rho = 1.041841321e-17;
+        limitCycle.kappa = 13;
+        limitCycle.rho = 1.782529606e-22;
 
         //
         // =============== Limit Cycle Step 1 ===============
@@ -931,22 +1076,22 @@ namespace ConverterBuck
         //
         // Cycle Step 1 -- Matrix P
         //
-        step->P[0][0] = 9.750744769e+17;
-        step->P[0][1] = 2.31513849e+17;
-        step->P[1][0] = 2.31513849e+17;
-        step->P[1][1] = 1.090152626e+18;
+        step->P[0][0] = 5.101913818e+11;
+        step->P[0][1] = 1.212113367e+11;
+        step->P[1][0] = 1.212113367e+11;
+        step->P[1][1] = 5.704468332e+11;
         //
         // Cycle Step 1 -- Vector Xe
         //
-        step->Xe[0] = 1.445607664;
-        step->Xe[1] = 29.84700013;
+        step->Xe[0] = 1.635285181;
+        step->Xe[1] = 29.84677515;
         //
         // Cycle Step 1 -- Matrix ell
         //
-        step->ell[0][0] = 0.8303233059;
-        step->ell[0][1] = 0.004617538638;
-        step->ell[1][0] = 0;
-        step->ell[1][1] = 0;
+        step->ell[0][0] = 0.8177426497;
+        step->ell[0][1] = 0.004547575931;
+        step->ell[1][0] = 2.220446049e-16;
+        step->ell[1][1] = 3.552713679e-15;
 
         //
         // =============== Limit Cycle Step 2 ===============
@@ -956,22 +1101,22 @@ namespace ConverterBuck
         //
         // Cycle Step 2 -- Matrix P
         //
-        step->P[0][0] = 9.750744769e+17;
-        step->P[0][1] = 2.31513849e+17;
-        step->P[1][0] = 2.31513849e+17;
-        step->P[1][1] = 1.090152626e+18;
+        step->P[0][0] = 5.101913818e+11;
+        step->P[0][1] = 1.212113367e+11;
+        step->P[1][0] = 1.212113367e+11;
+        step->P[1][1] = 5.704468332e+11;
         //
         // Cycle Step 2 -- Vector Xe
         //
-        step->Xe[0] = 1.061121772;
-        step->Xe[1] = 29.85749772;
+        step->Xe[0] = 1.249619578;
+        step->Xe[1] = 29.85937363;
         //
         // Cycle Step 2 -- Matrix ell
         //
-        step->ell[0][0] = 0.8303233059;
-        step->ell[0][1] = 0.004617538638;
-        step->ell[1][0] = 0;
-        step->ell[1][1] = 0;
+        step->ell[0][0] = 0.8177426497;
+        step->ell[0][1] = 0.004547575931;
+        step->ell[1][0] = 1.110223025e-16;
+        step->ell[1][1] = -3.552713679e-15;
 
         //
         // =============== Limit Cycle Step 3 ===============
@@ -981,22 +1126,22 @@ namespace ConverterBuck
         //
         // Cycle Step 3 -- Matrix P
         //
-        step->P[0][0] = 9.750744769e+17;
-        step->P[0][1] = 2.31513849e+17;
-        step->P[1][0] = 2.31513849e+17;
-        step->P[1][1] = 1.090152626e+18;
+        step->P[0][0] = 5.101913818e+11;
+        step->P[0][1] = 1.212113367e+11;
+        step->P[1][0] = 1.212113367e+11;
+        step->P[1][1] = 5.704468332e+11;
         //
         // Cycle Step 3 -- Vector Xe
         //
-        step->Xe[0] = 0.6789008922;
-        step->Xe[1] = 29.86373483;
+        step->Xe[0] = 0.8661999132;
+        step->Xe[1] = 29.86769818;
         //
         // Cycle Step 3 -- Matrix ell
         //
-        step->ell[0][0] = 0.8303233059;
-        step->ell[0][1] = 0.004617538638;
-        step->ell[1][0] = 1.665334537e-16;
-        step->ell[1][1] = -3.552713679e-15;
+        step->ell[0][0] = 0.8177426497;
+        step->ell[0][1] = 0.004547575931;
+        step->ell[1][0] = -1.665334537e-16;
+        step->ell[1][1] = 0;
 
         //
         // =============== Limit Cycle Step 4 ===============
@@ -1006,22 +1151,22 @@ namespace ConverterBuck
         //
         // Cycle Step 4 -- Matrix P
         //
-        step->P[0][0] = 9.750744769e+17;
-        step->P[0][1] = 2.31513849e+17;
-        step->P[1][0] = 2.31513849e+17;
-        step->P[1][1] = 1.090152626e+18;
+        step->P[0][0] = 5.101913818e+11;
+        step->P[0][1] = 1.212113367e+11;
+        step->P[1][0] = 1.212113367e+11;
+        step->P[1][1] = 5.704468332e+11;
         //
         // Cycle Step 4 -- Vector Xe
         //
-        step->Xe[0] = 0.2989845003;
-        step->Xe[1] = 29.86573733;
+        step->Xe[0] = 0.4850659497;
+        step->Xe[1] = 29.87177447;
         //
         // Cycle Step 4 -- Matrix ell
         //
-        step->ell[0][0] = 0.8303233059;
-        step->ell[0][1] = 0.004617538638;
-        step->ell[1][0] = -2.775557562e-17;
-        step->ell[1][1] = 3.552713679e-15;
+        step->ell[0][0] = 0.8177426497;
+        step->ell[0][1] = 0.004547575931;
+        step->ell[1][0] = -6.938893904e-17;
+        step->ell[1][1] = -3.552713679e-15;
 
         //
         // =============== Limit Cycle Step 5 ===============
@@ -1031,22 +1176,22 @@ namespace ConverterBuck
         //
         // Cycle Step 5 -- Matrix P
         //
-        step->P[0][0] = 9.750744769e+17;
-        step->P[0][1] = 2.31513849e+17;
-        step->P[1][0] = 2.31513849e+17;
-        step->P[1][1] = 1.090152626e+18;
+        step->P[0][0] = 5.101913818e+11;
+        step->P[0][1] = 1.212113367e+11;
+        step->P[1][0] = 1.212113367e+11;
+        step->P[1][1] = 5.704468332e+11;
         //
         // Cycle Step 5 -- Vector Xe
         //
-        step->Xe[0] = -0.07858850033;
-        step->Xe[1] = 29.86353154;
+        step->Xe[0] = 0.1062568805;
+        step->Xe[1] = 29.87162858;
         //
         // Cycle Step 5 -- Matrix ell
         //
-        step->ell[0][0] = 0.8303233059;
-        step->ell[0][1] = 0.004617538638;
+        step->ell[0][0] = 0.8177426497;
+        step->ell[0][1] = 0.004547575931;
         step->ell[1][0] = 1.665334537e-16;
-        step->ell[1][1] = 0;
+        step->ell[1][1] = 3.552713679e-15;
 
         //
         // =============== Limit Cycle Step 6 ===============
@@ -1056,21 +1201,21 @@ namespace ConverterBuck
         //
         // Cycle Step 6 -- Matrix P
         //
-        step->P[0][0] = 9.750744769e+17;
-        step->P[0][1] = 2.31513849e+17;
-        step->P[1][0] = 2.31513849e+17;
-        step->P[1][1] = 1.090152626e+18;
+        step->P[0][0] = 5.101913818e+11;
+        step->P[0][1] = 1.212113367e+11;
+        step->P[1][0] = 1.212113367e+11;
+        step->P[1][1] = 5.704468332e+11;
         //
         // Cycle Step 6 -- Vector Xe
         //
-        step->Xe[0] = -0.4537797793;
-        step->Xe[1] = 29.85714418;
+        step->Xe[0] = -0.2701886743;
+        step->Xe[1] = 29.86728706;
         //
         // Cycle Step 6 -- Matrix ell
         //
-        step->ell[0][0] = 0.8303233059;
-        step->ell[0][1] = 0.004617538638;
-        step->ell[1][0] = 1.110223025e-16;
+        step->ell[0][0] = 0.8177426497;
+        step->ell[0][1] = 0.004547575931;
+        step->ell[1][0] = 2.220446049e-16;
         step->ell[1][1] = 0;
 
         //
@@ -1081,22 +1226,22 @@ namespace ConverterBuck
         //
         // Cycle Step 7 -- Matrix P
         //
-        step->P[0][0] = 9.750744769e+17;
-        step->P[0][1] = 2.31513849e+17;
-        step->P[1][0] = 2.31513849e+17;
-        step->P[1][1] = 1.090152626e+18;
+        step->P[0][0] = 5.101913818e+11;
+        step->P[0][1] = 1.212113367e+11;
+        step->P[1][0] = 1.212113367e+11;
+        step->P[1][1] = 5.704468332e+11;
         //
         // Cycle Step 7 -- Vector Xe
         //
-        step->Xe[0] = -0.8265515815;
-        step->Xe[1] = 29.84660241;
+        step->Xe[0] = -0.6442326692;
+        step->Xe[1] = 29.85877686;
         //
         // Cycle Step 7 -- Matrix ell
         //
-        step->ell[0][0] = 1.110223025e-16;
-        step->ell[0][1] = 2.938621568e-15;
-        step->ell[1][0] = -0.8303233059;
-        step->ell[1][1] = -0.004617538638;
+        step->ell[0][0] = 0.8177426497;
+        step->ell[0][1] = 0.004547575931;
+        step->ell[1][0] = 0;
+        step->ell[1][1] = -3.552713679e-15;
 
         //
         // =============== Limit Cycle Step 8 ===============
@@ -1106,22 +1251,22 @@ namespace ConverterBuck
         //
         // Cycle Step 8 -- Matrix P
         //
-        step->P[0][0] = 9.750744769e+17;
-        step->P[0][1] = 2.31513849e+17;
-        step->P[1][0] = 2.31513849e+17;
-        step->P[1][1] = 1.090152626e+18;
+        step->P[0][0] = 5.101913818e+11;
+        step->P[0][1] = 1.212113367e+11;
+        step->P[1][0] = 1.212113367e+11;
+        step->P[1][1] = 5.704468332e+11;
         //
         // Cycle Step 8 -- Vector Xe
         //
-        step->Xe[0] = -0.3665434232;
-        step->Xe[1] = 29.83655133;
+        step->Xe[0] = -1.015837635;
+        step->Xe[1] = 29.84612534;
         //
         // Cycle Step 8 -- Matrix ell
         //
-        step->ell[0][0] = -2.220446049e-16;
-        step->ell[0][1] = -4.166805789e-15;
-        step->ell[1][0] = -0.8303233059;
-        step->ell[1][1] = -0.004617538638;
+        step->ell[0][0] = -1.110223025e-16;
+        step->ell[0][1] = 3.540570614e-15;
+        step->ell[1][0] = -0.8177426497;
+        step->ell[1][1] = -0.004547575931;
 
         //
         // =============== Limit Cycle Step 9 ===============
@@ -1131,22 +1276,22 @@ namespace ConverterBuck
         //
         // Cycle Step 9 -- Matrix P
         //
-        step->P[0][0] = 9.750744769e+17;
-        step->P[0][1] = 2.31513849e+17;
-        step->P[1][0] = 2.31513849e+17;
-        step->P[1][1] = 1.090152626e+18;
+        step->P[0][0] = 5.101913818e+11;
+        step->P[0][1] = 1.212113367e+11;
+        step->P[1][0] = 1.212113367e+11;
+        step->P[1][1] = 5.704468332e+11;
         //
         // Cycle Step 9 -- Vector Xe
         //
-        step->Xe[0] = 0.09072326343;
-        step->Xe[1] = 29.83159712;
+        step->Xe[0] = -0.5672240304;
+        step->Xe[1] = 29.83390787;
         //
         // Cycle Step 9 -- Matrix ell
         //
-        step->ell[0][0] = 3.330669074e-16;
-        step->ell[0][1] = -6.140921105e-16;
-        step->ell[1][0] = -0.8303233059;
-        step->ell[1][1] = -0.004617538638;
+        step->ell[0][0] = 2.220446049e-16;
+        step->ell[0][1] = -1.214306433e-17;
+        step->ell[1][0] = -0.8177426497;
+        step->ell[1][1] = -0.004547575931;
 
         //
         // =============== Limit Cycle Step 10 ===============
@@ -1156,22 +1301,22 @@ namespace ConverterBuck
         //
         // Cycle Step 10 -- Matrix P
         //
-        step->P[0][0] = 9.750744769e+17;
-        step->P[0][1] = 2.31513849e+17;
-        step->P[1][0] = 2.31513849e+17;
-        step->P[1][1] = 1.090152626e+18;
+        step->P[0][0] = 5.101913818e+11;
+        step->P[0][1] = 1.212113367e+11;
+        step->P[1][0] = 1.212113367e+11;
+        step->P[1][1] = 5.704468332e+11;
         //
         // Cycle Step 10 -- Vector Xe
         //
-        step->Xe[0] = 0.5452014517;
-        step->Xe[1] = 29.83170849;
+        step->Xe[0] = -0.1212536052;
+        step->Xe[1] = 29.82666146;
         //
         // Cycle Step 10 -- Matrix ell
         //
-        step->ell[0][0] = 4.440892099e-16;
-        step->ell[0][1] = -6.140921105e-16;
-        step->ell[1][0] = -0.8303233059;
-        step->ell[1][1] = -0.004617538638;
+        step->ell[0][0] = 3.330669074e-16;
+        step->ell[0][1] = -1.214306433e-17;
+        step->ell[1][0] = -0.8177426497;
+        step->ell[1][1] = -0.004547575931;
 
         //
         // =============== Limit Cycle Step 11 ===============
@@ -1181,22 +1326,72 @@ namespace ConverterBuck
         //
         // Cycle Step 11 -- Matrix P
         //
-        step->P[0][0] = 9.750744769e+17;
-        step->P[0][1] = 2.31513849e+17;
-        step->P[1][0] = 2.31513849e+17;
-        step->P[1][1] = 1.090152626e+18;
+        step->P[0][0] = 5.101913818e+11;
+        step->P[0][1] = 1.212113367e+11;
+        step->P[1][0] = 1.212113367e+11;
+        step->P[1][1] = 5.704468332e+11;
         //
         // Cycle Step 11 -- Vector Xe
         //
-        step->Xe[0] = 0.996844802;
-        step->Xe[1] = 29.8368536;
+        step->Xe[0] = 0.3220275836;
+        step->Xe[1] = 29.82435593;
         //
         // Cycle Step 11 -- Matrix ell
         //
+        step->ell[0][0] = 6.661338148e-16;
+        step->ell[0][1] = 3.540570614e-15;
+        step->ell[1][0] = -0.8177426497;
+        step->ell[1][1] = -0.004547575931;
+
+        //
+        // =============== Limit Cycle Step 12 ===============
+        //
+        step = &(limitCycle.cycleSteps[11]);
+
+        //
+        // Cycle Step 12 -- Matrix P
+        //
+        step->P[0][0] = 5.101913818e+11;
+        step->P[0][1] = 1.212113367e+11;
+        step->P[1][0] = 1.212113367e+11;
+        step->P[1][1] = 5.704468332e+11;
+        //
+        // Cycle Step 12 -- Vector Xe
+        //
+        step->Xe[0] = 0.7625741462;
+        step->Xe[1] = 29.82696058;
+        //
+        // Cycle Step 12 -- Matrix ell
+        //
+        step->ell[0][0] = 1.110223025e-16;
+        step->ell[0][1] = -1.214306433e-17;
+        step->ell[1][0] = -0.8177426497;
+        step->ell[1][1] = -0.004547575931;
+
+        //
+        // =============== Limit Cycle Step 13 ===============
+        //
+        step = &(limitCycle.cycleSteps[12]);
+
+        //
+        // Cycle Step 13 -- Matrix P
+        //
+        step->P[0][0] = 5.101913818e+11;
+        step->P[0][1] = 1.212113367e+11;
+        step->P[1][0] = 1.212113367e+11;
+        step->P[1][1] = 5.704468332e+11;
+        //
+        // Cycle Step 13 -- Vector Xe
+        //
+        step->Xe[0] = 1.200341362;
+        step->Xe[1] = 29.83444422;
+        //
+        // Cycle Step 13 -- Matrix ell
+        //
         step->ell[0][0] = 0;
-        step->ell[0][1] = -6.140921105e-16;
-        step->ell[1][0] = -0.8303233059;
-        step->ell[1][1] = -0.004617538638;
+        step->ell[0][1] = -1.214306433e-17;
+        step->ell[1][0] = -0.8177426497;
+        step->ell[1][1] = -0.004547575931;
 
     }
 

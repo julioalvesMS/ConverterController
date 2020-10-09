@@ -41,6 +41,7 @@ int SwitchingFrequency, ADCFrequency;
 bool ConverterEnabled;
 bool OutputLoadStep;
 bool ModeHoppingEnabled;
+bool LoadEstimationEnabled;
 
 DAC_SPI::Channel DacChannel = DAC_SPI::CH_CONTROLE;
 

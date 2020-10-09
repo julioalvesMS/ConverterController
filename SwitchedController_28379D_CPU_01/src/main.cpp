@@ -102,7 +102,8 @@ int SwitchState;
 bool ConverterEnabled = false;
 bool CapacitorPreLoad;
 bool CapacitorPreLoadEngaged = false;
-bool ModeHoppingEnabled = true;
+bool ModeHoppingEnabled = false;
+bool LoadEstimationEnabled = true;
 bool Synchronous = true;
 bool RecentReference = true;
 Protection::Problem protection = Protection::NONE;
@@ -210,8 +211,8 @@ void main(void)
 
     Xe = Equilibrium::GetEquilibrium();
     Xe_o = Equilibrium::GetOriginalEquilibrium();
-    Equilibrium::UpdateEquilibrium(*u);
-    Equilibrium::UpdateOriginalEquilibrium(*u);
+    Equilibrium::UpdateEquilibrium(*u, *loadResistance);
+    Equilibrium::UpdateOriginalEquilibrium(*u, *loadResistance);
 
     CurrentOperationState = Manager::GetCurrentState();
     Manager::ChangeController(controlStrategy);
@@ -412,20 +413,20 @@ __interrupt void Interruption_ReferenceUpdate(void)
     switch(CorrectionMethod)
     {
     case Equilibrium::REFERENCE_UPDATE:
-        ReferenceUpdate::UpdateReference(*Vout_mean, *u);
+        ReferenceUpdate::UpdateReference(*Vout_mean, *u, *loadResistance, !RecentReference);
         break;
     case Equilibrium::PARTIAL_INFORMATION:
         PartialInformation::UpdateReference(*IL);
         break;
     case Equilibrium::CURRENT_CORRECTION:
-        CurrentCorrection::UpdateReference(*Vout_mean, *u, !RecentReference);
+        CurrentCorrection::UpdateReference(*Vout_mean, *u, *loadResistance, !RecentReference);
         break;
     case Equilibrium::NONE:
     default:
-        Equilibrium::UpdateEquilibrium(*u);
+        Equilibrium::UpdateEquilibrium(*u, *loadResistance);
         break;
     }
-    Equilibrium::UpdateOriginalEquilibrium(*u);
+    Equilibrium::UpdateOriginalEquilibrium(*u, *loadResistance);
 }
 
 
@@ -496,13 +497,13 @@ void SwitchedControl(void)
     switch(controlStrategy)
     {
     case CS_CONTINUOUS_THEOREM_1:
-        BestSubsystem = SwitchingRule1::SwitchingRule(sys, P, X, Xe, *u);
+        BestSubsystem = SwitchingRule1::SwitchingRule(sys, P, X, Xe, *u, *loadResistance);
         break;
     case CS_CONTINUOUS_THEOREM_2:
-        BestSubsystem = SwitchingRule2::SwitchingRule(sys, P, X, Xe, *u);
+        BestSubsystem = SwitchingRule2::SwitchingRule(sys, P, X, Xe, *u, *loadResistance);
         break;
     case CS_DISCRETE_THEOREM_1:
-        BestSubsystem = DiscreteSwitchingRule1::SwitchingRule(dsys, P, X, Xe, Xe_o, *u);
+        BestSubsystem = DiscreteSwitchingRule1::SwitchingRule(sys, dsys, P, X, Xe, Xe_o, *u, *loadResistance);
         break;
     case CS_LIMIT_CYCLE_COST:
     case CS_LIMIT_CYCLE_H2:

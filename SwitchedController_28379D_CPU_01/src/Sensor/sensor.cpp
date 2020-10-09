@@ -154,10 +154,13 @@ namespace Sensor
         vout_mean = filtro_1(s_state[1]);
 
         if(output_current > 0)
-            load_resistance = filtro_2(s_state[1]/output_current);
+            //load_resistance = filtro_2(s_state[1]/output_current);
+            load_resistance = s_state[1]/output_current;
+        else
+            load_resistance = Ro;
 
-        if(load_resistance < 0)
-            load_resistance = 0;
+        if(load_resistance <= 0.2*Ro)
+            load_resistance = Ro;
 
         return;
     }

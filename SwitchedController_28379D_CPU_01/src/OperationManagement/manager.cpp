@@ -4,6 +4,7 @@ extern double *Vin, *Vout;
 extern bool ConverterEnabled;
 extern bool OutputLoadStep;
 extern bool ModeHoppingEnabled;
+extern bool LoadEstimationEnabled;
 extern bool RecentReference;
 extern ConverterID activeConverter;
 extern ControlStrategy controlStrategy;
@@ -131,6 +132,12 @@ namespace Manager
             break;
         case Protocol::DisableModeHopping:
             ModeHoppingEnabled = false;
+            break;
+        case Protocol::EnableLoadEstimation:
+            LoadEstimationEnabled = true;
+            break;
+        case Protocol::DisableLoadEstimation:
+            LoadEstimationEnabled = false;
             break;
         default:
             break;

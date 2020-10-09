@@ -17,6 +17,7 @@ extern double *loadResistance;
 extern int SwitchingFrequency;
 extern bool ConverterEnabled;
 extern bool ModeHoppingEnabled;
+extern bool LoadEstimationEnabled;
 extern int CorrectionMethod;
 extern bool OutputLoadStep;
 extern int protection;
@@ -95,6 +96,9 @@ volatile double shared_stateDutyCycle[4];
 volatile bool shared_ModeHoppingEnabled;
 
 #pragma DATA_SECTION("SHARERAMGS0");
+volatile bool shared_LoadEstimationEnabled;
+
+#pragma DATA_SECTION("SHARERAMGS0");
 volatile double shared_VoltageRipple;
 
 
@@ -138,6 +142,7 @@ namespace IPC
         shared_SwitchingFrequency = SwitchingFrequency;
         shared_ConverterEnabled = ConverterEnabled;
         shared_ModeHoppingEnabled = ModeHoppingEnabled;
+        shared_LoadEstimationEnabled = LoadEstimationEnabled;
         shared_CorrectionMethod = CorrectionMethod;
         shared_OutputLoadStep = OutputLoadStep;
         shared_protection = protection;

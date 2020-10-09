@@ -1,5 +1,7 @@
 #include <src/Equilibrium/equilibrium.h>
 
+extern bool LoadEstimationEnabled;
+
 namespace Equilibrium
 {
     static double Xe[SYSTEM_ORDER];
@@ -24,38 +26,52 @@ namespace Equilibrium
         return Xe_o;
     }
 
-    void UpdateEquilibrium(double u)
+    void UpdateEquilibrium(double u, double Rom)
     {
-        Xe[0] = EstimateEquilibriumCurrent(Vref, u);
+        Xe[0] = EstimateEquilibriumCurrent(Vref, u, Rom);
         Xe[1] = Vref;
     }
 
-    void UpdateOriginalEquilibrium(double u)
+    void UpdateOriginalEquilibrium(double u, double Rom)
     {
-        Xe_o[0] = EstimateEquilibriumCurrent(Vref, u);
+        Xe_o[0] = EstimateEquilibriumCurrent(Vref, u, Rom);
         Xe_o[1] = Vref;
     }
 
-    double EstimateEquilibriumCurrent(double Ve, double u)
+    double EstimateEquilibriumCurrent(double Ve, double u, double Rom)
     {
-        double Ie;
+        double Ie, load, val;
+
+        if (LoadEstimationEnabled)
+            load = Rom;
+        else
+            load = Ro;
 
         switch(activeConverter)
         {
         case ID_Buck:
-            Ie = Ve/Ro;
+            Ie = Ve/load;
             break;
 
         case ID_Boost:
-            Ie = (u/(2*R) - sqrt( pow(u,2)/(4*pow(R,2)) - pow(Ve,2)/(R*Ro) ) );
+            val = pow(u,2)/(4*pow(R,2)) - pow(Ve,2)/(R*load);
+            if (val < 0)
+                val = 0;
+            Ie = (u/(2*R) - sqrt(val) );
             break;
 
         case ID_BuckBoost:
-            Ie = (u/(2*R) - sqrt( pow(u,2)/(4*pow(R,2)) - Ve*(Ve+u)/(R*Ro) ) );
+            val = pow(u,2)/(4*pow(R,2)) - Ve*(Ve+u)/(R*load);
+            if (val < 0)
+                val = 0;
+            Ie = (u/(2*R) - sqrt(val) );
             break;
 
         case ID_BuckBoost3:
-            Ie = (u/(2*R) - sqrt( pow(u,2)/(4*pow(R,2)) - Ve*(Ve+u)/(R*Ro) ) );
+            val = pow(u,2)/(4*pow(R,2)) - Ve*(Ve+u)/(R*load);
+            if (val < 0)
+                val = 0;
+            Ie = (u/(2*R) - sqrt(val) );
             break;
         }
 

@@ -1,6 +1,8 @@
 #ifndef SRC_EQUILIBRIUM_REFERENCE_UPDATE_H_
 #define SRC_EQUILIBRIUM_REFERENCE_UPDATE_H_
 
+#include <math.h>
+#include <src/Common/constants.h>
 #include <src/Converter/base_converter.h>
 #include <src/Converter/buck.h>
 #include <src/Converter/boost.h>
@@ -24,7 +26,7 @@ namespace ReferenceUpdate
 
     void LoadController(void);
 
-    void UpdateReference(double Vout, double u);
+    void UpdateReference(double Vout, double u, double Rom, bool enable);
 
     void ResetController(void);
 }

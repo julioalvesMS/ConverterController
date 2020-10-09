@@ -36,42 +36,20 @@ namespace ReferenceUpdate
         }
     }
 
-    void UpdateReference(double Vout, double u)
+    void UpdateReference(double Vout, double u, double Rom, bool enable)
     {
         double Ve;
         double Ie;
 
-        double upperLimit, lowerLimit;
+        double upperLimit = 50, lowerLimit = -50;
 
-
-        e[1] = e[0];
-        r[1] = r[0];
-
-        e[0] = Vref - Vout;
-//            r[0] = 0.5000*e[0] - 0.4700*e[1] + r[1];
-        r[0] = numPID[0]*e[0] + numPID[1]*e[1] - denPID[1]*r[1];
-
-        switch(activeConverter)
+        if (enable)
         {
-        case ID_Buck:
-            upperLimit = u; lowerLimit = -5;
-            break;
+            e[1] = e[0];
+            r[1] = r[0];
 
-        case ID_Boost:
-            upperLimit = 3*u; lowerLimit = u*0.5;
-            break;
-
-        case ID_BuckBoost:
-            upperLimit = 3*u; lowerLimit = -50;
-            break;
-
-        case ID_BuckBoost3:
-            upperLimit = 3*u; lowerLimit = -50;
-            break;
-
-        default:
-            upperLimit = 0; lowerLimit = 0;
-            break;
+            e[0] = Vref - Vout;
+            r[0] = numPID[0]*e[0] + numPID[1]*e[1] - denPID[1]*r[1];
         }
 
         if (r[0] < lowerLimit)
@@ -79,8 +57,8 @@ namespace ReferenceUpdate
         else if (r[0] > upperLimit)
             r[0] = upperLimit;
 
-        Ve = r[0];
-        Ie = Equilibrium::EstimateEquilibriumCurrent(Ve, u);
+        Ve = Vref + r[0];
+        Ie = Equilibrium::EstimateEquilibriumCurrent(Ve, u, Rom);
 
 
         Xe[0] = Ie;
@@ -89,8 +67,8 @@ namespace ReferenceUpdate
 
     void ResetController(void)
     {
-        r[0] = Vref;
-        r[1] = Vref;
+        r[0] = 0;
+        r[1] = 0;
 
         e[0] = 0;
         e[1] = 0;

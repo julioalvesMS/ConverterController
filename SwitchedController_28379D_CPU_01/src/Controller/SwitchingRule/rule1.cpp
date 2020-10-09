@@ -1,17 +1,23 @@
 #include <src/Controller/SwitchingRule/rule1.h>
 
+
 using namespace SwitchedSystem;
+
+
+extern bool LoadEstimationEnabled;
+
 
 namespace SwitchingRule1
 {
     static double csi[SYSTEM_ORDER];  // (x - xe)
+    static double AR[SYSTEM_ORDER][SYSTEM_ORDER];   // Ar0 + Ard/Ro
 
     static double prod_01[SYSTEM_ORDER], prod_02[SYSTEM_ORDER];    // Ai*xe, Bi*u
     static double sum_0[SYSTEM_ORDER], sum_1[SYSTEM_ORDER];    // Ai*xe + Bi*u
 
     static double prod_11[SYSTEM_ORDER], prod_12[SYSTEM_ORDER];   // csi'*P
 
-    int SwitchingRule(System *sys, double P[SYSTEM_ORDER][SYSTEM_ORDER], double X[SYSTEM_ORDER], double Xe[SYSTEM_ORDER], double u)
+    int SwitchingRule(System *sys, double P[SYSTEM_ORDER][SYSTEM_ORDER], double X[SYSTEM_ORDER], double Xe[SYSTEM_ORDER], double u, double Rom)
     {
         double best_sigma = 0, new_sigma;
         int best_id = 0;
@@ -23,7 +29,7 @@ namespace SwitchingRule1
 
         for (i=0;i<sys->N;i++)
         {
-            new_sigma = EvaluateSubSystem(&(sys->subSystems[i]), P, X, Xe, u);
+            new_sigma = EvaluateSubSystem(&(sys->subSystems[i]), P, X, Xe, u, Rom);
 
             if (new_sigma < best_sigma || i==0)
             {
@@ -35,17 +41,19 @@ namespace SwitchingRule1
         return best_id;
     }
 
-    double EvaluateSubSystem(SubSystem *subSys, double P[SYSTEM_ORDER][SYSTEM_ORDER], double X[SYSTEM_ORDER], double Xe[SYSTEM_ORDER], double u)
+    double EvaluateSubSystem(SubSystem *subSys, double P[SYSTEM_ORDER][SYSTEM_ORDER], double X[SYSTEM_ORDER], double Xe[SYSTEM_ORDER], double u, double Rom)
     {
         double val;
+
+        EvaluateModelR(subSys, Rom);
 
         //
         // Ai*X
         //
-        prod_01[0]  = subSys->A[0][0] * X[0];
-        prod_01[0] += subSys->A[0][1] * X[1];
-        prod_01[1]  = subSys->A[1][0] * X[0];
-        prod_01[1] += subSys->A[1][1] * X[1];
+        prod_01[0]  = AR[0][0] * X[0];
+        prod_01[0] += AR[0][1] * X[1];
+        prod_01[1]  = AR[1][0] * X[0];
+        prod_01[1] += AR[1][1] * X[1];
 
         //
         // Bi*u
@@ -90,6 +98,22 @@ namespace SwitchingRule1
         return val;
     }
 
-
+    void EvaluateModelR(SubSystem *subSys, double Rom)
+    {
+        if (LoadEstimationEnabled)
+        {
+            AR[0][0] = subSys->Ar0[0][0] + subSys->Ard[0][0]/Rom;
+            AR[0][1] = subSys->Ar0[0][1] + subSys->Ard[0][1]/Rom;
+            AR[1][0] = subSys->Ar0[1][0] + subSys->Ard[1][0]/Rom;
+            AR[1][1] = subSys->Ar0[1][1] + subSys->Ard[1][1]/Rom;
+        }
+        else
+        {
+            AR[0][0] = subSys->A[0][0];
+            AR[0][1] = subSys->A[0][1];
+            AR[1][0] = subSys->A[1][0];
+            AR[1][1] = subSys->A[1][1];
+        }
+    }
 }
 

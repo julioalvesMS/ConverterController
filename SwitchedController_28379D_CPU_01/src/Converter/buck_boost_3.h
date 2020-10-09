@@ -25,7 +25,7 @@ namespace ConverterBuckBoost3
 
         static void GetReferenceController(double num[2], double den[2]);
 
-        static void GetCurrentCorrectionController(double num[2], double den[2]);
+        static void GetCurrentCorrectionController(double num[2], double den[2], double *designVoltage);
 
         static int SubSystem2SwitchState(int SubSystem);
     };

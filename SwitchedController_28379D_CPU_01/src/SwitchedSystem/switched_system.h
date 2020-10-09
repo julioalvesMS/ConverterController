@@ -10,6 +10,9 @@ namespace SwitchedSystem
     {
     public:
         double A[SYSTEM_ORDER][SYSTEM_ORDER];
+        double Ar[SYSTEM_ORDER][SYSTEM_ORDER];
+        double Ar0[SYSTEM_ORDER][SYSTEM_ORDER];
+        double Ard[SYSTEM_ORDER][SYSTEM_ORDER];
         double B[SYSTEM_ORDER];
         double L[SYSTEM_ORDER][SYSTEM_ORDER+1];
         double l[SYSTEM_ORDER];

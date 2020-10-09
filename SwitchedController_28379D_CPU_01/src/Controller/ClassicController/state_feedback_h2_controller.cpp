@@ -3,7 +3,6 @@
 namespace StateFeedbackH2Controller
 {
     static double K[2] = {0, 0};
-    static double C[2] = {0, 0};
     static double M = 0;
 
     void LoadController(void)
@@ -11,13 +10,13 @@ namespace StateFeedbackH2Controller
         switch(activeConverter)
         {
         case BaseConverter::ID_Buck:
-            Buck::GetStateFeedbackH2Controller(K, C, &M);
+            Buck::GetStateFeedbackH2Controller(K, &M);
             break;
         case BaseConverter::ID_Boost:
-            Boost::GetStateFeedbackH2Controller(K, C, &M);
+            Boost::GetStateFeedbackH2Controller(K, &M);
             break;
         case BaseConverter::ID_BuckBoost:
-            BuckBoost::GetStateFeedbackH2Controller(K, C, &M);
+            BuckBoost::GetStateFeedbackH2Controller(K, &M);
             break;
 
         default:
@@ -49,7 +48,7 @@ namespace StateFeedbackH2Controller
             break;
         }
 
-        r = Xe[0]*C[0] + Xe[1]*C[1];
+        r = Xe[1];
         kx = K[0]*X[0] + K[1]*X[1];
 
         duty = M*r - kx;

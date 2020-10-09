@@ -34,11 +34,11 @@ namespace Equilibrium
 
     double* GetOriginalEquilibrium(void);
 
-    void UpdateEquilibrium(double u);
+    void UpdateEquilibrium(double u, double Rom);
 
-    void UpdateOriginalEquilibrium(double u);
+    void UpdateOriginalEquilibrium(double u, double Rom);
 
-    double EstimateEquilibriumCurrent(double Ve, double u);
+    double EstimateEquilibriumCurrent(double Ve, double u, double Rom);
 }
 
 

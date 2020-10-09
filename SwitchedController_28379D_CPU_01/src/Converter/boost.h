@@ -27,11 +27,11 @@ namespace ConverterBoost
 
         static void GetClassicVoltageCurrentController(double vNum[2], double vDen[2], double iNum[2], double iDen[2]);
 
-        static void GetStateFeedbackH2Controller(double K[2], double C[2], double* M);
+        static void GetStateFeedbackH2Controller(double K[2], double* M);
 
         static void GetReferenceController(double num[2], double den[2]);
 
-        static void GetCurrentCorrectionController(double num[2], double den[2]);
+        static void GetCurrentCorrectionController(double num[2], double den[2], double *designVoltage);
 
         static int SubSystem2SwitchState(int SubSystem);
     };

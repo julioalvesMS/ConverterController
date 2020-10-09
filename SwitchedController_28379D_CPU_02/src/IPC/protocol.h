@@ -49,6 +49,9 @@ namespace Protocol
 
         EnableModeHopping,
         DisableModeHopping,
+
+        EnableLoadEstimation,
+        DisableLoadEstimation,
     };
 }
 
