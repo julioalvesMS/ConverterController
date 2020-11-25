@@ -52,6 +52,9 @@ namespace Protocol
 
         EnableLoadEstimation,
         DisableLoadEstimation,
+
+        HoldReference,
+        ReleaseReference,
     };
 }
 

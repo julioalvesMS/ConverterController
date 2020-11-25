@@ -3,11 +3,13 @@
 extern double Vin, Vout, IL, Iout;
 extern double Vout_mean;
 extern double Vref;
+extern double VrefH;
 extern double loadResistance;
 extern int SwitchingFrequency;
 extern bool ConverterEnabled;
 extern bool ModeHoppingEnabled;
 extern bool LoadEstimationEnabled;
+extern bool VoltageHolderEnabled;
 extern int CorrectionMethod;
 extern bool OutputLoadStep;
 extern double stateDutyCycle[4];
@@ -42,7 +44,12 @@ namespace Serial
             sprintf(protocol_message, "Y%04d", (int) (10*Vout));
             break;
         case 2:
-            sprintf(protocol_message, "R%04d", (int) (10*Vref));
+            double val;
+            if(!VoltageHolderEnabled)
+                val = Vref;
+            else
+                val = VrefH;
+            sprintf(protocol_message, "R%04d", (int) (10*val));
             break;
         case 3:
             sprintf(protocol_message, "I%03d", (int) (100*Iout));
@@ -247,6 +254,13 @@ namespace Serial
                 break;
             case 'o':
                 command = Protocol::DisableLoadEstimation;
+                break;
+
+            case 'B':
+                command = Protocol::HoldReference;
+                break;
+            case 'b':
+                command = Protocol::ReleaseReference;
                 break;
             default:
                 command = Protocol::None;

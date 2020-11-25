@@ -27,6 +27,7 @@ __interrupt void Interruption_CommunicationTimer(void);
 double Vin, Vout, IL, Iout;
 double Vout_mean;
 double Vref;
+double VrefH;
 double loadResistance;
 double VoltageRipple;
 
@@ -42,6 +43,7 @@ bool ConverterEnabled;
 bool OutputLoadStep;
 bool ModeHoppingEnabled;
 bool LoadEstimationEnabled;
+bool VoltageHolderEnabled;
 
 DAC_SPI::Channel DacChannel = DAC_SPI::CH_CONTROLE;
 

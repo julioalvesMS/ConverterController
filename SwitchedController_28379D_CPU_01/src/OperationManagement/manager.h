@@ -50,7 +50,7 @@ namespace Manager
     void DisableOperation(void);
 
 
-    void ContinuePreLoad(void);
+    void ContinuePreLoad(bool converterChange);
 
 
     bool SynchronousOperation(double IL);

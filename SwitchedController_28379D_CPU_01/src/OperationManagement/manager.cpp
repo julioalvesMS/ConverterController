@@ -1,10 +1,11 @@
 #include <src/OperationManagement/manager.h>
 
-extern double *Vin, *Vout;
+extern double *Vin, *Vout, Vref, VrefH;
 extern bool ConverterEnabled;
 extern bool OutputLoadStep;
 extern bool ModeHoppingEnabled;
 extern bool LoadEstimationEnabled;
+extern bool VoltageHolderEnabled;
 extern bool RecentReference;
 extern ConverterID activeConverter;
 extern ControlStrategy controlStrategy;
@@ -15,6 +16,7 @@ extern Protocol::CommunicationCommand IPC_CommandBuffer[];
 extern int IPC_BufferIndex;
 
 static int lastBufferIndex = 0;
+
 
 namespace Manager
 {
@@ -39,25 +41,52 @@ namespace Manager
         case Protocol::DecreaseDacChannel:
             break;
         case Protocol::RampIncreaseReference:
-            Vref += 0.002;
-            if(Vref > PROTECTION_VOUT_MAX) Vref = PROTECTION_VOUT_MAX;
+            if (!VoltageHolderEnabled){
+                Vref += 0.002;
+                if(Vref > PROTECTION_VOUT_MAX) Vref = PROTECTION_VOUT_MAX;
+            }
+            else{
+                VrefH += 0.002;
+                if(VrefH > PROTECTION_VOUT_MAX) VrefH = PROTECTION_VOUT_MAX;
+            }
             break;
         case Protocol::RampDecreaseReference:
-            Vref -= 0.002;
-            if(Vref < 0) Vref = 0;
+            if (!VoltageHolderEnabled){
+                Vref -= 0.002;
+                if(Vref < 0) Vref = 0;
+            }
+            else{
+                VrefH -= 0.002;
+                if(VrefH < 0) VrefH = 0;
+            }
             break;
         case Protocol::StepIncreaseReference:
+            if (!VoltageHolderEnabled){
+                Vref += 5;
+                if(Vref > PROTECTION_VOUT_MAX) Vref = PROTECTION_VOUT_MAX;
+            }
+            else{
+                VrefH += 5;
+                if(VrefH > PROTECTION_VOUT_MAX) VrefH = PROTECTION_VOUT_MAX;
+            }
             RecentReference = true;
-            Vref += 5;
-            if(Vref > PROTECTION_VOUT_MAX) Vref = PROTECTION_VOUT_MAX;
             break;
         case Protocol::StepDecreaseReference:
+            if (!VoltageHolderEnabled){
+                Vref -= 5;
+                if(Vref < 0) Vref = 0;
+            }
+            else{
+                VrefH -= 5;
+                if(VrefH < 0) VrefH = 0;
+            }
             RecentReference = true;
-            Vref -= 5;
-            if(Vref < 0) Vref = 0;
             break;
         case Protocol::ResetReference:
-            Vref = 0;
+            if (!VoltageHolderEnabled)
+                Vref = 0;
+            else
+                VrefH = 0;
             break;
         case Protocol::EmergencyButtonProtection:
             protection = Protection::FAULT_EMERGENCY_STOP;
@@ -139,6 +168,14 @@ namespace Manager
         case Protocol::DisableLoadEstimation:
             LoadEstimationEnabled = false;
             break;
+        case Protocol::HoldReference:
+            VrefH = Vref;
+            VoltageHolderEnabled = true;
+            break;
+        case Protocol::ReleaseReference:
+            Vref = VrefH;
+            VoltageHolderEnabled = false;
+            break;
         default:
             break;
         }
@@ -212,13 +249,18 @@ namespace Manager
 
         if (activeConverter == ID_Boost)
         {
+            ConverterEnabled = false;
             CurrentState = OS_STARTING_PRE_LOAD;
-            Relay::PreLoadCapacitor(true);
+            Vref = 0;
+            activeConverter = ID_Buck;
+            Relay::PreLoadCapacitor(false);
+            //Relay::PreLoadCapacitor(true);
         }
         else
         {
             CurrentState = OS_RUNNING;
             Relay::PreLoadCapacitor(false);
+            ConverterEnabled = true;
         }
 
         if (Controller::isClassicControl(controlStrategy) && CurrentState==OS_RUNNING)
@@ -227,7 +269,6 @@ namespace Manager
         }
 
         RecentReference = true;
-        ConverterEnabled = true;
     }
 
 
@@ -236,17 +277,26 @@ namespace Manager
         if(CurrentState==OS_OFF)
             return;
 
-        CurrentState = OS_OFF;
+        ConverterEnabled = false;
 
         Switch::DisablePWM();
 
         Relay::PreLoadCapacitor(false);
 
-        ConverterEnabled = false;
+        if (CurrentState == OS_STARTING_PRE_LOAD ||
+            CurrentState == OS_PRE_LOAD ||
+            CurrentState == OS_ENDING_PRE_LOAD)
+        {
+            activeConverter = ID_Boost;
+            CurrentState = OS_CHANGING_CONVERTER_CONTROLLER;
+        }
+        else
+            CurrentState = OS_OFF;
+
     }
 
 
-    void ContinuePreLoad(void)
+    void ContinuePreLoad(bool converterChange)
     {
         if (    CurrentState != OS_STARTING_PRE_LOAD &&
                 CurrentState != OS_PRE_LOAD &&
@@ -257,8 +307,11 @@ namespace Manager
         switch(CurrentState)
         {
         case OS_STARTING_PRE_LOAD:
-            if (Relay::PreLoadCapacitor(true))
+            if (converterChange)
+            {
                 CurrentState = OS_PRE_LOAD;
+                ConverterEnabled = true;
+            }
 
             if (Controller::isClassicControl(controlStrategy))
             {
@@ -269,14 +322,20 @@ namespace Manager
         case OS_PRE_LOAD:
             if (*Vout >= *Vin * 0.9)
             {
-                Relay::PreLoadCapacitor(false);
+                ConverterEnabled = false;
+                //Relay::PreLoadCapacitor(false);
+                activeConverter = ID_Boost;
                 CurrentState = OS_ENDING_PRE_LOAD;
             }
             break;
 
         case OS_ENDING_PRE_LOAD:
-            if (!Relay::PreLoadCapacitor(false))
+            if (converterChange)
+            {
+                Vref = ((int)Vref/5)*5;
                 CurrentState = OS_RUNNING;
+                ConverterEnabled = true;
+            }
             VoltageController::ResetController();
             VoltageCurrentController::ResetController();
             ReferenceUpdate::ResetController();

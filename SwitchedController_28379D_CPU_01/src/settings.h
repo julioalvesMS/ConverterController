@@ -80,4 +80,9 @@
 //
 #define SYSTEM_EVALUATION_PERIOD 100000     // Period in Microseconds
 
+//
+// Deadband
+//
+#define DEAD_BAND_PERIOD 4     // Period in Microseconds
+
 #endif /* SETTINGS_H_ */

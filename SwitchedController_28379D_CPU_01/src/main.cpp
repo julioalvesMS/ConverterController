@@ -83,6 +83,7 @@ double *u;
 double *Vout_mean;
 double *loadResistance;
 double Vref = INITIAL_REFERENCE_VOLTAGE;
+double VrefH = Vref;
 
 
 //
@@ -104,6 +105,7 @@ bool CapacitorPreLoad;
 bool CapacitorPreLoadEngaged = false;
 bool ModeHoppingEnabled = false;
 bool LoadEstimationEnabled = true;
+bool VoltageHolderEnabled = false;
 bool Synchronous = true;
 bool RecentReference = true;
 Protection::Problem protection = Protection::NONE;
@@ -240,6 +242,12 @@ void main(void)
             LoadConverterController();
             Manager::CompleteConverterControllerChange();
         }
+        else if (*CurrentOperationState == Manager::OS_STARTING_PRE_LOAD ||
+                 *CurrentOperationState == Manager::OS_ENDING_PRE_LOAD)
+        {
+            LoadConverterController();
+            Manager::ContinuePreLoad(true);
+        }
 
         Relay::StepOutputLoad(OutputLoadStep);
     }
@@ -363,7 +371,7 @@ void CalculateDutyCycle(void)
 //
 __interrupt void Interruption_SystemEvaluation(void)
 {
-    static int i = 0;
+    static Uint32 i = 0;
     CpuTimer1.InterruptCount++;
 
     // Medições vão ser a cada 100ms
@@ -385,7 +393,7 @@ __interrupt void Interruption_SystemEvaluation(void)
     SwitchCounter = 0;
 
     if(i%10==0)
-        Manager::ContinuePreLoad();
+        Manager::ContinuePreLoad(false);
 
     i++;
 }
@@ -408,6 +416,12 @@ __interrupt void Interruption_ReferenceUpdate(void)
             RecentReference = false;
             i = 0;
         }
+    }
+
+    if (*CurrentOperationState == Manager::OS_PRE_LOAD
+            && Vref <= *Vin)
+    {
+        Vref += 0.01;
     }
 
     switch(CorrectionMethod)
@@ -450,7 +464,9 @@ __interrupt void Interruption_Sensor(void)
         protection = Protection::CheckProtections(*Vin, *Vout, *IL, *Iout);
 
     // If necessary, protect system
-    if(protection != Protection::NONE || !ConverterEnabled)
+    if(protection != Protection::NONE ||
+        (!ConverterEnabled &&
+        (*CurrentOperationState!=Manager::OS_STARTING_PRE_LOAD && *CurrentOperationState!=Manager::OS_ENDING_PRE_LOAD)))
     {
         Protection::ProtectSystem();
     }
@@ -539,13 +555,13 @@ void SwitchedControl(void)
     switch(*CurrentOperationState)
     {
     case Manager::OS_RUNNING:
+    case Manager::OS_PRE_LOAD:
         break;
 
     case Manager::OS_STARTING_PRE_LOAD:
         SwitchState = DISBALE_SWITCHES;
         break;
 
-    case Manager::OS_PRE_LOAD:
     case Manager::OS_ENDING_PRE_LOAD:
         SwitchState = 0;
         break;
@@ -588,10 +604,10 @@ void ClassicControl(void)
     switch(*CurrentOperationState)
     {
     case Manager::OS_RUNNING:
+    case Manager::OS_PRE_LOAD:
         Switch::UpdateDutyCycle(DutyCycle);
         break;
 
-    case Manager::OS_PRE_LOAD:
     case Manager::OS_ENDING_PRE_LOAD:
         DutyCycle = 0;
         Switch::UpdateDutyCycle(DutyCycle);

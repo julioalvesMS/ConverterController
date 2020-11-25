@@ -14,6 +14,7 @@ extern int ADC_Vout, ADC_Vin, ADC_IL, ADC_Iout;
 extern double Vin, Vout, IL, Iout;
 extern double Vout_mean;
 extern double Vref;
+extern double VrefH;
 extern double loadResistance;
 extern int SwitchingFrequency;
 extern bool ConverterEnabled;
@@ -21,6 +22,7 @@ extern int CorrectionMethod;
 extern bool OutputLoadStep;
 extern bool ModeHoppingEnabled;
 extern bool LoadEstimationEnabled;
+extern bool VoltageHolderEnabled;
 extern int protection;
 extern int DacChannel;
 extern int activeConverter;
@@ -65,6 +67,8 @@ volatile double shared_Vout_mean;
 
 #pragma DATA_SECTION("SHARERAMGS0");
 volatile double shared_Vref;
+#pragma DATA_SECTION("SHARERAMGS0");
+volatile double shared_VrefH;
 
 #pragma DATA_SECTION("SHARERAMGS0");
 volatile int shared_SwitchingFrequency;
@@ -101,6 +105,9 @@ volatile bool shared_LoadEstimationEnabled;
 
 #pragma DATA_SECTION("SHARERAMGS0");
 volatile double shared_VoltageRipple;
+
+#pragma DATA_SECTION("SHARERAMGS0");
+volatile bool shared_VoltageHolderEnabled;
 
 
 namespace IPC
@@ -140,12 +147,14 @@ namespace IPC
         Iout = shared_Iout;
         Vout_mean = shared_Vout_mean;
         Vref = shared_Vref;
+        VrefH = shared_VrefH;
         loadResistance = shared_loadResistance;
 
         SwitchingFrequency = shared_SwitchingFrequency;
         ConverterEnabled = shared_ConverterEnabled;
         ModeHoppingEnabled = shared_ModeHoppingEnabled;
         LoadEstimationEnabled = shared_LoadEstimationEnabled;
+        VoltageHolderEnabled = shared_VoltageHolderEnabled;
         CorrectionMethod = shared_CorrectionMethod;
         OutputLoadStep = shared_OutputLoadStep;
         protection = shared_protection;
