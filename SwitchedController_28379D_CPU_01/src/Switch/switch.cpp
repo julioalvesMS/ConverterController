@@ -100,7 +100,7 @@ namespace Switch
     }
 
 
-    bool SetState(int state, bool synchronous)
+    bool SetState(int state)
     {
         bool switched = false;
 
@@ -108,26 +108,33 @@ namespace Switch
         if (state == current_switch_state && current_switch_state!=DISBALE_SWITCHES)
             return switched;
 
-        switched = true;
-        switch(state)
+        // Register new state
+        current_switch_state = state;
+
+        switched = DeactivateSwitches();
+        // Start Deadband Timer
+        CpuTimer0Regs.TCR.bit.TSS = 0;
+
+        return switched;
+    }
+
+
+    bool DeactivateSwitches()
+    {
+        bool switched = true;
+        switch(current_switch_state)
         {
         case 0:
             GpioDataRegs.GPACLEAR.bit.S2 = 1;
             GpioDataRegs.GPACLEAR.bit.S3 = 1;
-            GpioDataRegs.GPASET.bit.S1 = 1;
-            GpioDataRegs.GPASET.bit.S4 = 1 && synchronous;
             break;
         case 1:
             GpioDataRegs.GPACLEAR.bit.S1 = 1;
             GpioDataRegs.GPACLEAR.bit.S3 = 1;
-            GpioDataRegs.GPASET.bit.S2 = 1 && synchronous;
-            GpioDataRegs.GPASET.bit.S4 = 1 && synchronous;
             break;
         case 2:
             GpioDataRegs.GPACLEAR.bit.S2 = 1;
             GpioDataRegs.GPACLEAR.bit.S4 = 1;
-            GpioDataRegs.GPASET.bit.S1 = 1;
-            GpioDataRegs.GPASET.bit.S3 = 1;
             break;
         case DISBALE_SWITCHES:
         default:
@@ -139,10 +146,30 @@ namespace Switch
             break;
         }
 
-        // Register new state
-        current_switch_state = state;
-
         return switched;
+    }
+
+    void ActivateSwitches(bool synchronous)
+    {
+        CpuTimer0Regs.TCR.bit.TSS = 1;
+
+        switch(current_switch_state)
+        {
+        case 0:
+            GpioDataRegs.GPASET.bit.S1 = 1;
+            GpioDataRegs.GPASET.bit.S4 = 1 && synchronous;
+            break;
+        case 1:
+            GpioDataRegs.GPASET.bit.S2 = 1 && synchronous;
+            GpioDataRegs.GPASET.bit.S4 = 1 && synchronous;
+            break;
+        case 2:
+            GpioDataRegs.GPASET.bit.S1 = 1;
+            GpioDataRegs.GPASET.bit.S3 = 1;
+            break;
+        default:
+            break;
+        }
     }
 
 

@@ -63,6 +63,7 @@ void ClassicControl(void);
 //
 // Interruptions defined in main
 //
+__interrupt void Interruption_DeadBand(void);
 __interrupt void Interruption_SystemEvaluation(void);
 __interrupt void Interruption_ReferenceUpdate(void);
 __interrupt void Interruption_Sensor(void);
@@ -174,6 +175,7 @@ void main(void)
 
     EALLOW;
     PieVectTable.ADCA1_INT = &(Interruption_Sensor);
+    PieVectTable.TIMER0_INT = &(Interruption_DeadBand);
     PieVectTable.TIMER1_INT = &(Interruption_SystemEvaluation);
     PieVectTable.TIMER2_INT = &(Interruption_ReferenceUpdate);
 //    PieVectTable.EPWM = &ePWM1_TZ_isr;
@@ -367,6 +369,22 @@ void CalculateDutyCycle(void)
 
 
 //
+// Interrupção para simular dead band
+//
+__interrupt void Interruption_DeadBand(void)
+{
+    CpuTimer0.InterruptCount++;
+
+    Switch::ActivateSwitches(Synchronous);
+
+    //
+    // Acknowledge this __interrupt to receive more __interrupts from group 1
+    //
+    PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
+}
+
+
+//
 // Interrupção executada a cada 100ms para medições temporais
 //
 __interrupt void Interruption_SystemEvaluation(void)
@@ -513,7 +531,11 @@ void SwitchedControl(void)
     switch(controlStrategy)
     {
     case CS_CONTINUOUS_THEOREM_1:
-        BestSubsystem = SwitchingRule1::SwitchingRule(sys, P, X, Xe, *u, *loadResistance);
+        if (BestSubsystem)
+            BestSubsystem = 0;
+        else
+            BestSubsystem = 1;
+        //BestSubsystem = SwitchingRule1::SwitchingRule(sys, P, X, Xe, *u, *loadResistance);
         break;
     case CS_CONTINUOUS_THEOREM_2:
         BestSubsystem = SwitchingRule2::SwitchingRule(sys, P, X, Xe, *u, *loadResistance);
@@ -577,7 +599,7 @@ void SwitchedControl(void)
     //
     // Signal to the gate
     //
-    SwitchCounter += Switch::SetState(SwitchState, Synchronous);
+    SwitchCounter += Switch::SetState(SwitchState);
 }
 
 

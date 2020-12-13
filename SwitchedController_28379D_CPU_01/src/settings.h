@@ -83,6 +83,6 @@
 //
 // Deadband
 //
-#define DEAD_BAND_PERIOD 4     // Period in Microseconds
+#define DEAD_BAND_PERIOD 10     // Period in Microseconds
 
 #endif /* SETTINGS_H_ */
